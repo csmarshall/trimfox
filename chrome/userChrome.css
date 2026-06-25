@@ -1,0 +1,471 @@
+/* Findbar */
+@import url('./refined-findbar/findbar.css');
+
+/* IMPORTANT: Selection styles MUST come BEFORE namespace declaration */
+::-moz-selection {
+  background-color: #555558 !important;
+  color: #ffffff !important;
+}
+
+::selection {
+  background-color: #555558 !important;
+  color: #ffffff !important;
+}
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /* set default namespace to XUL */
+@namespace html url("http://www.w3.org/1999/xhtml"); /* HTML namespace for input elements */
+
+/* Modern Firefox Dark Theme Colors */
+:root {
+  /* Background colors */
+  --toolbar-bgcolor: #2b2a33 !important;
+  --lwt-accent-color: #1c1b22 !important;
+  --lwt-toolbarbutton-background: #38383d !important;
+
+  /* Text colors */
+  --toolbar-color: #fbfbfe !important;
+  --lwt-text-color: #fbfbfe !important;
+
+  /* Sidebar */
+  --sidebar-background-color: #1c1b22 !important;
+  --sidebar-text-color: #fbfbfe !important;
+  --sidebar-border-color: #2b2a33 !important;
+
+  /* URL bar */
+  --urlbar-box-bgcolor: #1c1b22 !important;
+  --urlbar-popup-action-color: #555558 !important;
+  --toolbar-field-color: #fbfbfe !important;
+  --toolbar-field-focus-color: #fbfbfe !important;
+  --urlbar-popup-url-color: #555558 !important;
+
+  /* URL bar dropdown colors */
+  --autocomplete-popup-highlight-background: #555558 !important;
+  --autocomplete-popup-highlight-color: #ffffff !important;
+  --urlbar-popup-selected-bgcolor: #555558 !important;
+  --urlbar-popup-selected-color: #ffffff !important;
+
+  /* Sidebar dimensions */
+  --sidebar-hover-width: 52px;
+  --sidebar-visible-width: 320px;
+
+  /* Override Firefox accent colors (dialogs, checkboxes, buttons) */
+  /* Buttons need lighter color for readability */
+  --focus-outline-color: #707075 !important;
+  --color-accent-primary: #707075 !important;
+  --color-accent-primary-hover: #808085 !important;
+  --color-accent-primary-active: #606065 !important;
+  accent-color: #707075 !important;
+
+  /* Force selection colors everywhere */
+  --lwt-toolbar-field-highlight: #555558 !important;
+  --lwt-toolbar-field-highlight-text: #ffffff !important;
+  --toolbar-field-highlight: #555558 !important;
+  --toolbar-field-highlight-text: #ffffff !important;
+  --chrome-selection-background-color: #555558 !important;
+  --chrome-selection-color: #ffffff !important;
+}
+
+menupopup > menuitem, menupopup > menu, 
+menupopup > menucaption, menupopup > menuseparator {
+  padding-left: 5px !important;
+  padding-right: 7px !important;
+}
+
+/* reduce back and forward button */
+#back-button,#forward-button{ list-style-image: url("chrome://devtools/skin/images/play.svg") !important; }
+#back-button > .toolbarbutton-icon{ transform: scaleX(-1) }
+
+/* change font */
+* {
+    font-size: 7pt !important;
+    font-family: -apple-system !important;
+}
+
+/* The searchmode-switcher placeholder is a literal "a" that Firefox hides
+   with font-size:0; our universal 7pt above defeats that and leaks the glyph.
+   Force it back to invisible (keep the element so the moz-button still sizes). */
+.urlbar-visually-hidden {
+  font-size: 0 !important;
+  color: transparent !important;
+}
+
+.ac-title,
+.urlbarView-results {
+   font-size: 7pt;
+ }
+
+/* URL dropdown - force gray color on URLs (override teal accent) */
+.urlbarView-secondary,
+.urlbarView-url,
+.urlbarView-action,
+.urlbarView-row .urlbarView-url,
+#urlbar-results .urlbarView-url,
+#urlbar .urlbarView-url,
+.urlbarView-row[type="bookmark"] .urlbarView-url,
+.urlbarView-row[type="history"] .urlbarView-url,
+.urlbarView-row[type="switchtab"] .urlbarView-url,
+.urlbarView-row .urlbarView-title-separator,
+#urlbar-results .urlbarView-row .urlbarView-url {
+  color: #555558 !important;
+  -moz-context-properties: none !important;
+  font-size: 7pt;
+}
+
+/* Override any link styling */
+.urlbarView-url:-moz-any-link,
+.urlbarView-url:any-link {
+  color: #555558 !important;
+}
+
+/* URL bar dropdown row selection */
+.urlbarView-row[selected],
+.urlbarView-row:is([selected]) {
+  background-color: #555558 !important;
+  background: #555558 !important;
+}
+
+.urlbarView-row[selected] *,
+.urlbarView-row[selected] .urlbarView-title,
+.urlbarView-row[selected] .urlbarView-url,
+.urlbarView-row[selected] .urlbarView-secondary,
+.urlbarView-row[selected] .urlbarView-action {
+  color: #ffffff !important;
+}
+
+#urlbar {
+  /* light background: #FAFAFA !important;*/
+  background: #2b2a33 !important;
+  font-size: 7pt !important;
+ }
+
+/*#tabbrowser-tabs {
+  visibility: collapse;
+  height: 0px !important; 
+  max-height: 0px !important; 
+  min-height: 0px !important; 
+}*/
+
+/* trimfox: was `#TabsToolbar { visibility: collapse; }` — hid the tab bar for
+   TST. Native vertical tabs move tabs to the sidebar, so this is no longer
+   needed; left disabled in case we want to re-hide the top strip surgically. */
+/* #TabsToolbar { visibility: collapse; } */
+
+/* Hide sidebar header */
+#sidebar-box #sidebar-header {
+  visibility: collapse;
+}
+/*
+#sidebar-box #sidebar-header {
+      display: none !important;
+}
+
+#sidebar-box[sidebarcommand="_3c078156-979c-498b-8990-85f7987dd929_-sidebar-action"] > #sidebar-header{
+  display: none
+}*/
+
+.sidebar-splitter {
+  width: 1px !important;
+  transition: 300ms !important;
+}
+
+#sidebar-box:hover + .sidebar-splitter, .sidebar-splitter:hover {
+  transition: 300ms !important;
+}
+
+/* trimfox: dropped #TabsToolbar from this hide (was nuking native vertical tabs) */
+#sidebar-header {
+  display: none !important;
+}
+
+#sidebar-box {
+  position: relative !important;
+  overflow:hidden;
+  max-width: var(--sidebar-hover-width) !important;
+}
+
+#sidebar-box:hover {
+  transition: all 100ms !important;
+  max-width: var(--sidebar-visible-width) !important;
+  width:5px !important;
+}
+
+#sidebar-header { display: none }
+/* trimfox: was `#tabbrowser-tabs { visibility: collapse }` — THIS hid the native
+   vertical tabs (it's the tab container). Disabled for native vertical tabs. */
+/* #tabbrowser-tabs { visibility: collapse } */
+
+/*Collapse in default state and add transition*/
+#sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"] {
+  overflow: hidden;
+  min-width: 10px !important;
+  max-width: 10px !important;
+  transition: all 0.2s ease;
+  border-right: 1px solid #2b2a33;
+  border-top: 1px solid #555558;
+  z-index: 2;
+}
+
+/*Expand to 260px on hover */
+#sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"]:hover,
+#sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"] #sidebar {
+  min-width: 240px !important;
+  max-width: 240px !important;
+  border-right: 1px solid #2b2a33;
+  z-index: 1;
+}
+
+/* Hide "search with" */
+#urlbar .search-one-offs:not([hidden]) {
+  display: none !important;
+}
+
+#urlbar *|input::placeholder { opacity: 0 !important; }
+
+panel#urlbar-results #urlbarView-row-0 .urlbarView-title-separator::before,
+panel#urlbar-results #urlbarView-row-0 .urlbarView-secondary {
+   display:none !important;
+}
+
+/* Hides the first item in the urlbar dropdown if it is a "search with" or "visit" item. Does not hide "search in private window item", probably */
+#urlbar[usertyping] .urlbarView-row:not([type]):first-child,
+#urlbar[usertyping] .urlbarView-row[type="search"]:first-child {
+display: none;
+}
+
+/* Compact Results */
+.urlbarView-results {
+    padding-block: unset !important;
+    font-size: small;
+    white-space: nowrap;
+}
+
+.urlbarView-row {
+    fill: currentColor;
+    fill-opacity: .6;
+    padding-block: unset !important; 
+}
+
+/* Needed for for FF 75 megabar */
+#urlbar {
+  --urlbar-toolbar-height: 34px !important;
+}
+
+/* URL bar text - ensure readable colors */
+#urlbar-input,
+#urlbar .urlbar-input-box,
+#urlbar input,
+.urlbar-input {
+  color: #fbfbfe !important;
+  -moz-appearance: none !important;
+  background: transparent !important;
+  --lwt-toolbar-field-highlight: #555558 !important;
+  --lwt-toolbar-field-highlight-text: #ffffff !important;
+}
+
+#urlbar[focused="true"] #urlbar-input,
+#urlbar:focus-within #urlbar-input,
+#urlbar[focused] #urlbar-input {
+  color: #fbfbfe !important;
+}
+
+#urlbar,
+#urlbar[focused],
+#urlbar[focused="true"] {
+  --toolbar-field-focus-color: #fbfbfe !important;
+  --lwt-toolbar-field-highlight: #555558 !important;
+  --lwt-toolbar-field-highlight-text: #ffffff !important;
+}
+
+/* URL bar text selection - force gray bg with white text */
+/* Using HTML namespace for input elements */
+#urlbar html|input::-moz-selection,
+#urlbar html|input::selection,
+html|input.urlbar-input::-moz-selection,
+html|input.urlbar-input::selection,
+#urlbar-input::selection,
+#urlbar-input::-moz-selection {
+   background: #555558 !important;
+   background-color: #555558 !important;
+   color: #ffffff !important;
+}
+
+/*** Hide Tab Close buttons ***/
+.tabbrowser-tab .tab-close-button {
+  visibility: collapse !important;
+}
+
+/* Hide find bar */
+findbar:not(:focus-within) {
+  height: 0px !important;
+  overflow: hidden !important;
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* ========================================================================== */
+/* trimfox: NATIVE vertical tabs — minimal "separators only" reskin           */
+/* Models the old Tree Style Tab look: no favicons, a thin separator between  */
+/* each tab, compact 22px rows. Collapsed => a stack of separator lines that  */
+/* just shows how many tabs are open; hover/expand => readable labels.        */
+/* Spec from TST userStyleRules + Photon theme (tab_background_separator).     */
+/* FIRST PASS — tune the separator opacity / collapsed width after eyeballing.*/
+/* ========================================================================== */
+
+/* Compact row height + skinny collapsed strip — using the REAL native vars
+   (per Firefox vertical-tabs CSS docs), not blunt overrides:
+     --tab-min-height               = row height   (TST: .tab { height: 22px })
+     --tab-collapsed-background-width = collapsed strip width (~your old 20-25px) */
+:root {
+  --tab-min-height: 22px !important;
+  --tab-collapsed-background-width: 14px !important;   /* ~your original ~15px */
+}
+
+/* Slim the collapsed tab so the strip width is driven by the var, not by tab
+   padding (otherwise the strip sits wider than the var). */
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab,
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tab-content {
+  padding-inline: 0 !important;
+  margin-inline: 0 !important;
+  min-width: 0 !important;
+}
+
+/* CONSTRAIN the collapsed tab column to the strip width so tabs don't overflow
+   (~38px) past the bar. Measured cause of: (a) bar wider than the var, and
+   (b) missing right divider — the overflowing tab bg was painting over the
+   #sidebar-main border. Clipping the tabs fixes both. Scoped to collapsed so
+   hover-expand is unaffected. */
+#tabbrowser-tabs[orient="vertical"]:not([expanded]),
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) > arrowscrollbox {
+  max-width: var(--tab-collapsed-background-width) !important;
+  overflow: hidden !important;
+}
+
+/* COLLAPSED right divider. #vertical-tabs is full window height but normally
+   ~235px wide (transparent past the strip), so its border lands off in the page.
+   Constrain it to the strip width ONLY when collapsed (via :has() on the tab
+   state) and border its right edge → line at the visible ~14px edge, full height.
+   Expanded edge is handled by #sidebar-main below. */
+#vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
+  max-width: var(--tab-collapsed-background-width) !important;
+  overflow: hidden !important;
+  border-inline-end: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+:root:-moz-window-inactive #vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
+  border-inline-end-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Favicons: present and visible normally (and when expanded on hover), but
+   hidden ONLY in the collapsed state, so the collapsed strip is just separator
+   lines = a tab count. This is the correct state-based way — `[expanded]` marks
+   the hover-expanded state on #tabbrowser-tabs[orient="vertical"]. (Earlier I
+   wrongly blanket-hid the favicons; this matches how you had it in TST: favicons
+   pushed out of the narrow collapsed strip, back when expanded.) */
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tab-icon-image,
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tab-icon-overlay {
+  /* display:none (not visibility:hidden) so the favicon reclaims its width and
+     the collapsed strip can actually shrink to just separator lines. */
+  display: none !important;
+}
+
+/* Thin separator between tabs (TST tab_background_separator: rgba(255,255,255,.5),
+   dialed down — bump the alpha toward 0.5 if you want them more visible). */
+.tabbrowser-tab {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Track window focus like the rest of the themed chrome: dim the separators
+   when the window is inactive (mirrors Photon's *_inactive theme colors). */
+:root:-moz-window-inactive .tabbrowser-tab {
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* No close "X" at all — you close with Cmd+W. `display:none` (not just hidden)
+   also removes it from layout, which fixes the label visibly SHIFTING on hover:
+   the appearing close button was reflowing the text. */
+.tabbrowser-tab .tab-close-button {
+  display: none !important;
+}
+
+/* Muted-tab dimming (TST: tab-item.muted { opacity: 0.5 }) */
+.tabbrowser-tab[muted] {
+  opacity: 0.5 !important;
+}
+
+/* Active tab: a clear flat highlight so you can tell which tab is current.
+   (Photon theme makes tab_selected == sidebar bg, i.e. invisible, so we set it.)
+   Dimmer when the window is unfocused, like the rest of the chrome. */
+.tabbrowser-tab[selected] .tab-background,
+.tabbrowser-tab[visuallyselected] .tab-background {
+  background-color: rgba(255, 255, 255, 0.10) !important;
+}
+:root:-moz-window-inactive .tabbrowser-tab[selected] .tab-background,
+:root:-moz-window-inactive .tabbrowser-tab[visuallyselected] .tab-background {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Flatten the tab "pill": kill the rounded background, its inset margins and
+   any extra vertical padding so tabs are flush, square, compact rows (and the
+   active tab reads as a flat full-width bar, not a rounded bubble/dot). */
+.tabbrowser-tab .tab-background {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.tabbrowser-tab {
+  margin: 0 !important;
+  padding-block: 0 !important;
+  min-height: 22px !important;     /* belt-and-suspenders with --tab-min-height */
+}
+.tabbrowser-tab .tab-content {
+  padding-block: 0 !important;
+}
+
+/* Hide the tab-list scrollbar — like your TST `margin-left:-18px` trick. This
+   removes the ~10-18px the scrollbar was adding to the collapsed strip AND clears
+   the right edge so the divider lands where it should. */
+#vertical-tabs,
+#vertical-tabs arrowscrollbox,
+#tabbrowser-arrowscrollbox,
+#tabbrowser-tabs {
+  scrollbar-width: none !important;
+}
+
+/* EXPANDED right divider: when expanded, #sidebar-main IS ~235px and visible, so
+   its right border sits exactly at the expanded edge. (Invisible when collapsed —
+   the #vertical-tabs border above covers that state.) This is what was working
+   for the expanded view before; the collapsed handoff is the new part. */
+#sidebar-main {
+  border-inline-end: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+:root:-moz-window-inactive #sidebar-main {
+  border-inline-end-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* No new-tab button — Cmd+T exists. Hide the tab-list "+ New Tab" periphery. */
+#tabbrowser-arrowscrollbox-periphery,
+#vertical-tabs-newtab-button {
+  display: none !important;
+}
+
+/* Hide the launcher WITHOUT collapsing the sidebar.
+   <sidebar-main> shadow DOM: div.wrapper (flex COLUMN) > [ slot(tabs), .buttons-wrapper ].
+   #sidebar-main is shrink-to-fit, and the launcher's box is the only thing giving
+   the collapsed sidebar its width — so `display:none` on it drops the width to 0
+   and the whole sidebar vanishes (verified live). Instead we KEEP the box in flow
+   (it keeps anchoring the cross-axis width) but clip it to zero height + invisible
+   + non-interactive. Launcher disappears; tabs stay. */
+.buttons-wrapper {
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  /* Pin the anchor box to the collapsed-strip width so the bar is skinny, not
+     ~38px. One knob: --tab-collapsed-background-width (set in :root above). */
+  width: var(--tab-collapsed-background-width) !important;
+  min-width: var(--tab-collapsed-background-width) !important;
+  max-width: var(--tab-collapsed-background-width) !important;
+}

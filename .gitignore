@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# session / working state (never committed)
+session-state.md
+
+# installer backups left in a profile, and logs
+*.bak-*
+*.log

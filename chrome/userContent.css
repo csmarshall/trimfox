@@ -1,0 +1,42 @@
+/* Dark background for blank pages */
+@-moz-document url-prefix(about:blank) {
+  * { background-color: #1c1b22; }
+}
+
+/* Override highlight/selection and accent colors on Firefox internal pages */
+@-moz-document url-prefix(about:), url-prefix(chrome:) {
+  /* Text selection - darker for readability */
+  *::selection,
+  *::-moz-selection {
+    background-color: #555558 !important;
+    color: #ffffff !important;
+  }
+
+  /* Override accent colors - lighter for buttons */
+  :root {
+    --in-content-primary-button-background: #707075 !important;
+    --in-content-primary-button-background-hover: #808085 !important;
+    --in-content-primary-button-background-active: #606065 !important;
+    --in-content-focus-outline-color: #707075 !important;
+    --in-content-accent-color: #707075 !important;
+    --in-content-accent-color-active: #606065 !important;
+    --color-accent-primary: #707075 !important;
+    --color-accent-primary-hover: #808085 !important;
+    --color-accent-primary-active: #606065 !important;
+    --focus-outline-color: #707075 !important;
+    accent-color: #707075 !important;
+  }
+
+  /* Force accent color on form elements */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: #707075 !important;
+  }
+}
+
+/* NOTE: error pages (about:neterror / certerror / blocked) CANNOT be styled from
+   here — Firefox loads them in a privileged context that does not inject
+   userContent.css (verified: the about: block above sets --color-accent-primary
+   on :root, but it never takes effect on about:neterror). Their gray button
+   override lives in an AutoConfig USER_SHEET instead; see
+   chrome/autoconfig/install-neterror-accent.sh. */
