@@ -293,9 +293,11 @@ findbar:not(:focus-within) {
   max-width: var(--tab-collapsed-background-width) !important;
   overflow: hidden !important;
   border-inline-end: 1px solid var(--tf-line) !important;
+  border-block-start: 1px solid var(--tf-line) !important;   /* top divider (collapsed) */
 }
 :root:-moz-window-inactive #vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
   border-inline-end-color: var(--tf-line-inactive) !important;
+  border-block-start-color: var(--tf-line-inactive) !important;
 }
 
 /* Favicons: present and visible normally (and when expanded on hover), but
@@ -384,6 +386,18 @@ findbar:not(:focus-within) {
 }
 :root:-moz-window-inactive #sidebar-main {
   border-inline-end-color: var(--tf-line-inactive) !important;
+}
+
+/* TOP divider — same 1px line, separating the tab bar from the URL bar above it.
+   Expanded-only: #sidebar-main is 235px wide, so an unscoped top border would
+   stray over page content when collapsed. The collapsed top border lives on the
+   width-clamped #vertical-tabs rule above. Together they frame the tab bar
+   (top + right) in both states. */
+#sidebar-main:has(#tabbrowser-tabs[orient="vertical"][expanded]) {
+  border-block-start: 1px solid var(--tf-line) !important;
+}
+:root:-moz-window-inactive #sidebar-main:has(#tabbrowser-tabs[orient="vertical"][expanded]) {
+  border-block-start-color: var(--tf-line-inactive) !important;
 }
 
 /* Auto-hide the whole sidebar when there's only ONE tab — a single-item strip is
