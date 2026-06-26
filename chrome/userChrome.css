@@ -335,11 +335,9 @@ findbar:not(:focus-within) {
   max-width: var(--tab-collapsed-background-width) !important;
   overflow: hidden !important;
   border-inline-end: 1px solid var(--tf-line) !important;
-  border-block-start: 1px solid var(--tf-line) !important;   /* top divider (collapsed) */
 }
 :root:-moz-window-inactive #vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
   border-inline-end-color: var(--tf-line-inactive) !important;
-  border-block-start-color: var(--tf-line-inactive) !important;
 }
 
 /* Favicons: present and visible normally (and when expanded on hover), but
@@ -430,15 +428,27 @@ findbar:not(:focus-within) {
   border-inline-end-color: var(--tf-line-inactive) !important;
 }
 
-/* TOP divider on the sidebar (expanded). #sidebar-main is 235px wide, so this is
-   scoped to the expanded state; the collapsed top divider lives on the
-   width-clamped #vertical-tabs rule above. Together with the right divider, the
-   tab bar is framed top + right. Dims with focus. */
-#sidebar-main:has(#tabbrowser-tabs[orient="vertical"][expanded]) {
-  border-block-start: 1px solid var(--tf-line) !important;
+/* UNIFIED full-width line under the toolbar — runs the whole window width so the
+   URL bar + tab sidebar read as one bar. Drawn as a ::after on top of everything
+   (z-index) rather than a border, so the absolutely-positioned sidebar can't
+   overlap it unevenly (that overlap is what made the old border-based line look
+   ~2px thicker over the sidebar). Replaces the old per-side top dividers.
+   pointer-events:none so it never blocks clicks. Dims with focus. */
+#navigator-toolbox {
+  position: relative !important;
 }
-:root:-moz-window-inactive #sidebar-main:has(#tabbrowser-tabs[orient="vertical"][expanded]) {
-  border-block-start-color: var(--tf-line-inactive) !important;
+#navigator-toolbox::after {
+  content: "" !important;
+  position: absolute !important;
+  inset-inline: 0 !important;
+  inset-block-end: 0 !important;
+  block-size: 1px !important;
+  background: var(--tf-line) !important;
+  z-index: 5 !important;
+  pointer-events: none !important;
+}
+:root:-moz-window-inactive #navigator-toolbox::after {
+  background: var(--tf-line-inactive) !important;
 }
 
 /* Auto-hide the whole sidebar when there's only ONE tab — a single-item strip is
