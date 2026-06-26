@@ -91,6 +91,22 @@ menupopup > menucaption, menupopup > menuseparator {
   min-height: 0 !important;
 }
 
+/* Force the menu TEXT to 7pt. The global `*` rule sizes the menuitem *container*
+   (measured 9.33px), but the actual text label (.menu-iconic-text) renders larger
+   than 7pt on macOS — which is why the back/forward history list looked oversized
+   even though the container reported 7pt. Pin every text-bearing menu element. */
+menupopup,
+menupopup menuitem,
+menupopup menu,
+menupopup menucaption,
+menupopup .menu-iconic-text,
+menupopup .menu-text,
+menupopup menuitem > label,
+menupopup label,
+menupopup description {
+  font-size: 7pt !important;
+}
+
 /* reduce back and forward button */
 #back-button,#forward-button{ list-style-image: url("chrome://devtools/skin/images/play.svg") !important; }
 #back-button > .toolbarbutton-icon{ transform: scaleX(-1) }
