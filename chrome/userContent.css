@@ -1,6 +1,6 @@
 /* Dark background for blank pages */
 @-moz-document url-prefix(about:blank) {
-  * { background-color: #1c1b22; }
+  * { background-color: #1c1c1c; }
 }
 
 /* Override highlight/selection and accent colors on Firefox internal pages */
@@ -8,29 +8,29 @@
   /* Text selection - darker for readability */
   *::selection,
   *::-moz-selection {
-    background-color: #555558 !important;
+    background-color: #555555 !important;
     color: #ffffff !important;
   }
 
   /* Override accent colors - lighter for buttons */
   :root {
-    --in-content-primary-button-background: #707075 !important;
-    --in-content-primary-button-background-hover: #808085 !important;
-    --in-content-primary-button-background-active: #606065 !important;
-    --in-content-focus-outline-color: #707075 !important;
-    --in-content-accent-color: #707075 !important;
-    --in-content-accent-color-active: #606065 !important;
-    --color-accent-primary: #707075 !important;
-    --color-accent-primary-hover: #808085 !important;
-    --color-accent-primary-active: #606065 !important;
-    --focus-outline-color: #707075 !important;
-    accent-color: #707075 !important;
+    --in-content-primary-button-background: #707070 !important;
+    --in-content-primary-button-background-hover: #808080 !important;
+    --in-content-primary-button-background-active: #606060 !important;
+    --in-content-focus-outline-color: #707070 !important;
+    --in-content-accent-color: #707070 !important;
+    --in-content-accent-color-active: #606060 !important;
+    --color-accent-primary: #707070 !important;
+    --color-accent-primary-hover: #808080 !important;
+    --color-accent-primary-active: #606060 !important;
+    --focus-outline-color: #707070 !important;
+    accent-color: #707070 !important;
   }
 
   /* Force accent color on form elements */
   input[type="checkbox"],
   input[type="radio"] {
-    accent-color: #707075 !important;
+    accent-color: #707070 !important;
   }
 }
 

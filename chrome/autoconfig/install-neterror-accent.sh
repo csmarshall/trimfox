@@ -4,7 +4,7 @@
 #
 # Restyle Firefox error-page primary buttons (about:neterror / about:certerror /
 # about:blocked / about:httpsonlyerror) from Firefox's built-in teal accent to
-# Charles's gray (#707075).
+# Charles's gray (#707070).
 #
 # WHY THIS EXISTS
 #   Error pages load in a privileged context that does NOT inject userContent.css,
@@ -82,7 +82,7 @@ cat > "$CFG_FILE" <<'CFG_EOF'
 //
 // Registers a global USER_SHEET (the only style origin that reaches privileged
 // error pages) overriding the in-content accent design tokens so primary buttons
-// render as #707075 gray instead of Firefox's teal. USER_SHEET + !important beats
+// render as #707070 gray instead of Firefox's teal. USER_SHEET + !important beats
 // the chrome author tokens. (If this ever fails to take effect, change USER_SHEET
 // to AGENT_SHEET below — UA-important is the strongest origin.)
 try {
@@ -97,14 +97,14 @@ try {
     '               url-prefix("about:blocked"),',
     '               url-prefix("about:httpsonlyerror") {',
     '  :root {',
-    '    --color-accent-primary: #707075 !important;',
+    '    --color-accent-primary: #707070 !important;',
     '    --color-accent-primary-hover: #808085 !important;',
     '    --color-accent-primary-active: #606065 !important;',
-    '    --button-background-color-primary: #707075 !important;',
+    '    --button-background-color-primary: #707070 !important;',
     '    --button-background-color-primary-hover: #808085 !important;',
     '    --button-background-color-primary-active: #606065 !important;',
-    '    --focus-outline-color: #707075 !important;',
-    '    accent-color: #707075 !important;',
+    '    --focus-outline-color: #707070 !important;',
+    '    accent-color: #707070 !important;',
     '  }',
     '}'
   ].join('\n');
