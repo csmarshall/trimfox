@@ -105,6 +105,26 @@ menupopup * {
 #back-button,#forward-button{ list-style-image: url("chrome://devtools/skin/images/play.svg") !important; }
 #back-button > .toolbarbutton-icon{ transform: scaleX(-1) }
 
+/* Remove the macOS native window-control dots (close/min/max) and reclaim their
+   reserved strip, leaving an 8px inset before Back. The dots ARE native, but
+   `appearance: none` on .titlebar-buttonbox disables them; we deliberately don't
+   re-enable the XUL .titlebar-button replacements, so there are no window buttons
+   at all (use Cmd+W / Cmd+Q / Cmd+M, double-click titlebar to zoom).
+   Technique credit: r/FirefoxCSS "Override native window control buttons, macOS". */
+.titlebar-buttonbox-container,
+.titlebar-buttonbox {
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+.titlebar-button  { display: none !important; }
+.titlebar-spacer  { display: none !important; }
+.titlebar-buttonbox-container {
+  width: 8px !important;
+  min-width: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /* change font */
 * {
     font-size: 7pt !important;
