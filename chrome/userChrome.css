@@ -397,6 +397,17 @@ findbar:not(:focus-within) {
   margin: 0 !important;
   border: none !important;
   box-shadow: none !important;
+  outline: none !important;   /* native draws a 1px outline on .tab-background +
+                                 a 3px one on the selected tab — outline is a
+                                 separate property from border/box-shadow, so it
+                                 survived the flatten and drew an inset frame
+                                 (GitHub #3). Kill it so the fill is flush. */
+}
+.tabbrowser-tab[selected],
+.tabbrowser-tab[visuallyselected],
+.tabbrowser-tab[selected] .tab-background,
+.tabbrowser-tab[visuallyselected] .tab-background {
+  outline: none !important;
 }
 .tabbrowser-tab {
   margin: 0 !important;
