@@ -442,6 +442,15 @@ findbar:not(:focus-within) {
   border-inline-end-color: rgba(255, 255, 255, 0.06) !important;
 }
 
+/* Auto-hide the whole sidebar when there's only ONE tab — a single-item strip is
+   pointless. It reappears the instant a 2nd tab exists. `.tabbrowser-tab ~
+   .tabbrowser-tab` only matches when 2+ tabs share the row; :has() is live, so
+   this tracks open/close with no restart. #sidebar-main is position:absolute, so
+   hiding it just stops painting the overlay strip — content is unaffected. */
+#sidebar-main:not(:has(.tabbrowser-tab ~ .tabbrowser-tab)) {
+  display: none !important;
+}
+
 /* No new-tab button — Cmd+T exists. Hide the tab-list "+ New Tab" periphery. */
 #tabbrowser-arrowscrollbox-periphery,
 #vertical-tabs-newtab-button {
@@ -454,11 +463,9 @@ findbar:not(:focus-within) {
   display: none !important;
 }
 
-/* Remove the flexible space between back/forward and the URL bar that Customize
-   Toolbar won't let you drag off. Covers both element forms (spring=flexible,
-   spacer=fixed) plus the widget id; nav-bar-scoped so nothing else is affected. */
-#nav-bar toolbarspring,
-#nav-bar toolbarspacer,
+/* Remove ONLY the un-removable flexible space between back/forward and the URL
+   bar (widget id "vertical-spacer"). Targeted by id so any Flexible Space you add
+   to the RIGHT of the toolbar for customization still shows and works. */
 #nav-bar #vertical-spacer {
   display: none !important;
 }
