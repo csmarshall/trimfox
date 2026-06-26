@@ -82,6 +82,16 @@ installing (right-click the toolbar → **Customize Toolbar**):
 
 ---
 
+## Known limitation
+
+The **back/forward button history menu** (click-and-hold Back/Forward) renders as
+a **native macOS menu** and *cannot* be styled by userChrome.css — so at this
+setup's 7pt chrome it looks oversized next to everything else. This is not a
+trimfox bug: there's no pref to make it XUL (unlike right-click context menus,
+which `widget.macos.native-context-menus=false` keeps styleable). See
+`BUGREPORT.md`. Right-click context menus, the URL bar, and all other chrome
+*are* styled normally.
+
 ## 4. Extensions
 
 **None are required for the look** — it's pure `userChrome.css` on native vertical
