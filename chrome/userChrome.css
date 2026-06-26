@@ -91,19 +91,13 @@ menupopup > menucaption, menupopup > menuseparator {
   min-height: 0 !important;
 }
 
-/* Force the menu TEXT to 7pt. The global `*` rule sizes the menuitem *container*
-   (measured 9.33px), but the actual text label (.menu-iconic-text) renders larger
-   than 7pt on macOS — which is why the back/forward history list looked oversized
-   even though the container reported 7pt. Pin every text-bearing menu element. */
+/* Force ALL menu text to 7pt (the known-working `menupopup > *` pattern + a
+   descendant sweep so the text label is definitely caught). NOTE: this only works
+   when menus are XUL — `widget.macos.native-context-menus` must be `false`
+   (native macOS menus can't be styled by CSS at all). */
 menupopup,
-menupopup menuitem,
-menupopup menu,
-menupopup menucaption,
-menupopup .menu-iconic-text,
-menupopup .menu-text,
-menupopup menuitem > label,
-menupopup label,
-menupopup description {
+menupopup > *,
+menupopup * {
   font-size: 7pt !important;
 }
 
