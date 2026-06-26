@@ -147,81 +147,10 @@ menupopup > menucaption, menupopup > menuseparator {
   font-size: 7pt !important;
  }
 
-/*#tabbrowser-tabs {
-  visibility: collapse;
-  height: 0px !important; 
-  max-height: 0px !important; 
-  min-height: 0px !important; 
-}*/
-
 /* trimfox: was `#TabsToolbar { visibility: collapse; }` — hid the tab bar for
    TST. Native vertical tabs move tabs to the sidebar, so this is no longer
    needed; left disabled in case we want to re-hide the top strip surgically. */
 /* #TabsToolbar { visibility: collapse; } */
-
-/* Hide sidebar header */
-#sidebar-box #sidebar-header {
-  visibility: collapse;
-}
-/*
-#sidebar-box #sidebar-header {
-      display: none !important;
-}
-
-#sidebar-box[sidebarcommand="_3c078156-979c-498b-8990-85f7987dd929_-sidebar-action"] > #sidebar-header{
-  display: none
-}*/
-
-.sidebar-splitter {
-  width: 1px !important;
-  transition: 300ms !important;
-}
-
-#sidebar-box:hover + .sidebar-splitter, .sidebar-splitter:hover {
-  transition: 300ms !important;
-}
-
-/* trimfox: dropped #TabsToolbar from this hide (was nuking native vertical tabs) */
-#sidebar-header {
-  display: none !important;
-}
-
-#sidebar-box {
-  position: relative !important;
-  overflow:hidden;
-  max-width: var(--sidebar-hover-width) !important;
-}
-
-#sidebar-box:hover {
-  transition: all 100ms !important;
-  max-width: var(--sidebar-visible-width) !important;
-  width:5px !important;
-}
-
-#sidebar-header { display: none }
-/* trimfox: was `#tabbrowser-tabs { visibility: collapse }` — THIS hid the native
-   vertical tabs (it's the tab container). Disabled for native vertical tabs. */
-/* #tabbrowser-tabs { visibility: collapse } */
-
-/*Collapse in default state and add transition*/
-#sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"] {
-  overflow: hidden;
-  min-width: 10px !important;
-  max-width: 10px !important;
-  transition: all 0.2s ease;
-  border-right: 1px solid #2b2a33;
-  border-top: 1px solid #555558;
-  z-index: 2;
-}
-
-/*Expand to 260px on hover */
-#sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"]:hover,
-#sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"] #sidebar {
-  min-width: 240px !important;
-  max-width: 240px !important;
-  border-right: 1px solid #2b2a33;
-  z-index: 1;
-}
 
 /* Hide "search with" */
 #urlbar .search-one-offs:not([hidden]) {
