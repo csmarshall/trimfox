@@ -14,8 +14,9 @@ It's called *trimfox* because that's the point — trim everything that isn't a 
 ## Requirements
 
 - **Firefox 136+** (native vertical tabs); developed and verified on **152**.
-- macOS or Linux. Tuned on macOS with a Photon-style dark lightweight theme; the
-  separator/divider colors assume a dark sidebar.
+- **macOS.** Built and tuned on macOS only — see [Platform support](#platform-support).
+- A dark setup: the palette is a neutral grayscale (see `palette.html`) and the
+  separators/dividers assume a dark sidebar.
 
 ## Install
 
@@ -69,11 +70,40 @@ section in `chrome/userChrome.css`:
 The divider and separators use `:-moz-window-inactive` so they dim when the
 window loses focus, matching the rest of the themed chrome.
 
+## Palette
+
+All colors are neutral-grayscale `--tf-*` tokens defined once at the top of
+`chrome/userChrome.css` (`:root`), with Firefox's own theme variables mapped onto
+them — so there's a single place to change any color. Open **`palette.html`** in a
+browser for a visual swatch reference and the token vocabulary: `field`,
+`content`, `surface`, `raised`, `select`, `accent`, `text`, `text-dim`, `line`,
+`highlight`.
+
+The accent (`--tf-accent`) replaces Firefox's default teal on buttons, focus
+rings and checkboxes — in the chrome, on `about:` pages (`userContent.css`), and
+on privileged error pages (the optional AutoConfig in `chrome/autoconfig/`).
+
 ## reference/
 
 `reference/` documents the migration *off* Tree Style Tab — the exported TST
 user stylesheet and config that the native setup was modeled on. It's a record,
 not something you install.
+
+## Platform support
+
+Built and tuned on **macOS only** (Firefox 152). It likely works on Windows and
+Linux with tweaks, but a couple of things are macOS-specific and untested
+elsewhere:
+
+- layout/spacing assumes the macOS titlebar and traffic-light window controls;
+- `install.sh` profile auto-detection includes the Linux path but is only
+  verified on macOS.
+
+**PRs for other platforms are very welcome** — with one hard rule: **they must not
+change the look or layout on macOS.** Gate any platform-specific differences behind
+the right selectors (e.g. `@media (-moz-platform: windows)` /
+`:root[platform="linux"]`) or separate files, so the macOS default stays exactly
+as-is.
 
 ## License
 
