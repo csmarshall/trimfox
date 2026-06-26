@@ -52,3 +52,44 @@ user_pref("sidebar.main.tools", "");
 // anyway, so the card is redundant.
 user_pref("browser.tabs.hoverPreview.enabled", false);          // default true
 user_pref("browser.tabs.hoverPreview.showThumbnails", false);
+
+// ============================================================================
+// Compact UI / layout  (part of the trimmed look)
+// ============================================================================
+user_pref("browser.uidensity", 1);                           // compact density
+user_pref("browser.compactmode.show", true);                 // expose the Compact option in Settings
+user_pref("browser.toolbars.bookmarks.visibility", "never"); // no bookmarks toolbar
+user_pref("browser.tabs.closeWindowWithLastTab", false);     // closing the last tab keeps the window
+
+// ============================================================================
+// Content fonts  (the *chrome* is forced to 7pt by userChrome.css; these are
+// the default web-page fonts)
+// ============================================================================
+user_pref("font.size.variable.x-western", 12);
+user_pref("font.size.monospace.x-western", 14);
+
+// ============================================================================
+// Live userChrome editing via the Browser Toolbox  (optional but handy)
+// ============================================================================
+user_pref("devtools.chrome.enabled", true);
+user_pref("devtools.debugger.remote-enabled", true);
+
+// ============================================================================
+// PERSONAL preferences (OPTIONAL) — a minimal URL bar and a stripped new-tab
+// page. Delete this whole block if you only want the vertical-tabs look and
+// not the behavior.
+// ============================================================================
+user_pref("browser.urlbar.suggest.engines", false);
+user_pref("browser.urlbar.suggest.quickactions", false);
+user_pref("browser.urlbar.suggest.quicksuggest.nonsponsored", false);
+user_pref("browser.urlbar.suggest.quicksuggest.sponsored", false);
+user_pref("browser.urlbar.suggest.recentsearches", false);
+user_pref("browser.urlbar.suggest.topsites", false);
+user_pref("browser.urlbar.showSearchSuggestionsFirst", false);
+user_pref("browser.urlbar.openViewOnFocus", false);
+user_pref("browser.urlbar.groupLabels.enabled", false);
+user_pref("browser.startup.page", 3);                        // restore the previous session
+user_pref("browser.newtabpage.enabled", false);
+user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
+user_pref("browser.newtabpage.activity-stream.showSearch", false);
+user_pref("browser.newtabpage.activity-stream.showWeather", false);
