@@ -15,54 +15,63 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /* set default namespace to XUL */
 @namespace html url("http://www.w3.org/1999/xhtml"); /* HTML namespace for input elements */
 
-/* Modern Firefox Dark Theme Colors */
+/* ============================================================================
+   trimfox palette — SINGLE SOURCE OF TRUTH (neutral grayscale, zero blue).
+   Visual reference + token vocabulary: palette.html
+   Everything below maps Firefox's own theme variables onto these tokens, so
+   there's one place to change a color.
+   ============================================================================ */
 :root {
-  /* Background colors */
-  --toolbar-bgcolor: #2b2a33 !important;
-  --lwt-accent-color: #1c1b22 !important;
-  --lwt-toolbarbutton-background: #38383d !important;
+  /* --- Surfaces (dark inset -> light raised) --- */
+  --tf-field:    #121212;   /* inset fields: URL bar, search boxes */
+  --tf-content:  #1c1c1c;   /* page/web content background */
+  --tf-surface:  #202020;   /* chrome: toolbar, sidebar, tab strip */
+  --tf-raised:   #2e2e2e;   /* hover / selected tab / highlight */
+  --tf-select:   #555555;   /* text selection + urlbar dropdown selection */
 
-  /* Text colors */
-  --toolbar-color: #fbfbfe !important;
-  --lwt-text-color: #fbfbfe !important;
+  /* --- Accent (replaces Firefox's teal on buttons / focus / checkboxes) --- */
+  --tf-accent:        #707070;
+  --tf-accent-hover:  #808080;
+  --tf-accent-active: #606060;
 
-  /* Sidebar */
-  --sidebar-background-color: #1c1b22 !important;
-  --sidebar-text-color: #fbfbfe !important;
-  --sidebar-border-color: #2b2a33 !important;
+  /* --- Text --- */
+  --tf-text:     #ffffff;
+  --tf-text-dim: #aaaaaa;
 
-  /* URL bar */
-  --urlbar-box-bgcolor: #1c1b22 !important;
-  --urlbar-popup-action-color: #555558 !important;
-  --toolbar-field-color: #fbfbfe !important;
-  --toolbar-field-focus-color: #fbfbfe !important;
-  --urlbar-popup-url-color: #555558 !important;
+  /* ---- Map Firefox theme vars onto the tokens ---- */
+  --toolbar-bgcolor:              var(--tf-surface) !important;
+  --lwt-accent-color:             var(--tf-surface) !important;
+  --lwt-toolbarbutton-background: var(--tf-raised)  !important;
+  --sidebar-background-color:     var(--tf-surface) !important;
+  --sidebar-border-color:         var(--tf-surface) !important;
+  --urlbar-box-bgcolor:           var(--tf-field)   !important;
 
-  /* URL bar dropdown colors */
-  --autocomplete-popup-highlight-background: #555558 !important;
-  --autocomplete-popup-highlight-color: #ffffff !important;
-  --urlbar-popup-selected-bgcolor: #555558 !important;
-  --urlbar-popup-selected-color: #ffffff !important;
+  --toolbar-color:             var(--tf-text) !important;
+  --lwt-text-color:            var(--tf-text) !important;
+  --sidebar-text-color:        var(--tf-text) !important;
+  --toolbar-field-color:       var(--tf-text) !important;
+  --toolbar-field-focus-color: var(--tf-text) !important;
 
-  /* Sidebar dimensions */
-  --sidebar-hover-width: 52px;
-  --sidebar-visible-width: 320px;
+  /* Accent — dialogs, checkboxes, buttons, focus rings (no more teal) */
+  --focus-outline-color:         var(--tf-accent)        !important;
+  --color-accent-primary:        var(--tf-accent)        !important;
+  --color-accent-primary-hover:  var(--tf-accent-hover)  !important;
+  --color-accent-primary-active: var(--tf-accent-active) !important;
+  accent-color:                  var(--tf-accent)        !important;
 
-  /* Override Firefox accent colors (dialogs, checkboxes, buttons) */
-  /* Buttons need lighter color for readability */
-  --focus-outline-color: #707075 !important;
-  --color-accent-primary: #707075 !important;
-  --color-accent-primary-hover: #808085 !important;
-  --color-accent-primary-active: #606065 !important;
-  accent-color: #707075 !important;
-
-  /* Force selection colors everywhere */
-  --lwt-toolbar-field-highlight: #555558 !important;
-  --lwt-toolbar-field-highlight-text: #ffffff !important;
-  --toolbar-field-highlight: #555558 !important;
-  --toolbar-field-highlight-text: #ffffff !important;
-  --chrome-selection-background-color: #555558 !important;
-  --chrome-selection-color: #ffffff !important;
+  /* Selection / highlight (urlbar dropdown, field highlight, chrome selection) */
+  --urlbar-popup-action-color:               var(--tf-text-dim) !important;
+  --urlbar-popup-url-color:                  var(--tf-text-dim) !important;
+  --autocomplete-popup-highlight-background: var(--tf-select)   !important;
+  --autocomplete-popup-highlight-color:      var(--tf-text)     !important;
+  --urlbar-popup-selected-bgcolor:           var(--tf-select)   !important;
+  --urlbar-popup-selected-color:             var(--tf-text)     !important;
+  --lwt-toolbar-field-highlight:             var(--tf-select)   !important;
+  --lwt-toolbar-field-highlight-text:        var(--tf-text)     !important;
+  --toolbar-field-highlight:                 var(--tf-select)   !important;
+  --toolbar-field-highlight-text:            var(--tf-text)     !important;
+  --chrome-selection-background-color:       var(--tf-select)   !important;
+  --chrome-selection-color:                  var(--tf-text)     !important;
 }
 
 menupopup > menuitem, menupopup > menu, 
