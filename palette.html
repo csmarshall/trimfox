@@ -58,40 +58,40 @@
   .line-demo { flex:1; height:1px; background: var(--tf-line); }
   .line-demo.inactive { background: var(--tf-line-inactive); }
 
-  /* ===== In-context mockup: a mini browser chrome built from the tokens ===== */
-  .mock {
-    display: flex; height: 340px; border: 1px solid var(--tf-line);
-    border-radius: 10px; overflow: hidden; margin-top: 8px; max-width: 760px;
-  }
+  /* ===== In-context mockups: mini browser chrome built from the tokens ===== */
+  .platforms { display: grid; gap: 24px; }
+  .plat figcaption { font-size: 14px; font-weight: 600; margin: 0 0 8px; display: flex; align-items: center; }
+  .tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-left: 10px;
+         text-transform: uppercase; letter-spacing: .05em; }
+  .tag.actual { background: var(--tf-accent); color: #fff; }
+  .tag.approx { background: transparent; color: var(--tf-text-dim); border: 1px solid var(--tf-line); }
+
+  .mock { border: 1px solid var(--tf-line); border-radius: 10px; overflow: hidden; max-width: 720px; }
+  .mock-toolbar { background: var(--tf-surface); padding: 9px 12px; display: flex; gap: 10px; align-items: center; }
+  .mock-lower { display: flex; height: 240px; }
   .mock-sidebar {
-    width: 150px; background: var(--tf-surface);
-    border-right: 1px solid var(--tf-line);
-    display: flex; flex-direction: column; padding: 8px 0;
+    width: 170px; background: var(--tf-surface);
+    border-top: 1px solid var(--tf-line);      /* top divider */
+    border-right: 1px solid var(--tf-line);    /* right divider */
+    display: flex; flex-direction: column; padding: 6px 0;
   }
-  .mock-tab { padding: 5px 12px; color: var(--tf-text-dim); font-size: 12px;
-              border-bottom: 1px solid var(--tf-line); white-space: nowrap; overflow: hidden; }
+  .mock-tab { display: flex; align-items: center; gap: 8px; padding: 5px 12px;
+              color: var(--tf-text-dim); font-size: 12px; border-bottom: 1px solid var(--tf-line);
+              white-space: nowrap; overflow: hidden; }
   .mock-tab.sel { background: var(--tf-raised); color: var(--tf-text); }
-  .mock-main { flex: 1; display: flex; flex-direction: column; background: var(--tf-content); }
-  .mock-toolbar {
-    background: var(--tf-surface); padding: 8px 10px;
-    border-bottom: 1px solid var(--tf-line); display: flex; gap: 8px; align-items: center;
-  }
-  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--tf-text-dim); opacity:.6; }
-  .mock-url {
-    flex: 1; background: var(--tf-field); color: var(--tf-text-dim);
-    border-radius: 6px; padding: 5px 10px; font-size: 12px;
-    font-family: ui-monospace, Menlo, monospace;
-  }
-  .mock-body { padding: 18px; color: var(--tf-text); }
-  .mock-body p { margin: 0 0 12px; }
-  .mock-body .dim { color: var(--tf-text-dim); }
-  .btn {
-    background: var(--tf-accent); color: #fff; border: none; border-radius: 6px;
-    padding: 7px 16px; font-size: 13px; cursor: pointer;
-  }
-  .btn:hover  { background: var(--tf-accent-hover); }
-  .btn:active { background: var(--tf-accent-active); }
-  .btn.ghost { background: transparent; border: 1px solid var(--tf-line); color: var(--tf-text); }
+  .fav { width: 12px; height: 12px; border-radius: 50%; background: var(--tf-text-dim); flex: none; opacity: .8; }
+  .mock-content { flex: 1; background: var(--tf-content); padding: 16px; color: var(--tf-text); }
+  .mock-content p { margin: 0 0 10px; } .mock-content .dim { color: var(--tf-text-dim); }
+
+  .winctl { display: flex; gap: 8px; align-items: center; }
+  .winctl.right { margin-left: auto; }                 /* Windows/Linux controls sit right */
+  .mac-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--tf-text-dim); opacity: .55; }
+  .pc-btn { color: var(--tf-text-dim); font: 13px/1 ui-monospace, Menlo, monospace; }
+  .nav { display: flex; gap: 8px; color: var(--tf-text-dim); }
+  .mock-url { flex: 1; background: var(--tf-field); color: var(--tf-text-dim); border-radius: 6px;
+              padding: 5px 10px; font-size: 12px; font-family: ui-monospace, Menlo, monospace; }
+  .btn { background: var(--tf-accent); color: #fff; border: none; border-radius: 6px;
+         padding: 6px 14px; font-size: 13px; cursor: pointer; }
   a { color: var(--tf-text-dim); }
 </style>
 </head>
@@ -145,25 +145,85 @@
     <span class="hex">rgba(255,255,255,.06)</span></div>
 
   <h2>In context</h2>
-  <div class="mock">
-    <div class="mock-sidebar">
-      <div class="mock-tab">Mozilla</div>
-      <div class="mock-tab sel">Reddit — r/FirefoxCSS</div>
-      <div class="mock-tab">GitHub</div>
-      <div class="mock-tab">news.ycombinator</div>
-    </div>
-    <div class="mock-main">
-      <div class="mock-toolbar">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <div class="mock-url">https://example.com</div>
+  <p class="sub">The tokens assembled into Firefox chrome. <b style="color:var(--tf-text)">macOS</b>
+  is the real layout (from screenshots). <b style="color:var(--tf-text)">Windows</b> &amp;
+  <b style="color:var(--tf-text)">Linux</b> are approximations — window controls move to the
+  right — and are exactly what a cross-platform PR would refine.</p>
+
+  <div class="platforms">
+
+    <figure class="plat">
+      <figcaption>macOS <span class="tag actual">actual</span></figcaption>
+      <div class="mock">
+        <div class="mock-toolbar">
+          <div class="winctl"><i class="mac-dot"></i><i class="mac-dot"></i><i class="mac-dot"></i></div>
+          <div class="nav">&#8249; &#8250;</div>
+          <div class="mock-url">&#128274;&nbsp; example.com</div>
+        </div>
+        <div class="mock-lower">
+          <div class="mock-sidebar">
+            <div class="mock-tab"><i class="fav"></i>Mozilla</div>
+            <div class="mock-tab sel"><i class="fav"></i>r/FirefoxCSS</div>
+            <div class="mock-tab"><i class="fav"></i>GitHub</div>
+            <div class="mock-tab"><i class="fav"></i>Hacker News</div>
+          </div>
+          <div class="mock-content">
+            <p>Primary text on <span class="dim">content</span>.</p>
+            <p class="dim">Secondary text uses text-dim.</p>
+            <p><button class="btn">Primary</button></p>
+          </div>
+        </div>
       </div>
-      <div class="mock-body">
-        <p>Primary text on <span class="dim">content</span>.</p>
-        <p class="dim">Secondary text uses text-dim.</p>
-        <p><button class="btn">Primary button</button> &nbsp; <button class="btn ghost">Ghost</button></p>
-        <p class="dim">The selected tab is <b style="color:var(--tf-text)">raised</b>; separators are <b style="color:var(--tf-text)">line</b>; the URL field is <b style="color:var(--tf-text)">field</b>.</p>
+    </figure>
+
+    <figure class="plat">
+      <figcaption>Windows <span class="tag approx">approximation</span></figcaption>
+      <div class="mock">
+        <div class="mock-toolbar">
+          <div class="nav">&#8592; &#8594;</div>
+          <div class="mock-url">&#128274;&nbsp; example.com</div>
+          <div class="winctl right"><span class="pc-btn">&#8211;</span><span class="pc-btn">&#9633;</span><span class="pc-btn">&#10005;</span></div>
+        </div>
+        <div class="mock-lower">
+          <div class="mock-sidebar">
+            <div class="mock-tab"><i class="fav"></i>Mozilla</div>
+            <div class="mock-tab sel"><i class="fav"></i>r/FirefoxCSS</div>
+            <div class="mock-tab"><i class="fav"></i>GitHub</div>
+            <div class="mock-tab"><i class="fav"></i>Hacker News</div>
+          </div>
+          <div class="mock-content">
+            <p>Primary text on <span class="dim">content</span>.</p>
+            <p class="dim">Min / max / close move to the right.</p>
+            <p><button class="btn">Primary</button></p>
+          </div>
+        </div>
       </div>
-    </div>
+    </figure>
+
+    <figure class="plat">
+      <figcaption>Linux <span class="tag approx">approximation</span></figcaption>
+      <div class="mock">
+        <div class="mock-toolbar">
+          <div class="nav">&#8592; &#8594;</div>
+          <div class="mock-url">&#128274;&nbsp; example.com</div>
+          <div class="winctl right"><span class="pc-btn">&#8211;</span><span class="pc-btn">&#9633;</span><span class="pc-btn">&#10005;</span></div>
+        </div>
+        <div class="mock-lower">
+          <div class="mock-sidebar">
+            <div class="mock-tab"><i class="fav"></i>Mozilla</div>
+            <div class="mock-tab sel"><i class="fav"></i>r/FirefoxCSS</div>
+            <div class="mock-tab"><i class="fav"></i>GitHub</div>
+            <div class="mock-tab"><i class="fav"></i>Hacker News</div>
+          </div>
+          <div class="mock-content">
+            <p>Primary text on <span class="dim">content</span>.</p>
+            <p class="dim">Controls &amp; decorations vary by desktop environment.</p>
+            <p><button class="btn">Primary</button></p>
+          </div>
+        </div>
+      </div>
+    </figure>
+
   </div>
 
 </body>
