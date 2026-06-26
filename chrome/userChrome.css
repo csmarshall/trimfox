@@ -3,13 +3,13 @@
 
 /* IMPORTANT: Selection styles MUST come BEFORE namespace declaration */
 ::-moz-selection {
-  background-color: #555558 !important;
-  color: #ffffff !important;
+  background-color: var(--tf-select) !important;
+  color: var(--tf-text) !important;
 }
 
 ::selection {
-  background-color: #555558 !important;
-  color: #ffffff !important;
+  background-color: var(--tf-select) !important;
+  color: var(--tf-text) !important;
 }
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /* set default namespace to XUL */
@@ -37,6 +37,12 @@
   /* --- Text --- */
   --tf-text:     #ffffff;
   --tf-text-dim: #aaaaaa;
+
+  /* --- Lines & translucent highlight (each dims when the window is unfocused) --- */
+  --tf-line:               rgba(255, 255, 255, 0.18);   /* separators, dividers */
+  --tf-line-inactive:      rgba(255, 255, 255, 0.06);
+  --tf-highlight:          rgba(255, 255, 255, 0.10);   /* active-tab fill */
+  --tf-highlight-inactive: rgba(255, 255, 255, 0.05);
 
   /* ---- Map Firefox theme vars onto the tokens ---- */
   --toolbar-bgcolor:              var(--tf-surface) !important;
@@ -115,7 +121,7 @@ menupopup > menucaption, menupopup > menuseparator {
 .urlbarView-row[type="switchtab"] .urlbarView-url,
 .urlbarView-row .urlbarView-title-separator,
 #urlbar-results .urlbarView-row .urlbarView-url {
-  color: #555558 !important;
+  color: var(--tf-text-dim) !important;
   -moz-context-properties: none !important;
   font-size: 7pt;
 }
@@ -123,14 +129,14 @@ menupopup > menucaption, menupopup > menuseparator {
 /* Override any link styling */
 .urlbarView-url:-moz-any-link,
 .urlbarView-url:any-link {
-  color: #555558 !important;
+  color: var(--tf-text-dim) !important;
 }
 
 /* URL bar dropdown row selection */
 .urlbarView-row[selected],
 .urlbarView-row:is([selected]) {
-  background-color: #555558 !important;
-  background: #555558 !important;
+  background-color: var(--tf-select) !important;
+  background: var(--tf-select) !important;
 }
 
 .urlbarView-row[selected] *,
@@ -138,12 +144,12 @@ menupopup > menucaption, menupopup > menuseparator {
 .urlbarView-row[selected] .urlbarView-url,
 .urlbarView-row[selected] .urlbarView-secondary,
 .urlbarView-row[selected] .urlbarView-action {
-  color: #ffffff !important;
+  color: var(--tf-text) !important;
 }
 
 #urlbar {
   /* light background: #FAFAFA !important;*/
-  background: #2b2a33 !important;
+  background: var(--tf-surface) !important;
   font-size: 7pt !important;
  }
 
@@ -193,25 +199,25 @@ display: none;
 #urlbar .urlbar-input-box,
 #urlbar input,
 .urlbar-input {
-  color: #fbfbfe !important;
+  color: var(--tf-text) !important;
   -moz-appearance: none !important;
   background: transparent !important;
-  --lwt-toolbar-field-highlight: #555558 !important;
-  --lwt-toolbar-field-highlight-text: #ffffff !important;
+  --lwt-toolbar-field-highlight: var(--tf-select) !important;
+  --lwt-toolbar-field-highlight-text: var(--tf-text) !important;
 }
 
 #urlbar[focused="true"] #urlbar-input,
 #urlbar:focus-within #urlbar-input,
 #urlbar[focused] #urlbar-input {
-  color: #fbfbfe !important;
+  color: var(--tf-text) !important;
 }
 
 #urlbar,
 #urlbar[focused],
 #urlbar[focused="true"] {
-  --toolbar-field-focus-color: #fbfbfe !important;
-  --lwt-toolbar-field-highlight: #555558 !important;
-  --lwt-toolbar-field-highlight-text: #ffffff !important;
+  --toolbar-field-focus-color: var(--tf-text) !important;
+  --lwt-toolbar-field-highlight: var(--tf-select) !important;
+  --lwt-toolbar-field-highlight-text: var(--tf-text) !important;
 }
 
 /* URL bar text selection - force gray bg with white text */
@@ -222,9 +228,9 @@ html|input.urlbar-input::-moz-selection,
 html|input.urlbar-input::selection,
 #urlbar-input::selection,
 #urlbar-input::-moz-selection {
-   background: #555558 !important;
-   background-color: #555558 !important;
-   color: #ffffff !important;
+   background: var(--tf-select) !important;
+   background-color: var(--tf-select) !important;
+   color: var(--tf-text) !important;
 }
 
 /*** Hide Tab Close buttons ***/
@@ -286,10 +292,10 @@ findbar:not(:focus-within) {
 #vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
   max-width: var(--tab-collapsed-background-width) !important;
   overflow: hidden !important;
-  border-inline-end: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-inline-end: 1px solid var(--tf-line) !important;
 }
 :root:-moz-window-inactive #vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
-  border-inline-end-color: rgba(255, 255, 255, 0.06) !important;
+  border-inline-end-color: var(--tf-line-inactive) !important;
 }
 
 /* Favicons: present and visible normally (and when expanded on hover), but
@@ -308,13 +314,13 @@ findbar:not(:focus-within) {
 /* Thin separator between tabs (TST tab_background_separator: rgba(255,255,255,.5),
    dialed down — bump the alpha toward 0.5 if you want them more visible). */
 .tabbrowser-tab {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-bottom: 1px solid var(--tf-line) !important;
 }
 
 /* Track window focus like the rest of the themed chrome: dim the separators
    when the window is inactive (mirrors Photon's *_inactive theme colors). */
 :root:-moz-window-inactive .tabbrowser-tab {
-  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  border-bottom-color: var(--tf-line-inactive) !important;
 }
 
 /* No close "X" at all — you close with Cmd+W. `display:none` (not just hidden)
@@ -334,11 +340,11 @@ findbar:not(:focus-within) {
    Dimmer when the window is unfocused, like the rest of the chrome. */
 .tabbrowser-tab[selected] .tab-background,
 .tabbrowser-tab[visuallyselected] .tab-background {
-  background-color: rgba(255, 255, 255, 0.10) !important;
+  background-color: var(--tf-highlight) !important;
 }
 :root:-moz-window-inactive .tabbrowser-tab[selected] .tab-background,
 :root:-moz-window-inactive .tabbrowser-tab[visuallyselected] .tab-background {
-  background-color: rgba(255, 255, 255, 0.05) !important;
+  background-color: var(--tf-highlight-inactive) !important;
 }
 
 /* Flatten the tab "pill": kill the rounded background, its inset margins and
@@ -374,10 +380,10 @@ findbar:not(:focus-within) {
    the #vertical-tabs border above covers that state.) This is what was working
    for the expanded view before; the collapsed handoff is the new part. */
 #sidebar-main {
-  border-inline-end: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-inline-end: 1px solid var(--tf-line) !important;
 }
 :root:-moz-window-inactive #sidebar-main {
-  border-inline-end-color: rgba(255, 255, 255, 0.06) !important;
+  border-inline-end-color: var(--tf-line-inactive) !important;
 }
 
 /* Auto-hide the whole sidebar when there's only ONE tab — a single-item strip is
