@@ -308,6 +308,13 @@ findbar:not(:focus-within) {
   min-width: 0 !important;
 }
 
+/* Expanded tabs: a small left inset on the favicon/label so it balances the
+   right-side title fade (favicon was hugging the edge while titles faded well
+   before the right edge). 10px — 8 was too tight, 12 too far. */
+#tabbrowser-tabs[orient="vertical"][expanded] .tab-content {
+  padding-inline-start: 10px !important;
+}
+
 /* CONSTRAIN the collapsed tab column to the strip width so tabs don't overflow
    (~38px) past the bar. Measured cause of: (a) bar wider than the var, and
    (b) missing right divider — the overflowing tab bg was painting over the
