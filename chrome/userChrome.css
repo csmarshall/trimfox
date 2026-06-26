@@ -448,6 +448,12 @@ findbar:not(:focus-within) {
   display: none !important;
 }
 
+/* Hide the toolbar sidebar toggle button — Firefox won't let you drag it off,
+   and expand-on-hover means we never need a manual toggle. */
+#sidebar-button {
+  display: none !important;
+}
+
 /* Hide the launcher WITHOUT collapsing the sidebar.
    <sidebar-main> shadow DOM: div.wrapper (flex COLUMN) > [ slot(tabs), .buttons-wrapper ].
    #sidebar-main is shrink-to-fit, and the launcher's box is the only thing giving
