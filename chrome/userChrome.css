@@ -439,7 +439,7 @@ findbar:not(:focus-within) {
    right divider stays, so the tab bar is framed by the nav-bar line (top) + its
    own right edge. Dims with focus like the rest. */
 #nav-bar {
-  border-block-end: 1px solid var(--tf-line-strong) !important;
+  border-block-end: 2px solid var(--tf-line-strong) !important;
 }
 :root:-moz-window-inactive #nav-bar {
   border-block-end-color: var(--tf-line-strong-inactive) !important;
