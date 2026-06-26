@@ -84,17 +84,11 @@ menupopup > menuitem, menupopup > menu,
 menupopup > menucaption, menupopup > menuseparator {
   padding-left: 5px !important;
   padding-right: 7px !important;
-}
-
-/* The back/forward history dropdown (long-press / right-click a nav button)
-   renders much larger than the rest of the 7pt chrome — pin it to match. If this
-   doesn't take, send a screenshot of the open menu (Cmd+Shift+3) and we'll
-   target the exact element. */
-#backForwardMenu,
-#backForwardMenu menuitem,
-#backForwardMenu menuitem > label,
-#backForwardMenu menuitem > .menu-iconic-text {
-  font-size: 7pt !important;
+  /* Compact the ROW HEIGHT. The text is already 7pt (verified: 9.33px), so the
+     "history popup is too big" was really the tall default menu rows on macOS.
+     Shrink vertical padding + drop the min-height floor. */
+  padding-block: 1px !important;
+  min-height: 0 !important;
 }
 
 /* reduce back and forward button */
