@@ -454,6 +454,15 @@ findbar:not(:focus-within) {
   display: none !important;
 }
 
+/* Remove the flexible space between back/forward and the URL bar that Customize
+   Toolbar won't let you drag off. Covers both element forms (spring=flexible,
+   spacer=fixed) plus the widget id; nav-bar-scoped so nothing else is affected. */
+#nav-bar toolbarspring,
+#nav-bar toolbarspacer,
+#nav-bar #vertical-spacer {
+  display: none !important;
+}
+
 /* Hide the launcher WITHOUT collapsing the sidebar.
    <sidebar-main> shadow DOM: div.wrapper (flex COLUMN) > [ slot(tabs), .buttons-wrapper ].
    #sidebar-main is shrink-to-fit, and the launcher's box is the only thing giving
