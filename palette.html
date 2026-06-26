@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>trimfox palette</title>
+<style>
+  /* ===== trimfox palette — single source of truth (neutral grayscale, zero blue) =====
+     These --tf-* token names are our shared vocabulary. Reference them by name. */
+  :root {
+    /* Surfaces — darkest (inset) to lightest (raised) */
+    --tf-field:    #121212;   /* rgb(18,18,18)   inset fields: URL bar, search boxes */
+    --tf-content:  #1c1c1c;   /* rgb(28,28,28)   web/page content background */
+    --tf-surface:  #202020;   /* rgb(32,32,32)   chrome: toolbar, sidebar, tab strip */
+    --tf-raised:   #2e2e2e;   /* rgb(46,46,46)   hover / selected tab / highlight */
+
+    /* Accent — replaces Firefox's teal on buttons / focus / checkboxes */
+    --tf-accent:        #707070;  /* rgb(112,112,112) */
+    --tf-accent-hover:  #808080;
+    --tf-accent-active: #606060;
+
+    /* Text */
+    --tf-text:     #ffffff;   /* primary text */
+    --tf-text-dim: #aaaaaa;   /* rgb(170,170,170) secondary text, icons */
+
+    /* Lines — separators / dividers, as white at low alpha (dims with focus) */
+    --tf-line:          rgba(255,255,255,0.18);  /* focused */
+    --tf-line-inactive: rgba(255,255,255,0.06);  /* window unfocused */
+
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px;
+    background: var(--tf-content);
+    color: var(--tf-text);
+    font: 14px/1.5 -apple-system, system-ui, sans-serif;
+  }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; }
+  .sub { color: var(--tf-text-dim); margin: 0 0 32px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em;
+       color: var(--tf-text-dim); margin: 36px 0 14px; font-weight: 600; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; }
+  .swatch {
+    border: 1px solid var(--tf-line);
+    border-radius: 8px; overflow: hidden; background: var(--tf-surface);
+  }
+  .chip { height: 78px; }
+  .meta { padding: 10px 12px; }
+  .name { font-weight: 600; font-size: 14px; }
+  .hex  { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--tf-text-dim); font-size: 12px; margin-top: 2px; }
+  .role { color: var(--tf-text-dim); font-size: 12px; margin-top: 6px; }
+
+  /* Line sample */
+  .line-row { display:flex; gap:24px; align-items:center; }
+  .line-demo { flex:1; height:1px; background: var(--tf-line); }
+  .line-demo.inactive { background: var(--tf-line-inactive); }
+
+  /* ===== In-context mockup: a mini browser chrome built from the tokens ===== */
+  .mock {
+    display: flex; height: 340px; border: 1px solid var(--tf-line);
+    border-radius: 10px; overflow: hidden; margin-top: 8px; max-width: 760px;
+  }
+  .mock-sidebar {
+    width: 150px; background: var(--tf-surface);
+    border-right: 1px solid var(--tf-line);
+    display: flex; flex-direction: column; padding: 8px 0;
+  }
+  .mock-tab { padding: 5px 12px; color: var(--tf-text-dim); font-size: 12px;
+              border-bottom: 1px solid var(--tf-line); white-space: nowrap; overflow: hidden; }
+  .mock-tab.sel { background: var(--tf-raised); color: var(--tf-text); }
+  .mock-main { flex: 1; display: flex; flex-direction: column; background: var(--tf-content); }
+  .mock-toolbar {
+    background: var(--tf-surface); padding: 8px 10px;
+    border-bottom: 1px solid var(--tf-line); display: flex; gap: 8px; align-items: center;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--tf-text-dim); opacity:.6; }
+  .mock-url {
+    flex: 1; background: var(--tf-field); color: var(--tf-text-dim);
+    border-radius: 6px; padding: 5px 10px; font-size: 12px;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .mock-body { padding: 18px; color: var(--tf-text); }
+  .mock-body p { margin: 0 0 12px; }
+  .mock-body .dim { color: var(--tf-text-dim); }
+  .btn {
+    background: var(--tf-accent); color: #fff; border: none; border-radius: 6px;
+    padding: 7px 16px; font-size: 13px; cursor: pointer;
+  }
+  .btn:hover  { background: var(--tf-accent-hover); }
+  .btn:active { background: var(--tf-accent-active); }
+  .btn.ghost { background: transparent; border: 1px solid var(--tf-line); color: var(--tf-text); }
+  a { color: var(--tf-text-dim); }
+</style>
+</head>
+<body>
+  <h1>trimfox palette</h1>
+  <p class="sub">Neutral grayscale — every value has R=G=B, so nothing reads blue. Token names below are our shared vocabulary.</p>
+
+  <h2>Surfaces</h2>
+  <div class="grid">
+    <div class="swatch"><div class="chip" style="background:var(--tf-field)"></div>
+      <div class="meta"><div class="name">field</div><div class="hex">#121212 · rgb(18,18,18)</div>
+      <div class="role">Inset fields — URL bar, search boxes</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--tf-content)"></div>
+      <div class="meta"><div class="name">content</div><div class="hex">#1c1c1c · rgb(28,28,28)</div>
+      <div class="role">Web / page content background</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--tf-surface)"></div>
+      <div class="meta"><div class="name">surface</div><div class="hex">#202020 · rgb(32,32,32)</div>
+      <div class="role">Chrome — toolbar, sidebar, tab strip</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--tf-raised)"></div>
+      <div class="meta"><div class="name">raised</div><div class="hex">#2e2e2e · rgb(46,46,46)</div>
+      <div class="role">Hover / selected tab / highlight</div></div></div>
+  </div>
+
+  <h2>Accent <span style="text-transform:none;letter-spacing:0;font-weight:400">(replaces Firefox's teal)</span></h2>
+  <div class="grid">
+    <div class="swatch"><div class="chip" style="background:var(--tf-accent)"></div>
+      <div class="meta"><div class="name">accent</div><div class="hex">#707070 · rgb(112,112,112)</div>
+      <div class="role">Primary buttons, focus rings, checkboxes</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--tf-accent-hover)"></div>
+      <div class="meta"><div class="name">accent-hover</div><div class="hex">#808080</div>
+      <div class="role">Button hover</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--tf-accent-active)"></div>
+      <div class="meta"><div class="name">accent-active</div><div class="hex">#606060</div>
+      <div class="role">Button pressed</div></div></div>
+  </div>
+
+  <h2>Text</h2>
+  <div class="grid">
+    <div class="swatch"><div class="chip" style="background:var(--tf-text)"></div>
+      <div class="meta"><div class="name">text</div><div class="hex">#ffffff</div>
+      <div class="role">Primary text</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--tf-text-dim)"></div>
+      <div class="meta"><div class="name">text-dim</div><div class="hex">#aaaaaa · rgb(170,170,170)</div>
+      <div class="role">Secondary text, icons</div></div></div>
+  </div>
+
+  <h2>Lines</h2>
+  <div class="line-row" style="margin-bottom:8px"><span style="width:90px">line</span><div class="line-demo"></div>
+    <span class="hex">rgba(255,255,255,.18)</span></div>
+  <div class="line-row"><span style="width:90px;color:var(--tf-text-dim)">line-inactive</span><div class="line-demo inactive"></div>
+    <span class="hex">rgba(255,255,255,.06)</span></div>
+
+  <h2>In context</h2>
+  <div class="mock">
+    <div class="mock-sidebar">
+      <div class="mock-tab">Mozilla</div>
+      <div class="mock-tab sel">Reddit — r/FirefoxCSS</div>
+      <div class="mock-tab">GitHub</div>
+      <div class="mock-tab">news.ycombinator</div>
+    </div>
+    <div class="mock-main">
+      <div class="mock-toolbar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <div class="mock-url">https://example.com</div>
+      </div>
+      <div class="mock-body">
+        <p>Primary text on <span class="dim">content</span>.</p>
+        <p class="dim">Secondary text uses text-dim.</p>
+        <p><button class="btn">Primary button</button> &nbsp; <button class="btn ghost">Ghost</button></p>
+        <p class="dim">The selected tab is <b style="color:var(--tf-text)">raised</b>; separators are <b style="color:var(--tf-text)">line</b>; the URL field is <b style="color:var(--tf-text)">field</b>.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
