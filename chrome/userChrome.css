@@ -41,6 +41,18 @@
   /* --- Lines & translucent highlight (each dims when the window is unfocused) --- */
   --tf-line:               rgba(255, 255, 255, 0.18);   /* separators, dividers */
   --tf-line-inactive:      rgba(255, 255, 255, 0.06);
+  --tf-line-solid:          #484848;                     /* OPAQUE form of --tf-line as
+                                                            it renders over --tf-surface.
+                                                            Used for tab separators so an
+                                                            edge reads the SAME color over
+                                                            the active-tab highlight and
+                                                            over dark inactive tabs (#2). */
+  --tf-line-solid-inactive: #2d2d2d;                     /* opaque --tf-line-inactive */
+  --tf-sep-inset:          1px;                          /* tab-separator inline-start
+                                                            inset — just clears the macOS
+                                                            window frame so separators
+                                                            meet its inner edge without
+                                                            crossing into it (#2) */
   --tf-highlight:          rgba(255, 255, 255, 0.10);   /* active-tab fill */
   --tf-highlight-inactive: rgba(255, 255, 255, 0.05);
 
@@ -353,16 +365,36 @@ findbar:not(:focus-within) {
   display: none !important;
 }
 
-/* Thin separator between tabs (TST tab_background_separator: rgba(255,255,255,.5),
-   dialed down — bump the alpha toward 0.5 if you want them more visible). */
+/* Separator between tabs, INSET from the inline-start so it doesn't run into the
+   window's frame edge (GitHub #2). A `border-bottom` always spans the full tab
+   width and the strip sits flush at x=0, so the old border touched the window
+   border. A 1px bottom gradient on .tab-background (which fills the tab) can be
+   inset — transparent for the first --tf-sep-inset px, then --tf-line to the
+   right edge (still meets the right divider). Tune --tf-sep-inset to taste. */
 .tabbrowser-tab {
-  border-bottom: 1px solid var(--tf-line) !important;
+  border-bottom: none !important;
 }
-
-/* Track window focus like the rest of the themed chrome: dim the separators
-   when the window is inactive (mirrors Photon's *_inactive theme colors). */
-:root:-moz-window-inactive .tabbrowser-tab {
-  border-bottom-color: var(--tf-line-inactive) !important;
+.tabbrowser-tab .tab-background {
+  background-image: linear-gradient(to right,
+                     transparent var(--tf-sep-inset, 4px),
+                     var(--tf-line-solid) var(--tf-sep-inset, 4px)) !important;
+  background-repeat: no-repeat !important;
+  background-position: bottom left !important;
+  background-size: 100% 1px !important;
+}
+:root:-moz-window-inactive .tabbrowser-tab .tab-background {
+  background-image: linear-gradient(to right,
+                     transparent var(--tf-sep-inset, 4px),
+                     var(--tf-line-solid-inactive) var(--tf-sep-inset, 4px)) !important;
+}
+/* The macOS window-edge highlight sits over the tab's left edge; on the ACTIVE
+   tab its lighter fill shows behind that edge and makes it read brighter than on
+   dark inactive tabs. Clip the active fill off the leftmost --tf-sep-inset px so
+   the window edge always sits over the dark tab background — identical left edge
+   on every tab, active or not (#2). */
+.tabbrowser-tab[selected] .tab-background,
+.tabbrowser-tab[visuallyselected] .tab-background {
+  clip-path: inset(0 0 0 var(--tf-sep-inset, 1px)) !important;
 }
 
 /* No close "X" at all — you close with Cmd+W. `display:none` (not just hidden)
