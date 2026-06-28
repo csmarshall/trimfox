@@ -616,3 +616,60 @@ findbar:not(:focus-within) {
   min-width: var(--tab-collapsed-background-width) !important;
   max-width: var(--tab-collapsed-background-width) !important;
 }
+
+/* ── #12: container-tab indicator ─────────────────────────────────────────────
+   COLOR is DYNAMIC: Firefox exposes each container's user-assigned color as
+   var(--identity-tab-color) (containers set to "toolbar", e.g. Facebook, resolve to
+   currentColor — that's intended). No hardcoded colors. Only the ICON is mapped per
+   container, because Firefox exposes no CSS variable for the container icon.
+   A container-color LINE runs down the inline-start edge in both states; EXPANDED
+   tabs also get the container glyph inset on the right. Dims on blur. The collapsed
+   line is toggleable. */
+.tabbrowser-tab[usercontextid="1"] { --tf-container-icon: url("resource://usercontext-content/fingerprint.svg"); }  /* Personal */
+.tabbrowser-tab[usercontextid="2"] { --tf-container-icon: url("resource://usercontext-content/briefcase.svg"); }   /* Work     */
+.tabbrowser-tab[usercontextid="3"] { --tf-container-icon: url("resource://usercontext-content/dollar.svg"); }      /* Banking  */
+.tabbrowser-tab[usercontextid="4"] { --tf-container-icon: url("resource://usercontext-content/cart.svg"); }        /* Shopping */
+.tabbrowser-tab[usercontextid="6"] { --tf-container-icon: url("resource://usercontext-content/fence.svg"); }       /* Facebook */
+
+.tabbrowser-tab[usercontextid] { position: relative !important; }
+.tabbrowser-tab[usercontextid]::after {
+  content: "" !important;
+  position: absolute !important;
+  inset-inline-end: 8px !important;   /* inset from the right edge */
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 14px !important;
+  height: 14px !important;
+  background-color: var(--identity-tab-color) !important;   /* a block of the container color… */
+  mask-image: var(--tf-container-icon) !important;    /* …clipped to the glyph shape, so the */
+  mask-size: contain !important;                      /*    icon is ALWAYS the container color */
+  mask-position: center !important;
+  mask-repeat: no-repeat !important;
+  pointer-events: none !important;
+}
+/* a thin container-color LINE down the inline-start edge — the constant "this tab is
+   container X" marker, shown collapsed AND expanded. Same dynamic color as the glyph. */
+.tabbrowser-tab[usercontextid]::before {
+  content: "" !important;
+  position: absolute !important;
+  inset-inline-end: 0 !important;     /* right edge — same side as the glyph */
+  top: 3px !important;
+  bottom: 3px !important;
+  width: 3px !important;
+  border-radius: 2px 0 0 2px !important;
+  background-color: var(--identity-tab-color) !important;
+  pointer-events: none !important;
+}
+/* compact strip: no room for the glyph — hide it, leave just the line.
+   EASY OFF: set --tf-container-collapsed-flag to `none` to also hide the line when
+   collapsed (the expanded glyph + line are unaffected). */
+:root { --tf-container-collapsed-flag: block; }   /* ← `none` = clean collapsed strip */
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab[usercontextid]::after {
+  display: none !important;
+}
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab[usercontextid]::before {
+  display: var(--tf-container-collapsed-flag, block) !important;
+}
+/* dim with the window on blur, like the rest of the chrome (covers line + glyph) */
+:root:-moz-window-inactive .tabbrowser-tab[usercontextid]::before,
+:root:-moz-window-inactive .tabbrowser-tab[usercontextid]::after { opacity: 0.45 !important; }
