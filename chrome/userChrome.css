@@ -207,6 +207,41 @@ menupopup * {
   font-size: 7pt !important;
  }
 
+/* ── #11: URL bar tab-style border + merge with the results popup ──────────────
+   Give the URL bar the same 1px line border the tabs/sidebar use. .urlbar-background
+   is the pill (a CLASS in FF152, not the old #urlbar-background id); when results
+   open it expands downward to cover the dropdown, so ONE border frames the field
+   when collapsed AND the field+popup as a single cohesive window when open. */
+#urlbar .urlbar-background {
+  border: 1px solid var(--tf-line) !important;
+}
+:root:-moz-window-inactive #urlbar .urlbar-background {
+  border-color: var(--tf-line-inactive) !important;
+}
+
+/* #11 no-grow on focus (measured): the "breakout-extend" state shifts the field up
+   4px, left 5px, +10px wide and +8px tall. Pin each back to the compact box using
+   Firefox's OWN live variables — so it still flexes with the window — and let only
+   the results panel drop below.
+     top:    compact = (toolbar-height − urlbar-height)/2  (was forced to 0)
+     width:  --urlbar-width  (the dynamic compact width; was +10px)
+     margin: auto            (kills the −5px left shift)
+     input:  --urlbar-height (26px; kills the +8px taller) */
+#urlbar[breakout][breakout-extend] {
+  top: calc((var(--urlbar-toolbar-height) - var(--urlbar-height)) / 2) !important;
+  width: var(--urlbar-width) !important;
+  margin-inline: auto !important;
+  background-color: transparent !important;   /* #urlbar's own square --tf-surface bg pokes
+                                                 ~10px past .urlbar-background's rounded corners
+                                                 when open; the rounded panel fills it anyway */
+}
+#urlbar[breakout][breakout-extend] > .urlbar-input-container {
+  height: var(--urlbar-height) !important;
+  padding: var(--urlbar-container-padding) !important;   /* compact 1px — on focus it jumps
+                                                            to 6px/5px and shoves the icons +
+                                                            text around. Pin to compact. */
+}
+
 /* trimfox: was `#TabsToolbar { visibility: collapse; }` — hid the tab bar for
    TST. Native vertical tabs move tabs to the sidebar, so this is no longer
    needed; left disabled in case we want to re-hide the top strip surgically. */
@@ -232,7 +267,10 @@ display: none;
 
 /* Compact Results */
 .urlbarView-results {
-    padding-block: unset !important;
+    padding-block-start: 0 !important;
+    padding-block-end: 8px !important;   /* #11: breathing room under the last result so it
+                                            doesn't jam against the rounded bottom edge —
+                                            measured to match the row's left inset (~2x of 4px) */
     font-size: small;
     white-space: nowrap;
 }
