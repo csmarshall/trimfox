@@ -731,3 +731,24 @@ findbar:not(:focus-within) {
   margin: 0 !important;
   border: none !important;
 }
+
+/* ── #14: drag-to-reorder tabs ────────────────────────────────────────────────
+   Native FF vertical tabs DO support drag-reorder (TST needed JS only because it
+   built its own strip), so this isn't a port — it's theming the drop indicator and
+   making sure our reskin doesn't block the drag. Our ::before/::after container
+   markers are already pointer-events:none, so they shouldn't interfere.
+   UPSTREAM CAVEAT: FF's sidebar.revamp vertical-tab drag has a KNOWN bug where tabs
+   can blank out mid-drag (Mozilla connect/support threads). If reorder is broken even
+   with this, that's the Firefox bug — not our CSS.
+   TEST when back: drag a tab up/down in BOTH expand-on-hover and always-show; watch
+   whether (a) it reorders, (b) the drop line shows, (c) tabs blank mid-drag (= the FF
+   bug). Report which, and I'll target the fix. */
+/* theme the drop indicator (the marker showing where the tab will land) */
+.tab-drop-indicator,
+#tabbrowser-tabs .tab-drop-indicator {
+  background-color: var(--tf-accent) !important;
+  border-color: var(--tf-accent) !important;
+  opacity: 1 !important;
+}
+/* make sure tabs read as draggable content, not a window-drag region */
+.tabbrowser-tab { -moz-window-dragging: no-drag !important; }
