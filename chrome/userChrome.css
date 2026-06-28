@@ -268,9 +268,8 @@ display: none;
 /* Compact Results */
 .urlbarView-results {
     padding-block-start: 0 !important;
-    padding-block-end: 8px !important;   /* #11: breathing room under the last result so it
-                                            doesn't jam against the rounded bottom edge —
-                                            measured to match the row's left inset (~2x of 4px) */
+    padding-block-end: 6px !important;   /* #11: breathing room under the last result so it
+                                            doesn't jam against the rounded bottom edge */
     font-size: small;
     white-space: nowrap;
 }
