@@ -117,6 +117,13 @@ menupopup * {
 #back-button,#forward-button{ list-style-image: url("chrome://devtools/skin/images/play.svg") !important; }
 #back-button > .toolbarbutton-icon{ transform: scaleX(-1) }
 
+/* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
+   bookmarks. (GitHub #10) */
+#star-button-box,
+#star-button {
+  display: none !important;
+}
+
 /* Remove the macOS native window-control dots (close/min/max) and reclaim their
    reserved strip, leaving an 8px inset before Back. The dots ARE native, but
    `appearance: none` on .titlebar-buttonbox disables them; we deliberately don't
