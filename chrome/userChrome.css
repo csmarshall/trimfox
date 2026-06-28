@@ -673,3 +673,61 @@ findbar:not(:focus-within) {
 /* dim with the window on blur, like the rest of the chrome (covers line + glyph) */
 :root:-moz-window-inactive .tabbrowser-tab[usercontextid]::before,
 :root:-moz-window-inactive .tabbrowser-tab[usercontextid]::after { opacity: 0.45 !important; }
+
+/* ── #13: pinned tabs — faviconized compact grid ──────────────────────────────
+   Approach modeled on Tree Style Tab's faviconized pins (TST is MPL 2.0; this is a
+   from-scratch rebuild against Firefox's NATIVE vertical-tab DOM — concept only, not
+   copied code). Pinned tabs become favicon-only squares in a wrapping grid, with the
+   reskin's row separators / borders neutralized on them.
+   FIRST PASS (built while away): the per-pin rules below use selector-CERTAIN classes
+   (.tabbrowser-tab[pinned], .tab-label, .tab-content, .tab-background). The pinned-AREA
+   container id is a best guess — run the #13 probe in NEXT-SESSION.md to confirm it and
+   the real gap sources, then refine. */
+:root {
+  --tf-pin-size: 30px;   /* faviconized pin square (TST uses 28) */
+}
+
+/* per-pin: favicon-only square (these selectors are reliable) */
+.tabbrowser-tab[pinned] {
+  width: var(--tf-pin-size) !important;
+  min-width: var(--tf-pin-size) !important;
+  max-width: var(--tf-pin-size) !important;
+  height: var(--tf-pin-size) !important;
+  min-height: var(--tf-pin-size) !important;
+  padding: 0 !important;
+  margin: 1px !important;
+}
+.tabbrowser-tab[pinned] .tab-label-container,
+.tabbrowser-tab[pinned] .tab-label,
+.tabbrowser-tab[pinned] .tab-secondary-label,
+.tabbrowser-tab[pinned] .tab-close-button {
+  display: none !important;
+}
+.tabbrowser-tab[pinned] .tab-content {
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 !important;
+}
+/* neutralize the reskin's row-separator gradient + stray borders/outline on pins */
+.tabbrowser-tab[pinned] .tab-background {
+  background-image: none !important;
+  border: none !important;
+  outline: none !important;
+}
+/* selection: a clean filled square (drop the regular-tab clip-path inset) */
+.tabbrowser-tab[pinned][selected] .tab-background,
+.tabbrowser-tab[pinned][visuallyselected] .tab-background {
+  background-color: var(--tf-highlight) !important;
+  clip-path: none !important;
+}
+
+/* the pinned AREA = a wrapping grid. NOTE: #vertical-pinned-tabs-container is the
+   best-guess native id (FF sidebar.revamp); verify via the probe. Harmless if absent. */
+#vertical-pinned-tabs-container {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  gap: 0 !important;
+  padding: 4px !important;
+  margin: 0 !important;
+  border: none !important;
+}
