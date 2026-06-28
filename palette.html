@@ -87,9 +87,16 @@
   .winctl.right { margin-left: auto; }                 /* Windows/Linux controls sit right */
   .mac-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--tf-text-dim); opacity: .55; }
   .pc-btn { color: var(--tf-text-dim); font: 13px/1 ui-monospace, Menlo, monospace; }
-  .nav { display: flex; gap: 8px; color: var(--tf-text-dim); }
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .navicon { width: 15px; height: 15px; fill: none; stroke: var(--tf-text-dim);
+             stroke-width: 1.3; stroke-linejoin: round; flex: none; }
   .mock-url { flex: 1; background: var(--tf-field); color: var(--tf-text-dim); border-radius: 6px;
-              padding: 5px 10px; font-size: 12px; font-family: ui-monospace, Menlo, monospace; }
+              padding: 5px 10px; font-size: 12px; font-family: ui-monospace, Menlo, monospace;
+              display: flex; align-items: center; gap: 7px; }
+  .urlicon { width: 13px; height: 13px; flex: none; fill: none; stroke: var(--tf-text-dim);
+             stroke-width: 1.1; stroke-linejoin: round; stroke-linecap: round; }
+  .urlicon.shield { stroke: var(--tf-text); }
+  .urlicon circle { fill: var(--tf-text-dim); stroke: none; }
   .btn { background: var(--tf-accent); color: #fff; border: none; border-radius: 6px;
          padding: 6px 14px; font-size: 13px; cursor: pointer; }
   a { color: var(--tf-text-dim); }
@@ -146,7 +153,8 @@
 
   <h2>In context</h2>
   <p class="sub">The tokens assembled into Firefox chrome. <b style="color:var(--tf-text)">macOS</b>
-  is the real layout (from screenshots). <b style="color:var(--tf-text)">Windows</b> &amp;
+  is the real layout (from screenshots) — note trimfox removes the traffic-light controls.
+  <b style="color:var(--tf-text)">Windows</b> &amp;
   <b style="color:var(--tf-text)">Linux</b> are approximations — window controls move to the
   right — and are exactly what a cross-platform PR would refine.</p>
 
@@ -156,9 +164,17 @@
       <figcaption>macOS <span class="tag actual">actual</span></figcaption>
       <div class="mock">
         <div class="mock-toolbar">
-          <div class="winctl"><i class="mac-dot"></i><i class="mac-dot"></i><i class="mac-dot"></i></div>
-          <div class="nav">&#8249; &#8250;</div>
-          <div class="mock-url">&#128274;&nbsp; example.com</div>
+          <!-- trimfox removes the macOS traffic-light window controls entirely -->
+          <div class="nav">
+            <svg class="navicon" viewBox="0 0 16 16"><path d="M10 3.5 L4.5 8 L10 12.5 Z"/></svg>
+            <svg class="navicon" viewBox="0 0 16 16"><path d="M6 3.5 L11.5 8 L6 12.5 Z"/></svg>
+          </div>
+          <div class="mock-url">
+            <svg class="urlicon shield" viewBox="0 0 16 16"><path d="M8 2 L13 4 V8 C13 11 11 13 8 14 C5 13 3 11 3 8 V4 Z"/><path d="M5.8 8.2 L7.2 9.6 L10.2 6.2"/></svg>
+            <svg class="urlicon" viewBox="0 0 16 16"><line x1="3.5" y1="6" x2="12.5" y2="6"/><line x1="3.5" y1="10" x2="12.5" y2="10"/><circle cx="10.5" cy="6" r="1.7"/><circle cx="5.5" cy="10" r="1.7"/></svg>
+            <span>example.com</span>
+          </div>
+          <svg class="navicon" viewBox="0 0 16 16"><line x1="3" y1="5" x2="13" y2="5"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="11" x2="13" y2="11"/></svg>
         </div>
         <div class="mock-lower">
           <div class="mock-sidebar">
@@ -182,6 +198,7 @@
         <div class="mock-toolbar">
           <div class="nav">&#8592; &#8594;</div>
           <div class="mock-url">&#128274;&nbsp; example.com</div>
+          <svg class="navicon" viewBox="0 0 16 16"><line x1="3" y1="5" x2="13" y2="5"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="11" x2="13" y2="11"/></svg>
           <div class="winctl right"><span class="pc-btn">&#8211;</span><span class="pc-btn">&#9633;</span><span class="pc-btn">&#10005;</span></div>
         </div>
         <div class="mock-lower">
@@ -206,6 +223,7 @@
         <div class="mock-toolbar">
           <div class="nav">&#8592; &#8594;</div>
           <div class="mock-url">&#128274;&nbsp; example.com</div>
+          <svg class="navicon" viewBox="0 0 16 16"><line x1="3" y1="5" x2="13" y2="5"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="11" x2="13" y2="11"/></svg>
           <div class="winctl right"><span class="pc-btn">&#8211;</span><span class="pc-btn">&#9633;</span><span class="pc-btn">&#10005;</span></div>
         </div>
         <div class="mock-lower">
