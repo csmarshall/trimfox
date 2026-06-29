@@ -749,6 +749,9 @@ findbar:not(:focus-within) {
   align-content: flex-start !important;
   align-items: flex-start !important;
   width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;             /* probe found it clamped to 13px (collapsed
+                                             strip width) — unclamp so the row can spread */
   max-height: 96px !important;           /* ~3 rows of 28px (TST bounds the pin area) */
   overflow-x: hidden !important;
   overflow-y: auto !important;
