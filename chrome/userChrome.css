@@ -686,6 +686,8 @@ findbar:not(:focus-within) {
 :root {
   --tf-pin-size: 28px;       /* faviconized pin square — TST's --faviconized-tab-size */
   --tf-pin-favicon: 16px;    /* favicon inside it — TST's --favicon-size */
+  --tf-pin-pitch: 30px;      /* pin-to-pin step (size + gap) */
+  --tf-pins-per-row: 7;      /* wrap to a new row after this many (fits the sidebar) */
 }
 
 /* per-pin: favicon-only square (these selectors are reliable) */
@@ -748,41 +750,47 @@ findbar:not(:focus-within) {
    :nth-child → --pin-i. Their snippet stacks vertically (top: i*spacing); we go HORIZONTAL
    (left: i*spacing) for a single row. */
 #pinned-tabs-container {
+  --tf-pin-rows: 1;
   position: relative !important;
   display: block !important;
   width: 100% !important;
   min-width: 0 !important;
   max-width: none !important;
-  height: calc(var(--tf-pin-size) + 6px) !important;       /* holds the single row */
-  min-height: calc(var(--tf-pin-size) + 6px) !important;
-  max-height: calc(var(--tf-pin-size) + 6px) !important;
+  height:     calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
+  min-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
+  max-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
   overflow: visible !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
 }
+/* grow the area as pins wrap to new rows (per-row = 7) */
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8))  { --tf-pin-rows: 2; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-rows: 3; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(22)) { --tf-pin-rows: 4; }
+
 .tabbrowser-tab[pinned] {
   position: absolute !important;
-  top: 3px !important;
-  left: calc(4px + var(--pin-i, 0) * (var(--tf-pin-size) + 3px)) !important;  /* horizontal */
+  top:  calc(3px + var(--pin-row, 0) * var(--tf-pin-pitch)) !important;
+  left: calc(4px + var(--pin-col, 0) * var(--tf-pin-pitch)) !important;
   margin: 0 !important;
 }
-.tabbrowser-tab[pinned]:nth-child(1)  { --pin-i: 0;  }
-.tabbrowser-tab[pinned]:nth-child(2)  { --pin-i: 1;  }
-.tabbrowser-tab[pinned]:nth-child(3)  { --pin-i: 2;  }
-.tabbrowser-tab[pinned]:nth-child(4)  { --pin-i: 3;  }
-.tabbrowser-tab[pinned]:nth-child(5)  { --pin-i: 4;  }
-.tabbrowser-tab[pinned]:nth-child(6)  { --pin-i: 5;  }
-.tabbrowser-tab[pinned]:nth-child(7)  { --pin-i: 6;  }
-.tabbrowser-tab[pinned]:nth-child(8)  { --pin-i: 7;  }
-.tabbrowser-tab[pinned]:nth-child(9)  { --pin-i: 8;  }
-.tabbrowser-tab[pinned]:nth-child(10) { --pin-i: 9;  }
-.tabbrowser-tab[pinned]:nth-child(11) { --pin-i: 10; }
-.tabbrowser-tab[pinned]:nth-child(12) { --pin-i: 11; }
-.tabbrowser-tab[pinned]:nth-child(13) { --pin-i: 12; }
-.tabbrowser-tab[pinned]:nth-child(14) { --pin-i: 13; }
-.tabbrowser-tab[pinned]:nth-child(15) { --pin-i: 14; }
-.tabbrowser-tab[pinned]:nth-child(16) { --pin-i: 15; }
+/* COLUMN = position modulo 7, via nth-child STEP patterns — these repeat forever, so ANY
+   number of pins lays out with no hand-numbering. (sibling-index() would collapse all of
+   this to one rule, but Firefox hasn't shipped it — Bug 1953973.) Keep the `7` here in
+   sync with --tf-pins-per-row (nth-child can't take a variable). */
+.tabbrowser-tab[pinned]:nth-child(7n+1) { --pin-col: 0; }
+.tabbrowser-tab[pinned]:nth-child(7n+2) { --pin-col: 1; }
+.tabbrowser-tab[pinned]:nth-child(7n+3) { --pin-col: 2; }
+.tabbrowser-tab[pinned]:nth-child(7n+4) { --pin-col: 3; }
+.tabbrowser-tab[pinned]:nth-child(7n+5) { --pin-col: 4; }
+.tabbrowser-tab[pinned]:nth-child(7n+6) { --pin-col: 5; }
+.tabbrowser-tab[pinned]:nth-child(7n+7) { --pin-col: 6; }
+/* ROW = which block of 7 you're in (range rules, one per row) */
+.tabbrowser-tab[pinned]:nth-child(-n+7)                  { --pin-row: 0; }
+.tabbrowser-tab[pinned]:nth-child(n+8):nth-child(-n+14)  { --pin-row: 1; }
+.tabbrowser-tab[pinned]:nth-child(n+15):nth-child(-n+21) { --pin-row: 2; }
+.tabbrowser-tab[pinned]:nth-child(n+22)                  { --pin-row: 3; }
 /* clean faviconized pins: no chunky button box unless selected/hovered */
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
