@@ -745,11 +745,16 @@ findbar:not(:focus-within) {
   padding: 0 !important;
   margin: 0 !important;
 }
-.tabbrowser-tab[pinned] .tab-icon-image,
-.tabbrowser-tab[pinned] .tab-icon-stack {
+.tabbrowser-tab[pinned] .tab-icon-stack,
+.tabbrowser-tab[pinned] .tab-icon-image {
+  position: absolute !important;          /* absolutely dead-center it in the square —
+                                             the flex centering wasn't winning */
+  inset: 0 !important;
+  margin: auto !important;
   width: var(--tf-pin-favicon) !important;
   height: var(--tf-pin-favicon) !important;
-  margin: 0 !important;
+  min-width: var(--tf-pin-favicon) !important;
+  min-height: var(--tf-pin-favicon) !important;
 }
 /* neutralize the reskin's row-separator gradient + stray borders/outline on pins */
 .tabbrowser-tab[pinned] .tab-background {
@@ -853,10 +858,9 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
 }
-/* hover highlight as you slide across the pins — ONLY on .tab-background (now sized to
-   fill the square, so it's centered on the favicon; the pin element itself was the
-   "slammed-left" highlight) */
-.tabbrowser-tab[pinned]:hover .tab-background {
+/* hover highlight on .tab-content — it's the element that's actually the full 22px square
+   (.tab-background is FF-locked to the 14px strip width), so the highlight is centered. */
+.tabbrowser-tab[pinned]:hover .tab-content {
   background-color: var(--tf-select) !important;   /* #555 — clearly readable; tune if too hot */
   border-radius: 5px !important;
 }
