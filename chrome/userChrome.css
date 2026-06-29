@@ -113,15 +113,15 @@ menupopup * {
   font-size: 7pt !important;
 }
 
-/* #5: ONE combined nav button whose glyph ADAPTS to your position in the history stack,
-   reusing Firefox's OWN themed back/forward icons for the single-direction states:
-     - both ways available       -> custom ◄► (Firefox has no native combined glyph)
-     - newest page (no forward)   -> NATIVE back arrow (the theme's own icon, no override)
-     - oldest page (no back)      -> swap to the REAL Forward button -> NATIVE forward arrow
-     - fresh tab (neither)        -> back button, greyed custom ◄►
-   [disabled] + :has() drive the switch. Left-click navigates; right-click = history menu.
-   Only the ◄► (both-ways) state uses a custom glyph; see nav-icon-options.html to restyle it. */
-#forward-button { display: none !important; }                 /* hidden by default; shown at stack-start */
+/* #5: ONE combined nav button whose glyph ADAPTS to your history position, using Firefox's
+   OWN play.svg — the original theme's back/fwd icon, a HOLLOW rounded triangle (even-odd
+   FILLED, so context-fill themes it; stroke won't theme on toolbar icons) — throughout:
+     - both ways          -> two play.svg triangles + a slim rounded divider  (◀ | ▶)
+     - newest (no forward) -> play.svg FLIPPED  (◀, back-only)
+     - oldest (no back)    -> swap to the real Forward button, play.svg  (▶)
+     - fresh tab (neither) -> back button, greyed two-triangle glyph
+   [disabled] + :has() drive the switch. Left-click navigates; right-click = history menu. */
+#forward-button { display: none !important; }                /* hidden by default; shown at stack-start */
 #back-button, #forward-button {
   -moz-context-properties: fill !important;
   fill: currentColor !important;
@@ -129,20 +129,25 @@ menupopup * {
 #back-button > .toolbarbutton-icon,
 #forward-button > .toolbarbutton-icon { transform: none !important; }
 
-/* both ways (or neither -> greyed) -> custom ◄► (the only state with no native equivalent) */
+/* both ways (or neither -> greyed): two play.svg triangles + slim divider */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M6 4.5 L2 8 L6 11.5 Z M7.3 4.5 L8.7 4.5 L8.7 11.5 L7.3 11.5 Z M10 4.5 L14 8 L10 11.5 Z"/></svg>') !important;
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><g fill="context-fill" fill-rule="evenodd"><path transform="translate(7.34 3.5) scale(0.6)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><path transform="translate(8.66 3.5) scale(-0.6 0.6)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><rect x="7.55" y="5.2" width="0.9" height="5.6" rx="0.45"/></g></svg>') !important;
 }
-/* newest page (only back): NO override -> #back-button keeps Firefox's NATIVE themed back
-   arrow (the ◄► rule above doesn't match this state). */
-
-/* oldest page (only forward): hide Back, reveal the real Forward button with its NATIVE icon */
+/* newest page (only back): the real play.svg, FLIPPED to point left ◀ */
+#nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button {
+  list-style-image: url("chrome://devtools/skin/images/play.svg") !important;
+}
+#nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button > .toolbarbutton-icon {
+  transform: scaleX(-1) !important;
+}
+/* oldest page (only forward): hide Back, reveal the real Forward button with play.svg ▶ */
 #nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #back-button {
   display: none !important;
 }
 #nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #forward-button {
   display: flex !important;
+  list-style-image: url("chrome://devtools/skin/images/play.svg") !important;
 }
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
