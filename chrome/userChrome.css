@@ -113,9 +113,18 @@ menupopup * {
   font-size: 7pt !important;
 }
 
-/* reduce back and forward button */
-#back-button,#forward-button{ list-style-image: url("chrome://devtools/skin/images/play.svg") !important; }
-#back-button > .toolbarbutton-icon{ transform: scaleX(-1) }
+/* #5: combine Back + Forward into ONE navigation button (the old unified-nav look).
+   No JS: hide Forward, give the single Back button a symmetric double-arrow (both-directions)
+   glyph, themed via context-fill. Left-click = go back; RIGHT-click = the themed XUL history
+   menu (works natively, styleable). Left-click-opens-menu would need AutoConfig JS (wiped on
+   every FF update) — deliberately out of scope. */
+#forward-button { display: none !important; }
+#back-button {
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M1.5 8 L5.5 4 L5.5 6.5 L10.5 6.5 L10.5 4 L14.5 8 L10.5 12 L10.5 9.5 L5.5 9.5 L5.5 12 Z"/></svg>') !important;
+  -moz-context-properties: fill !important;   /* let the SVG's context-fill pick up the color */
+  fill: currentColor !important;              /* themed toolbar icon color (no flip — symmetric) */
+}
+#back-button > .toolbarbutton-icon { transform: none !important; }
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
    bookmarks. (GitHub #10) */
