@@ -741,25 +741,34 @@ findbar:not(:focus-within) {
    UNCONDITIONAL — the mode-scoped selector wasn't matching expand-on-hover's DOM, so
    the grid never applied. Packed tight (justify/align start), bounded to ~3 rows then
    scrolls. */
-/* The whole vertical-tab strip is a ~13px base box that content OVERFLOWS (regular tab
-   labels extend right past it). Firefox forces #pinned-tabs-container to flex-column +
-   ~14px max-width MORE specifically than a bare #id, so a 3-id selector is needed to
-   win — and the pin ROW must overflow to the right like the labels do (width:max-content,
-   overflow:visible) since the parent box is only 13px. */
+/* THE REAL FIX (from the Firefox source): #pinned-tabs-container lays its pins out in a
+   shadow-DOM grid exposed as ::part(items-wrapper). FF sets that part to
+   `grid-template-columns: 1fr` in expand-on-hover (ONE column = vertical stack) and an
+   auto-fit grid in always-show. NONE of that is reachable by styling the host element —
+   which is why every host rule was ignored. Override the PART to flow into ONE horizontal
+   row. (User-sheet !important beats FF's author rule regardless of specificity.) */
+#pinned-tabs-container::part(items-wrapper),
+#vertical-pinned-tabs-container::part(items-wrapper) {
+  display: grid !important;
+  grid-auto-flow: column !important;          /* flow left-to-right = horizontal */
+  grid-template-columns: none !important;     /* kill FF's 1fr / auto-fit columns */
+  grid-template-rows: auto !important;        /* a single row */
+  grid-auto-columns: max-content !important;  /* each pin = its 28px square */
+  justify-content: start !important;
+  align-items: center !important;
+  gap: 2px !important;
+  overflow: visible !important;               /* row extends right, like the tab labels */
+}
+/* host: unclamp the ~14px width FF imposes so the horizontal row is actually visible */
 #main-window #tabbrowser-tabs #pinned-tabs-container,
 #main-window #tabbrowser-tabs #vertical-pinned-tabs-container {
-  display: flex !important;
-  flex-flow: row nowrap !important;       /* ONE row */
-  justify-content: flex-start !important;
-  align-items: center !important;
-  width: max-content !important;          /* size to the pins, not the 13px parent */
+  width: max-content !important;
   min-width: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  overflow: visible !important;           /* let the row extend right, like the labels */
-  gap: 2px !important;
-  padding: 2px 4px !important;
+  overflow: visible !important;
   margin: 0 !important;
+  padding: 2px 4px !important;
   border: none !important;
   box-shadow: none !important;
 }
