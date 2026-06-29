@@ -120,7 +120,10 @@ menupopup * {
    right-click = the themed XUL history menu (both directions reachable there). */
 #forward-button { display: none !important; }
 #back-button {
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="context-fill" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8 H13 M6 4.5 L2.5 8 L6 11.5 M10 4.5 L13.5 8 L10 11.5"/></svg>') !important;
+  /* the two ORIGINAL play-triangles (back + forward) combined on one button, FILLED so
+     context-fill themes it (stroke doesn't bridge). See nav-icon-options.html to pick a
+     different glyph — swap the `d=` path with the chosen option's. */
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg>') !important;
   -moz-context-properties: fill !important;   /* bridge the button's fill into the SVG */
   fill: currentColor !important;              /* themed toolbar icon color */
 }
