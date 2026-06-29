@@ -158,6 +158,7 @@ menupopup * {
   color: transparent !important;
 }
 
+/* URL dropdown title + results list — match the 7pt chrome font */
 .ac-title,
 .urlbarView-results {
    font-size: 7pt;
@@ -193,6 +194,7 @@ menupopup * {
   background: var(--tf-select) !important;
 }
 
+/* Selected dropdown row — force white text on every child element */
 .urlbarView-row[selected] *,
 .urlbarView-row[selected] .urlbarView-title,
 .urlbarView-row[selected] .urlbarView-url,
@@ -201,6 +203,7 @@ menupopup * {
   color: var(--tf-text) !important;
 }
 
+/* URL bar field — surface background + 7pt */
 #urlbar {
   /* light background: #FAFAFA !important;*/
   background: var(--tf-surface) !important;
@@ -252,8 +255,10 @@ menupopup * {
   display: none !important;
 }
 
+/* Hide the URL bar placeholder text */
 #urlbar *|input::placeholder { opacity: 0 !important; }
 
+/* Drop the title-separator + secondary text on the first results row */
 panel#urlbar-results #urlbarView-row-0 .urlbarView-title-separator::before,
 panel#urlbar-results #urlbarView-row-0 .urlbarView-secondary {
    display:none !important;
@@ -274,6 +279,7 @@ display: none;
     white-space: nowrap;
 }
 
+/* Results rows — dim the icon fill, drop default vertical padding */
 .urlbarView-row {
     fill: currentColor;
     fill-opacity: .6;
@@ -297,12 +303,14 @@ display: none;
   --lwt-toolbar-field-highlight-text: var(--tf-text) !important;
 }
 
+/* Keep the input text readable while the field is focused */
 #urlbar[focused="true"] #urlbar-input,
 #urlbar:focus-within #urlbar-input,
 #urlbar[focused] #urlbar-input {
   color: var(--tf-text) !important;
 }
 
+/* Focused field highlight vars — gray selection, white text */
 #urlbar,
 #urlbar[focused],
 #urlbar[focused="true"] {
@@ -537,7 +545,16 @@ findbar:not(:focus-within) {
    Scoped via #main-window[sidebar-expand-on-hover] (present ONLY in this mode —
    found via DOM probe) + [sidebar-launcher-expanded] (only while expanded), so
    always-show is never matched and never doubles. #1 */
+/* expand-on-hover overlay WIDTH — set via CSS because this mode CAN'T be drag-resized:
+   reaching the edge IS the collapse gesture, so the native splitter is unreachable here
+   (only always-show drags). The pinned grid auto-fits whatever this is. Default matches
+   Firefox's current ~235px so there's no visible jump; bump it for a wider overlay (= more
+   pin columns). always-show is never matched by this selector, so it stays drag-resizable. */
+:root { --tf-sidebar-width: 235px; }
 #main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] {
+  width:     var(--tf-sidebar-width) !important;
+  min-width: var(--tf-sidebar-width) !important;
+  max-width: var(--tf-sidebar-width) !important;
   margin-block-start: 0 !important;                                 /* aligns the expand-on-hover
                                                                        overlay block with always-show
                                                                        (dialed in by eye to the px) */
@@ -631,6 +648,7 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[usercontextid="4"] { --tf-container-icon: url("resource://usercontext-content/cart.svg"); }        /* Shopping */
 .tabbrowser-tab[usercontextid="6"] { --tf-container-icon: url("resource://usercontext-content/fence.svg"); }       /* Facebook */
 
+/* positioning context for the container line + glyph markers below */
 .tabbrowser-tab[usercontextid] { position: relative !important; }
 .tabbrowser-tab[usercontextid]::after {
   content: "" !important;
@@ -673,3 +691,306 @@ findbar:not(:focus-within) {
 /* dim with the window on blur, like the rest of the chrome (covers line + glyph) */
 :root:-moz-window-inactive .tabbrowser-tab[usercontextid]::before,
 :root:-moz-window-inactive .tabbrowser-tab[usercontextid]::after { opacity: 0.45 !important; }
+
+/* ── #13: pinned tabs — faviconized compact grid ──────────────────────────────
+   Approach modeled on Tree Style Tab's faviconized pins (TST is MPL 2.0; this is a
+   from-scratch rebuild against Firefox's NATIVE vertical-tab DOM — concept only, not
+   copied code). Pinned tabs become favicon-only squares in a wrapping grid, with the
+   reskin's row separators / borders neutralized on them.
+   FIRST PASS (built while away): the per-pin rules below use selector-CERTAIN classes
+   (.tabbrowser-tab[pinned], .tab-label, .tab-content, .tab-background). The pinned-AREA
+   container id is a best guess — run the #13 probe in NEXT-SESSION.md to confirm it and
+   the real gap sources, then refine. */
+:root {
+  --tf-pin-size: 22px;       /* faviconized pin square (smaller) */
+  --tf-pin-favicon: 14px;    /* favicon inside it (smaller — leaves clear highlight margin) */
+  --tf-pin-pitch: 24px;      /* pin-to-pin step (size + 2px gap) — used for px placement */
+  --tf-pin-pitch-n: 24;      /* SAME value, UNITLESS, for the per-row division below */
+  /* Usable width of the expanded popout sidebar for pins, as a UNITLESS px number — the ONE
+     knob to match YOUR sidebar drag-width. columns-per-row is then COMPUTED, never hardcoded:
+        per-row = floor(usable-width / pitch)
+     (length÷length is illegal in CSS calc, which is exactly why these two are unitless.) */
+  --tf-pin-area-width: 230;
+  --tf-pins-per-row: max(1, round(down, var(--tf-pin-area-width) / var(--tf-pin-pitch-n)));
+  --tf-pin-row-inset: 4px;   /* left inset of pin #1. LOWER (even negative) = further LEFT.
+                                4px so the hover-highlight BOX (wider than the icon) floats
+                                off the sidebar's left padding instead of jamming the edge;
+                                the icon then sits ~4px right of the favicons below. */
+}
+
+/* Register the grid's integer vars so the round()/mod()/division resolve to CONCRETE
+   integers (not nested expression-strings) — robust and cheap. */
+@property --tf-pins-per-row { syntax: "<integer>"; inherits: true;  initial-value: 7; }
+@property --tf-pin-count    { syntax: "<integer>"; inherits: true;  initial-value: 0; }
+@property --tf-pin-rows     { syntax: "<integer>"; inherits: true;  initial-value: 1; }
+@property --pin-i           { syntax: "<integer>"; inherits: false; initial-value: 0; }
+@property --pin-col         { syntax: "<integer>"; inherits: false; initial-value: 0; }
+@property --pin-row         { syntax: "<integer>"; inherits: false; initial-value: 0; }
+
+/* per-pin: favicon-only square (these selectors are reliable) */
+.tabbrowser-tab[pinned] {
+  width: var(--tf-pin-size) !important;
+  min-width: var(--tf-pin-size) !important;
+  max-width: var(--tf-pin-size) !important;
+  height: var(--tf-pin-size) !important;
+  min-height: var(--tf-pin-size) !important;
+  padding: 0 !important;
+  margin: 1px !important;
+}
+/* hide labels + close button on pins — favicon only */
+.tabbrowser-tab[pinned] .tab-label-container,
+.tabbrowser-tab[pinned] .tab-label,
+.tabbrowser-tab[pinned] .tab-secondary-label,
+.tabbrowser-tab[pinned] .tab-close-button {
+  display: none !important;
+}
+/* dead-center the favicon in the pin square: .tab-content is absolutely sized to the
+   whole square and flex-centers, so the hidden label slot can't shove the icon right.
+   The .tab-background (the hover highlight) fills the square so it's centered on it too. */
+.tabbrowser-tab[pinned] .tab-stack {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.tabbrowser-tab[pinned] .tab-background {
+  inset: 0 !important;
+  width: var(--tf-pin-size) !important;        /* FF sizes this to the 14px strip width;
+                                                  force it to the full square so the hover
+                                                  highlight is centered on the favicon */
+  min-width: var(--tf-pin-size) !important;
+  max-width: var(--tf-pin-size) !important;
+  height: var(--tf-pin-size) !important;
+  margin: 0 !important;
+}
+.tabbrowser-tab[pinned] .tab-content {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.tabbrowser-tab[pinned] .tab-icon-stack,
+.tabbrowser-tab[pinned] .tab-icon-image {
+  position: absolute !important;          /* absolutely dead-center it in the square —
+                                             the flex centering wasn't winning */
+  inset: 0 !important;
+  margin: auto !important;
+  width: var(--tf-pin-favicon) !important;
+  height: var(--tf-pin-favicon) !important;
+  min-width: var(--tf-pin-favicon) !important;
+  min-height: var(--tf-pin-favicon) !important;
+}
+/* neutralize the reskin's row-separator gradient + stray borders/outline on pins */
+.tabbrowser-tab[pinned] .tab-background {
+  background-image: none !important;
+  border: none !important;
+  outline: none !important;
+}
+/* selection: a clean filled square (drop the regular-tab clip-path inset) */
+.tabbrowser-tab[pinned][selected] .tab-background,
+.tabbrowser-tab[pinned][visuallyselected] .tab-background {
+  background-color: var(--tf-highlight) !important;
+  clip-path: none !important;
+}
+
+/* pinned AREA — flat, no stray borders/gaps (real native id #pinned-tabs-container,
+   probe-confirmed; #vertical-pinned-tabs-container kept as a fallback). */
+/* pinned AREA = horizontal WRAPPING grid (TST's faviconized model: flex row + wrap),
+   UNCONDITIONAL — the mode-scoped selector wasn't matching expand-on-hover's DOM, so
+   the grid never applied. Packed tight (justify/align start), bounded to ~3 rows then
+   scrolls. */
+/* THE FIX (technique: r/FirefoxCSS, LunarEclipseCode): the pin layout lives in an
+   unreachable UA-Widget shadow (::part is broken in user sheets — Bug 1575507). So DON'T
+   touch the shadow — the pins are light-DOM children of #pinned-tabs-container and fully
+   styleable. Take them OUT of flow with position:absolute and place each one manually via
+   :nth-child → --pin-i. Their snippet stacks vertically (top: i*spacing); we go HORIZONTAL
+   (left: i*spacing) for a single row. */
+#pinned-tabs-container {
+  --tf-pin-count: 0;   /* set by the :has() ladder below = number of pinned tabs */
+  --tf-pin-rows: max(1, round(up, var(--tf-pin-count) / var(--tf-pins-per-row)));  /* ceil */
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  /* COMPACT: exactly N rows of pin-square, zero extra padding — the pinned area reads as
+     its own tight icon-only "compact strip" above the labelled tabs. */
+  height:     calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size)) !important;
+  min-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size)) !important;
+  max-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size)) !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+/* WRAP to as many rows as needed — every pin visible, no scroll. rows = ceil(count/per-row),
+   computed above from --tf-pin-count (the :has ladder below) and the per-row knob.
+   (Single-row + horizontal scroll is blocked by FF clamping this arrowscrollbox — see #18.) */
+/* 0 pins → collapse the empty pinned area AND drop the divider, so there's no dead gray
+   band when the last pin is removed. */
+#pinned-tabs-container:not(:has(.tabbrowser-tab[pinned])) {
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+}
+#tabbrowser-tabs:not(:has(.tabbrowser-tab[pinned])) #vertical-pinned-tabs-splitter {
+  display: none !important;
+}
+
+.tabbrowser-tab[pinned] {
+  /* col + row COMPUTED from the raw index --pin-i and the single per-row knob */
+  --pin-col: mod(var(--pin-i), var(--tf-pins-per-row));
+  --pin-row: round(down, var(--pin-i) / var(--tf-pins-per-row));
+  position: absolute !important;
+  top:  calc(var(--pin-row) * var(--tf-pin-pitch)) !important;
+  left: calc(var(--tf-pin-row-inset, 0px) + var(--pin-col) * var(--tf-pin-pitch)) !important;
+  margin: 0 !important;
+}
+/* Raw 0-based index per pin (--pin-i) + total count (--tf-pin-count), hardcoded to 16 pins
+   (sibling-index()/sibling-count() would each collapse to ONE rule, but FF hasn't shipped
+   them — Bug 1953973). EVERYTHING else — per-row, each pin's col/row, the container height —
+   is COMPUTED from these + the pitch + the sidebar width. Change --tf-pin-area-width and the
+   whole grid re-flows; raise this ladder's cap only if you keep >16 pinned tabs. */
+.tabbrowser-tab[pinned]:nth-child(1) { --pin-i: 0; }
+.tabbrowser-tab[pinned]:nth-child(2) { --pin-i: 1; }
+.tabbrowser-tab[pinned]:nth-child(3) { --pin-i: 2; }
+.tabbrowser-tab[pinned]:nth-child(4) { --pin-i: 3; }
+.tabbrowser-tab[pinned]:nth-child(5) { --pin-i: 4; }
+.tabbrowser-tab[pinned]:nth-child(6) { --pin-i: 5; }
+.tabbrowser-tab[pinned]:nth-child(7) { --pin-i: 6; }
+.tabbrowser-tab[pinned]:nth-child(8) { --pin-i: 7; }
+.tabbrowser-tab[pinned]:nth-child(9) { --pin-i: 8; }
+.tabbrowser-tab[pinned]:nth-child(10) { --pin-i: 9; }
+.tabbrowser-tab[pinned]:nth-child(11) { --pin-i: 10; }
+.tabbrowser-tab[pinned]:nth-child(12) { --pin-i: 11; }
+.tabbrowser-tab[pinned]:nth-child(13) { --pin-i: 12; }
+.tabbrowser-tab[pinned]:nth-child(14) { --pin-i: 13; }
+.tabbrowser-tab[pinned]:nth-child(15) { --pin-i: 14; }
+.tabbrowser-tab[pinned]:nth-child(16) { --pin-i: 15; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(1)) { --tf-pin-count: 1; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(2)) { --tf-pin-count: 2; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(3)) { --tf-pin-count: 3; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(4)) { --tf-pin-count: 4; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(5)) { --tf-pin-count: 5; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(6)) { --tf-pin-count: 6; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(7)) { --tf-pin-count: 7; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8)) { --tf-pin-count: 8; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(9)) { --tf-pin-count: 9; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(10)) { --tf-pin-count: 10; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(11)) { --tf-pin-count: 11; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(12)) { --tf-pin-count: 12; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(13)) { --tf-pin-count: 13; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(14)) { --tf-pin-count: 14; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-count: 15; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(16)) { --tf-pin-count: 16; }
+
+/* ── LIVE auto-fit: per-row tracks the ACTUAL expanded-sidebar width ──────────────────
+   Make the tab strip a query container, then a breakpoint ladder sets --tf-pins-per-row to
+   floor(width / pitch) live. Drag the sidebar wider → cross a rung → per-row ticks up → the
+   mod()/round() above instantly re-flow every pin's col/row AND the strip height. No restart.
+   Each rung is `min-width: 24*N + 2` so column N is added only once it FULLY fits (no clip).
+   This OVERRIDES the static --tf-pin-area-width computation; that knob remains the fallback
+   if container queries are ever unavailable (remove container-type → graceful fallback). The
+   skinny/collapsed strip (max-width) drops to a single vertical column, which is correct. */
+#tabbrowser-tabs { container-type: inline-size; container-name: tfpins; }
+@container tfpins (max-width: 49px) { #pinned-tabs-container { --tf-pins-per-row: 1; } }
+@container tfpins (min-width: 50px) { #pinned-tabs-container { --tf-pins-per-row: 2; } }
+@container tfpins (min-width: 74px) { #pinned-tabs-container { --tf-pins-per-row: 3; } }
+@container tfpins (min-width: 98px) { #pinned-tabs-container { --tf-pins-per-row: 4; } }
+@container tfpins (min-width: 122px) { #pinned-tabs-container { --tf-pins-per-row: 5; } }
+@container tfpins (min-width: 146px) { #pinned-tabs-container { --tf-pins-per-row: 6; } }
+@container tfpins (min-width: 170px) { #pinned-tabs-container { --tf-pins-per-row: 7; } }
+@container tfpins (min-width: 194px) { #pinned-tabs-container { --tf-pins-per-row: 8; } }
+@container tfpins (min-width: 218px) { #pinned-tabs-container { --tf-pins-per-row: 9; } }
+@container tfpins (min-width: 242px) { #pinned-tabs-container { --tf-pins-per-row: 10; } }
+@container tfpins (min-width: 266px) { #pinned-tabs-container { --tf-pins-per-row: 11; } }
+@container tfpins (min-width: 290px) { #pinned-tabs-container { --tf-pins-per-row: 12; } }
+@container tfpins (min-width: 314px) { #pinned-tabs-container { --tf-pins-per-row: 13; } }
+@container tfpins (min-width: 338px) { #pinned-tabs-container { --tf-pins-per-row: 14; } }
+@container tfpins (min-width: 362px) { #pinned-tabs-container { --tf-pins-per-row: 15; } }
+@container tfpins (min-width: 386px) { #pinned-tabs-container { --tf-pins-per-row: 16; } }
+
+/* The pinned row WRAPS on every platform now. We PREVIOUSLY ran a PLATFORM SPLIT here
+   using Firefox's `@media (-moz-platform: macos)` feature: macOS got a single horizontal
+   row meant to scroll via two-finger swipe, while `@media not (-moz-platform: macos)` got
+   the wrap fallback. The macOS slide was abandoned (FF clamps the pinned arrowscrollbox so
+   it can't scroll). If you want to revive a per-OS behavior, `-moz-platform` is the hook —
+   the exact removed @media block and the full why-it-failed post-mortem are preserved in
+   GitHub issue #18 and in this file's git history. */
+/* clean faviconized pins: no chunky button box unless selected/hovered */
+.tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
+  background-color: transparent !important;
+}
+/* hover highlight on .tab-content — it's the element that's actually the full 22px square
+   (.tab-background is FF-locked to the 14px strip width), so the highlight is centered. */
+.tabbrowser-tab[pinned]:hover .tab-content {
+  background-color: var(--tf-select) !important;   /* #555 — clearly readable; tune if too hot */
+  border-radius: 5px !important;
+}
+.tabbrowser-tab[pinned][selected] .tab-background,
+.tabbrowser-tab[pinned][visuallyselected] .tab-background {
+  border-radius: 4px !important;
+}
+/* the native pinned<->normal resizer #vertical-pinned-tabs-splitter is the ~11px gap
+   + the off-width divider (D/E/F). Render it as a clean 1px FULL-WIDTH line in the
+   separator color — same move as #sidebar-launcher-splitter in #1. */
+#vertical-pinned-tabs-splitter {
+  appearance: none !important;
+  min-height: 0 !important;
+  height: 1px !important;
+  max-height: 1px !important;
+  margin-block: 0 !important;
+  margin-inline: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background-color: var(--tf-line-solid) !important;
+}
+:root:-moz-window-inactive #vertical-pinned-tabs-splitter {
+  background-color: var(--tf-line-solid-inactive) !important;
+}
+/* no extra gap between the pinned area and the first normal tab (the "taller top tab").
+   Root cause (probe): #tabbrowser-tabs is a flex column with a ~5px GAP between its three
+   sections (pinned area / splitter / normal tabs). Zero it — regular tab spacing is
+   inside #tabbrowser-arrowscrollbox so it's unaffected. */
+#tabbrowser-tabs {
+  gap: 0 !important;
+}
+#tabbrowser-arrowscrollbox {
+  margin-block-start: 0 !important;
+  padding-block-start: 0 !important;
+}
+#tabbrowser-arrowscrollbox > .tabbrowser-tab:first-of-type {
+  margin-block-start: 0 !important;
+}
+
+/* ── #14: drag-to-reorder tabs ────────────────────────────────────────────────
+   Native FF vertical tabs DO support drag-reorder (TST needed JS only because it
+   built its own strip), so this isn't a port — it's theming the drop indicator and
+   making sure our reskin doesn't block the drag. Our ::before/::after container
+   markers are already pointer-events:none, so they shouldn't interfere.
+   UPSTREAM CAVEAT: FF's sidebar.revamp vertical-tab drag has a KNOWN bug where tabs
+   can blank out mid-drag (Mozilla connect/support threads). If reorder is broken even
+   with this, that's the Firefox bug — not our CSS.
+   TEST when back: drag a tab up/down in BOTH expand-on-hover and always-show; watch
+   whether (a) it reorders, (b) the drop line shows, (c) tabs blank mid-drag (= the FF
+   bug). Report which, and I'll target the fix. */
+/* drop indicator: FF's native .tab-drop-indicator paints tab-drag-indicator.svg and is
+   notoriously faint/translucent (Mozilla support #1276825). Make it a BOLD, OPAQUE
+   accent bar so the drop point is obvious. If NOTHING shows while dragging, FF isn't
+   positioning one in vertical mode — a CSS-only fix can't create that (needs JS). */
+.tab-drop-indicator,
+#tabbrowser-tabs .tab-drop-indicator,
+.tabbrowser-tab .tab-drop-indicator {
+  background: var(--tf-accent) !important;
+  background-image: none !important;          /* drop the faint SVG arrow */
+  opacity: 1 !important;
+  min-height: 3px !important;
+  min-width: 3px !important;
+  border: none !important;
+  border-radius: 2px !important;
+  box-shadow: 0 0 4px 1px var(--tf-accent) !important;   /* glow so it reads instantly */
+  z-index: 2147483647 !important;
+}
+/* make sure tabs read as draggable content, not a window-drag region */
+.tabbrowser-tab { -moz-window-dragging: no-drag !important; }
