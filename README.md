@@ -304,6 +304,23 @@ the right selectors (e.g. `@media (-moz-platform: windows)` /
 `:root[platform="linux"]`) or separate files, so the macOS default stays exactly
 as-is.
 
+### 🙋 Volunteers wanted (Linux / Windows testing)
+
+trimfox is built and tuned on macOS only, so a handful of things genuinely need
+eyes on other platforms. Anything that needs other-OS or other-hardware testing is
+tagged **[`user-testing`](https://github.com/csmarshall/trimfox/labels/user-testing)**
+— currently:
+
+- **Validate the overall look on Linux** (issue #8) and **Windows** (#9).
+- **Confirm the pinned-tab row's two-finger / horizontal scroll** works off macOS
+  (#17). On macOS the pinned row is a single sliding row; elsewhere it wraps to
+  rows as a fallback — if scroll works on your platform, we can switch it to slide.
+
+You don't need to write a fix — just run it, try the thing, and report back (a
+screenshot or even a plain "works / doesn't" is genuinely useful). Grab a
+[`user-testing` issue](https://github.com/csmarshall/trimfox/labels/user-testing)
+and comment.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
