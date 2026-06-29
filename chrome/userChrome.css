@@ -113,44 +113,39 @@ menupopup * {
   font-size: 7pt !important;
 }
 
-/* #5: ONE combined nav button whose glyph ADAPTS to your history position, using Firefox's
-   OWN play.svg — the original theme's back/fwd icon, a HOLLOW rounded triangle (even-odd
-   FILLED, so context-fill themes it; stroke won't theme on toolbar icons) — throughout:
-     - both ways          -> two play.svg triangles + a slim rounded divider  (◀ | ▶)
-     - newest (no forward) -> play.svg FLIPPED  (◀, back-only)
-     - oldest (no back)    -> swap to the real Forward button, play.svg  (▶)
-     - fresh tab (neither) -> back button, greyed two-triangle glyph
-   [disabled] + :has() drive the switch. Left-click navigates; right-click = history menu. */
+/* #5: ONE history-aware nav button. Firefox sets [disabled] on #back-button / #forward-button
+   when you can't go that way; :has() reads both and swaps the glyph (all real devtools icons,
+   themed via context-fill):
+     - both ways          -> arrowhead-down  (⌄ — nudges "there's a menu / more here")
+     - newest (no forward) -> arrowhead-left  (‹  back-only)
+     - oldest (no back)    -> swap to the real Forward button -> arrowhead-right (›)
+     - fresh tab (neither) -> back button, greyed arrowhead-down
+   Left-click navigates; right-click = themed history menu. */
 #forward-button { display: none !important; }                /* hidden by default; shown at stack-start */
 #back-button, #forward-button {
   -moz-context-properties: fill !important;
-  fill: var(--toolbar-color, #e8e8e8) !important;   /* explicit themed color — currentColor
-                                                        resolves dark on the nav buttons */
+  fill: var(--toolbar-color, #e8e8e8) !important;   /* explicit themed color (currentColor is dark here) */
 }
 #back-button > .toolbarbutton-icon,
 #forward-button > .toolbarbutton-icon { transform: none !important; }
 
-/* both ways (or neither -> greyed): two play.svg triangles + slim divider */
+/* both ways (or neither -> greyed) -> arrowhead-down */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" fill-rule="evenodd" transform="translate(6.98 1.85) scale(0.62 0.82)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><path fill="context-fill" fill-rule="evenodd" transform="translate(9.02 1.85) scale(-0.62 0.82)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><rect fill="context-fill" x="7.55" y="4.2" width="0.9" height="7.6" rx="0.45"/></svg>') !important;
+  list-style-image: url("chrome://devtools/skin/images/arrowhead-down.svg") !important;
 }
-/* newest page (only back): the real play.svg, FLIPPED to point left ◀ */
+/* newest page (only back) -> arrowhead-left */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button {
-  list-style-image: url("chrome://devtools/skin/images/play.svg") !important;
+  list-style-image: url("chrome://devtools/skin/images/arrowhead-left.svg") !important;
 }
-#nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button > .toolbarbutton-icon {
-  transform: scaleX(-1) !important;
-}
-/* oldest page (only forward): hide Back, reveal the real Forward button with play.svg ▶ */
+/* oldest page (only forward) -> hide Back, reveal Forward -> arrowhead-right */
 #nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #back-button {
   display: none !important;
 }
 #nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #forward-button {
   display: flex !important;
-  list-style-image: url("chrome://devtools/skin/images/play.svg") !important;
-  padding-inline-start: 8px !important;   /* match #back-button's 8px native padding so the
-                                             icon sits in the SAME spot — no shift on swap */
+  list-style-image: url("chrome://devtools/skin/images/arrowhead-right.svg") !important;
+  padding-inline-start: 8px !important;   /* match back's padding — no shift on swap */
 }
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
