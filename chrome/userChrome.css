@@ -741,27 +741,28 @@ findbar:not(:focus-within) {
    UNCONDITIONAL — the mode-scoped selector wasn't matching expand-on-hover's DOM, so
    the grid never applied. Packed tight (justify/align start), bounded to ~3 rows then
    scrolls. */
-/* THE REAL FIX (from the Firefox source): #pinned-tabs-container lays its pins out in a
-   shadow-DOM grid exposed as ::part(items-wrapper). FF sets that part to
-   `grid-template-columns: 1fr` in expand-on-hover (ONE column = vertical stack) and an
-   auto-fit grid in always-show. NONE of that is reachable by styling the host element —
-   which is why every host rule was ignored. Override the PART to flow into ONE horizontal
-   row. (User-sheet !important beats FF's author rule regardless of specificity.) */
-#pinned-tabs-container::part(items-wrapper),
-#vertical-pinned-tabs-container::part(items-wrapper) {
-  display: grid !important;
-  grid-auto-flow: column !important;          /* flow left-to-right = horizontal */
-  grid-template-columns: none !important;     /* kill FF's 1fr / auto-fit columns */
-  grid-template-rows: auto !important;        /* a single row */
-  grid-auto-columns: max-content !important;  /* each pin = its 28px square */
-  justify-content: start !important;
+/* THE REAL FIX (probe-confirmed structure): #pinned-tabs-container is a XUL
+   <arrowscrollbox orient="vertical">. Its pins slot into <slot part="items-wrapper">,
+   which FF lays out as display:flex / flex-direction:COLUMN (152 uses flex, not the grid
+   the master source showed). Flip that slot — and the scrollbox part around it — to ROW
+   for a single horizontal pin row. */
+#pinned-tabs-container::part(items-wrapper) {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   align-items: center !important;
   gap: 2px !important;
-  overflow: visible !important;               /* row extends right, like the tab labels */
 }
-/* host: unclamp the ~14px width FF imposes so the horizontal row is actually visible */
+#pinned-tabs-container::part(scrollbox) {
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+/* host: drop the orient-driven vertical box + unclamp the ~14px width FF imposes so the
+   horizontal row is actually visible */
 #main-window #tabbrowser-tabs #pinned-tabs-container,
 #main-window #tabbrowser-tabs #vertical-pinned-tabs-container {
+  -moz-box-orient: horizontal !important;
   width: max-content !important;
   min-width: 0 !important;
   max-width: none !important;
