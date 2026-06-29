@@ -693,9 +693,9 @@ findbar:not(:focus-within) {
    container id is a best guess — run the #13 probe in NEXT-SESSION.md to confirm it and
    the real gap sources, then refine. */
 :root {
-  --tf-pin-size: 24px;       /* faviconized pin square (was 28 — tightened) */
-  --tf-pin-favicon: 16px;    /* favicon inside it — TST's --favicon-size */
-  --tf-pin-pitch: 26px;      /* pin-to-pin step (size + small gap) — tighter */
+  --tf-pin-size: 22px;       /* faviconized pin square (smaller) */
+  --tf-pin-favicon: 14px;    /* favicon inside it (smaller — leaves clear highlight margin) */
+  --tf-pin-pitch: 24px;      /* pin-to-pin step (size + small gap) */
   --tf-pins-per-row: 7;      /* MUST match the 7n nth-child patterns + row ranges below */
   --tf-pin-row-inset: 0px;   /* left inset of pin #1. LOWER (even negative) = further LEFT.
                                 tune to line pin #1 up with the tab content below */
@@ -718,23 +718,32 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned] .tab-close-button {
   display: none !important;
 }
-/* center the favicon BOTH axes within each pin square */
-.tabbrowser-tab[pinned] .tab-stack,
-.tabbrowser-tab[pinned] .tab-content {
+/* dead-center the favicon in the pin square: .tab-content is absolutely sized to the
+   whole square and flex-centers, so the hidden label slot can't shove the icon right.
+   The .tab-background (the hover highlight) fills the square so it's centered on it too. */
+.tabbrowser-tab[pinned] .tab-stack {
+  position: relative !important;
   width: 100% !important;
   height: 100% !important;
+}
+.tabbrowser-tab[pinned] .tab-background {
+  inset: 0 !important;
+  margin: 0 !important;
+}
+.tabbrowser-tab[pinned] .tab-content {
+  position: absolute !important;
+  inset: 0 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 0 !important;
   margin: 0 !important;
 }
-/* favicon sized like TST (16px), centered in the 28px square */
 .tabbrowser-tab[pinned] .tab-icon-image,
 .tabbrowser-tab[pinned] .tab-icon-stack {
   width: var(--tf-pin-favicon) !important;
   height: var(--tf-pin-favicon) !important;
-  margin: auto !important;
+  margin: 0 !important;
 }
 /* neutralize the reskin's row-separator gradient + stray borders/outline on pins */
 .tabbrowser-tab[pinned] .tab-background {
@@ -838,9 +847,9 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
 }
-/* hover highlight as you slide across the pins — clearly visible (raised was too faint
-   behind the favicon) */
-.tabbrowser-tab[pinned]:hover,
+/* hover highlight as you slide across the pins — ONLY on .tab-background (now sized to
+   fill the square, so it's centered on the favicon; the pin element itself was the
+   "slammed-left" highlight) */
 .tabbrowser-tab[pinned]:hover .tab-background {
   background-color: var(--tf-select) !important;   /* #555 — clearly readable; tune if too hot */
   border-radius: 5px !important;
