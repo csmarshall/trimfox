@@ -688,6 +688,8 @@ findbar:not(:focus-within) {
   --tf-pin-favicon: 16px;    /* favicon inside it — TST's --favicon-size */
   --tf-pin-pitch: 26px;      /* pin-to-pin step (size + small gap) — tighter */
   --tf-pins-per-row: 7;      /* MUST match the 7n nth-child patterns + row ranges below */
+  --tf-pin-row-inset: 0px;   /* left inset of pin #1. LOWER (even negative) = further LEFT.
+                                tune to line pin #1 up with the tab content below */
 }
 
 /* per-pin: favicon-only square (these selectors are reliable) */
@@ -771,7 +773,7 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned] {
   position: absolute !important;
   top: 3px !important;                          /* all in ONE row */
-  left: calc(4px + (var(--pin-row, 0) * var(--tf-pins-per-row) + var(--pin-col, 0)) * var(--tf-pin-pitch)) !important;
+  left: calc(var(--tf-pin-row-inset, 0px) + (var(--pin-row, 0) * var(--tf-pins-per-row) + var(--pin-col, 0)) * var(--tf-pin-pitch)) !important;
   margin: 0 !important;
 }
 /* col + row from nth-child STEP patterns → each pin's ABSOLUTE index (row*per-row + col),
@@ -794,10 +796,12 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
 }
-/* hover highlight as you slide across the pins */
+/* hover highlight as you slide across the pins — on the tab itself (the .tab-background
+   wasn't filling the square), in the same raised color as a normal tab hover */
+.tabbrowser-tab[pinned]:hover,
 .tabbrowser-tab[pinned]:hover .tab-background {
-  background-color: var(--tf-highlight) !important;
-  border-radius: 4px !important;
+  background-color: var(--tf-raised) !important;
+  border-radius: 5px !important;
 }
 .tabbrowser-tab[pinned][selected] .tab-background,
 .tabbrowser-tab[pinned][visuallyselected] .tab-background {
