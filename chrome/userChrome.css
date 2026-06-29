@@ -158,6 +158,7 @@ menupopup * {
   color: transparent !important;
 }
 
+/* URL dropdown title + results list — match the 7pt chrome font */
 .ac-title,
 .urlbarView-results {
    font-size: 7pt;
@@ -193,6 +194,7 @@ menupopup * {
   background: var(--tf-select) !important;
 }
 
+/* Selected dropdown row — force white text on every child element */
 .urlbarView-row[selected] *,
 .urlbarView-row[selected] .urlbarView-title,
 .urlbarView-row[selected] .urlbarView-url,
@@ -201,6 +203,7 @@ menupopup * {
   color: var(--tf-text) !important;
 }
 
+/* URL bar field — surface background + 7pt */
 #urlbar {
   /* light background: #FAFAFA !important;*/
   background: var(--tf-surface) !important;
@@ -252,8 +255,10 @@ menupopup * {
   display: none !important;
 }
 
+/* Hide the URL bar placeholder text */
 #urlbar *|input::placeholder { opacity: 0 !important; }
 
+/* Drop the title-separator + secondary text on the first results row */
 panel#urlbar-results #urlbarView-row-0 .urlbarView-title-separator::before,
 panel#urlbar-results #urlbarView-row-0 .urlbarView-secondary {
    display:none !important;
@@ -274,6 +279,7 @@ display: none;
     white-space: nowrap;
 }
 
+/* Results rows — dim the icon fill, drop default vertical padding */
 .urlbarView-row {
     fill: currentColor;
     fill-opacity: .6;
@@ -297,12 +303,14 @@ display: none;
   --lwt-toolbar-field-highlight-text: var(--tf-text) !important;
 }
 
+/* Keep the input text readable while the field is focused */
 #urlbar[focused="true"] #urlbar-input,
 #urlbar:focus-within #urlbar-input,
 #urlbar[focused] #urlbar-input {
   color: var(--tf-text) !important;
 }
 
+/* Focused field highlight vars — gray selection, white text */
 #urlbar,
 #urlbar[focused],
 #urlbar[focused="true"] {
@@ -631,6 +639,7 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[usercontextid="4"] { --tf-container-icon: url("resource://usercontext-content/cart.svg"); }        /* Shopping */
 .tabbrowser-tab[usercontextid="6"] { --tf-container-icon: url("resource://usercontext-content/fence.svg"); }       /* Facebook */
 
+/* positioning context for the container line + glyph markers below */
 .tabbrowser-tab[usercontextid] { position: relative !important; }
 .tabbrowser-tab[usercontextid]::after {
   content: "" !important;
@@ -702,6 +711,7 @@ findbar:not(:focus-within) {
   padding: 0 !important;
   margin: 1px !important;
 }
+/* hide labels + close button on pins — favicon only */
 .tabbrowser-tab[pinned] .tab-label-container,
 .tabbrowser-tab[pinned] .tab-label,
 .tabbrowser-tab[pinned] .tab-secondary-label,
@@ -831,7 +841,13 @@ findbar:not(:focus-within) {
 :root:-moz-window-inactive #vertical-pinned-tabs-splitter {
   background-color: var(--tf-line-solid-inactive) !important;
 }
-/* no extra gap between the pinned area and the first normal tab (the "taller top tab") */
+/* no extra gap between the pinned area and the first normal tab (the "taller top tab").
+   Root cause (probe): #tabbrowser-tabs is a flex column with a ~5px GAP between its three
+   sections (pinned area / splitter / normal tabs). Zero it — regular tab spacing is
+   inside #tabbrowser-arrowscrollbox so it's unaffected. */
+#tabbrowser-tabs {
+  gap: 0 !important;
+}
 #tabbrowser-arrowscrollbox {
   margin-block-start: 0 !important;
   padding-block-start: 0 !important;
