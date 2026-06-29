@@ -721,8 +721,9 @@ findbar:not(:focus-within) {
   clip-path: none !important;
 }
 
-/* the pinned AREA = a wrapping grid. NOTE: #vertical-pinned-tabs-container is the
-   best-guess native id (FF sidebar.revamp); verify via the probe. Harmless if absent. */
+/* the pinned AREA = a wrapping grid. Real native id is #pinned-tabs-container
+   (confirmed via probe; #vertical-pinned-tabs-container kept as a fallback). */
+#pinned-tabs-container,
 #vertical-pinned-tabs-container {
   display: flex !important;
   flex-flow: row wrap !important;
