@@ -11,6 +11,13 @@ new-tab button, no hover-preview cards, no launcher clutter.
 
 It's called *trimfox* because that's the point — trim everything that isn't a tab.
 
+> **Heads up — this is opinionated.** trimfox collapses Back + Forward into a *single*,
+> history-aware nav button (the old unified-back/forward look): **◀** at the newest page,
+> **▶** at the oldest, a **◀▶** pair in between. Left-click navigates; the other direction
+> and full history are on **right-click** (or the keyboard — `Cmd+[` / `Cmd+]`). If you rely
+> on always-visible **separate Back and Forward buttons**, or you don't reach for
+> keyboard/right-click navigation, trimfox probably isn't for you.
+
 ## Requirements
 
 - **Firefox 136+** (native vertical tabs); developed and verified on **152**.
