@@ -755,6 +755,23 @@ findbar:not(:focus-within) {
   overflow-y: auto !important;
   scrollbar-width: thin !important;
 }
+/* the native pinned<->normal resizer #vertical-pinned-tabs-splitter is the ~11px gap
+   + the off-width divider (D/E/F). Render it as a clean 1px FULL-WIDTH line in the
+   separator color — same move as #sidebar-launcher-splitter in #1. */
+#vertical-pinned-tabs-splitter {
+  appearance: none !important;
+  min-height: 0 !important;
+  height: 1px !important;
+  max-height: 1px !important;
+  margin-block: 0 !important;
+  margin-inline: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background-color: var(--tf-line-solid) !important;
+}
+:root:-moz-window-inactive #vertical-pinned-tabs-splitter {
+  background-color: var(--tf-line-solid-inactive) !important;
+}
 
 /* ── #14: drag-to-reorder tabs ────────────────────────────────────────────────
    Native FF vertical tabs DO support drag-reorder (TST needed JS only because it
