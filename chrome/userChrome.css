@@ -780,12 +780,8 @@ findbar:not(:focus-within) {
   border: none !important;
 }
 
-/* overflow cue: once the pins exceed the viewport (~9th pin at the default width), fade
-   the right edge to signal "more — swipe/scroll right". (A clickable scroll arrow would
-   need JS, since native scroll buttons can't drive absolutely-positioned pins.) */
-#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(9)) {
-  mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent) !important;
-}
+/* (overflow fade removed — it implied a clickable arrow that pure userChrome can't
+   provide; pins reachable by two-finger swipe in slide mode.) */
 
 .tabbrowser-tab[pinned] {
   position: absolute !important;
