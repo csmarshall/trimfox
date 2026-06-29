@@ -697,8 +697,10 @@ findbar:not(:focus-within) {
   --tf-pin-favicon: 14px;    /* favicon inside it (smaller — leaves clear highlight margin) */
   --tf-pin-pitch: 24px;      /* pin-to-pin step (size + small gap) */
   --tf-pins-per-row: 7;      /* MUST match the 7n nth-child patterns + row ranges below */
-  --tf-pin-row-inset: 0px;   /* left inset of pin #1. LOWER (even negative) = further LEFT.
-                                tune to line pin #1 up with the tab content below */
+  --tf-pin-row-inset: 4px;   /* left inset of pin #1. LOWER (even negative) = further LEFT.
+                                4px so the hover-highlight BOX (wider than the icon) floats
+                                off the sidebar's left padding instead of jamming the edge;
+                                the icon then sits ~4px right of the favicons below. */
 }
 
 /* per-pin: favicon-only square (these selectors are reliable) */
