@@ -741,38 +741,48 @@ findbar:not(:focus-within) {
    UNCONDITIONAL — the mode-scoped selector wasn't matching expand-on-hover's DOM, so
    the grid never applied. Packed tight (justify/align start), bounded to ~3 rows then
    scrolls. */
-/* THE REAL FIX (probe-confirmed structure): #pinned-tabs-container is a XUL
-   <arrowscrollbox orient="vertical">. Its pins slot into <slot part="items-wrapper">,
-   which FF lays out as display:flex / flex-direction:COLUMN (152 uses flex, not the grid
-   the master source showed). Flip that slot — and the scrollbox part around it — to ROW
-   for a single horizontal pin row. */
-#pinned-tabs-container::part(items-wrapper) {
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 2px !important;
-}
-#pinned-tabs-container::part(scrollbox) {
-  flex-direction: row !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  scrollbar-width: none !important;
-}
-/* host: drop the orient-driven vertical box + unclamp the ~14px width FF imposes so the
-   horizontal row is actually visible */
-#main-window #tabbrowser-tabs #pinned-tabs-container,
-#main-window #tabbrowser-tabs #vertical-pinned-tabs-container {
-  -moz-box-orient: horizontal !important;
-  width: max-content !important;
+/* THE FIX (technique: r/FirefoxCSS, LunarEclipseCode): the pin layout lives in an
+   unreachable UA-Widget shadow (::part is broken in user sheets — Bug 1575507). So DON'T
+   touch the shadow — the pins are light-DOM children of #pinned-tabs-container and fully
+   styleable. Take them OUT of flow with position:absolute and place each one manually via
+   :nth-child → --pin-i. Their snippet stacks vertically (top: i*spacing); we go HORIZONTAL
+   (left: i*spacing) for a single row. */
+#pinned-tabs-container {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
   min-width: 0 !important;
   max-width: none !important;
-  max-height: none !important;
+  height: calc(var(--tf-pin-size) + 6px) !important;       /* holds the single row */
+  min-height: calc(var(--tf-pin-size) + 6px) !important;
+  max-height: calc(var(--tf-pin-size) + 6px) !important;
   overflow: visible !important;
+  padding: 0 !important;
   margin: 0 !important;
-  padding: 2px 4px !important;
   border: none !important;
-  box-shadow: none !important;
 }
+.tabbrowser-tab[pinned] {
+  position: absolute !important;
+  top: 3px !important;
+  left: calc(4px + var(--pin-i, 0) * (var(--tf-pin-size) + 3px)) !important;  /* horizontal */
+  margin: 0 !important;
+}
+.tabbrowser-tab[pinned]:nth-child(1)  { --pin-i: 0;  }
+.tabbrowser-tab[pinned]:nth-child(2)  { --pin-i: 1;  }
+.tabbrowser-tab[pinned]:nth-child(3)  { --pin-i: 2;  }
+.tabbrowser-tab[pinned]:nth-child(4)  { --pin-i: 3;  }
+.tabbrowser-tab[pinned]:nth-child(5)  { --pin-i: 4;  }
+.tabbrowser-tab[pinned]:nth-child(6)  { --pin-i: 5;  }
+.tabbrowser-tab[pinned]:nth-child(7)  { --pin-i: 6;  }
+.tabbrowser-tab[pinned]:nth-child(8)  { --pin-i: 7;  }
+.tabbrowser-tab[pinned]:nth-child(9)  { --pin-i: 8;  }
+.tabbrowser-tab[pinned]:nth-child(10) { --pin-i: 9;  }
+.tabbrowser-tab[pinned]:nth-child(11) { --pin-i: 10; }
+.tabbrowser-tab[pinned]:nth-child(12) { --pin-i: 11; }
+.tabbrowser-tab[pinned]:nth-child(13) { --pin-i: 12; }
+.tabbrowser-tab[pinned]:nth-child(14) { --pin-i: 13; }
+.tabbrowser-tab[pinned]:nth-child(15) { --pin-i: 14; }
+.tabbrowser-tab[pinned]:nth-child(16) { --pin-i: 15; }
 /* clean faviconized pins: no chunky button box unless selected/hovered */
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
