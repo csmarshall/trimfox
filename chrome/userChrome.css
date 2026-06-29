@@ -123,8 +123,10 @@ menupopup * {
    Only the ◄► (both-ways) state uses a custom glyph; see nav-icon-options.html to restyle it. */
 #forward-button { display: none !important; }                 /* hidden by default; shown at stack-start */
 #back-button, #forward-button {
-  -moz-context-properties: fill !important;
+  -moz-context-properties: fill, stroke !important;   /* expose BOTH so filled native icons
+                                                          AND our stroked ◄► glyph theme */
   fill: currentColor !important;
+  stroke: currentColor !important;
 }
 #back-button > .toolbarbutton-icon,
 #forward-button > .toolbarbutton-icon { transform: none !important; }
@@ -132,7 +134,7 @@ menupopup * {
 /* both ways (or neither -> greyed) -> custom ◄► (the only state with no native equivalent) */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg>') !important;
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="context-stroke" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 4 L2 8 L5.5 12 Z"/><path d="M8 4 L8 12"/><path d="M10.5 4 L14 8 L10.5 12 Z"/></svg>') !important;
 }
 /* newest page (only back): NO override -> #back-button keeps Firefox's NATIVE themed back
    arrow (the ◄► rule above doesn't match this state). */
