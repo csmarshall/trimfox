@@ -775,7 +775,9 @@ findbar:not(:focus-within) {
   overflow-x: auto !important;                 /* slide left/right (trackpad / shift+wheel) */
   overflow-y: hidden !important;
   scrollbar-width: none !important;            /* no visible bar; still scrolls */
-  padding: 0 !important;
+  scroll-padding-inline-end: 8px !important;
+  padding: 0 8px 0 0 !important;               /* trailing gap so the last pin's hover
+                                                  highlight floats, never flush to the edge */
   margin: 0 !important;
   border: none !important;
 }
