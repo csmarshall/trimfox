@@ -746,7 +746,9 @@ findbar:not(:focus-within) {
    --pinned-tabs-area-size). They were stacking vertically only because the container
    stayed narrow. */
 #tabbrowser-tabs[orient="vertical"][expanded] #pinned-tabs-container,
-#tabbrowser-tabs[orient="vertical"][expanded] #vertical-pinned-tabs-container {
+#tabbrowser-tabs[orient="vertical"][expanded] #vertical-pinned-tabs-container,
+#main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] #pinned-tabs-container,
+#main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] #vertical-pinned-tabs-container {
   flex-flow: row wrap !important;
   align-items: flex-start !important;
   width: 100% !important;
