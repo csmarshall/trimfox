@@ -545,7 +545,16 @@ findbar:not(:focus-within) {
    Scoped via #main-window[sidebar-expand-on-hover] (present ONLY in this mode —
    found via DOM probe) + [sidebar-launcher-expanded] (only while expanded), so
    always-show is never matched and never doubles. #1 */
+/* expand-on-hover overlay WIDTH — set via CSS because this mode CAN'T be drag-resized:
+   reaching the edge IS the collapse gesture, so the native splitter is unreachable here
+   (only always-show drags). The pinned grid auto-fits whatever this is. Default matches
+   Firefox's current ~235px so there's no visible jump; bump it for a wider overlay (= more
+   pin columns). always-show is never matched by this selector, so it stays drag-resizable. */
+:root { --tf-sidebar-width: 235px; }
 #main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] {
+  width:     var(--tf-sidebar-width) !important;
+  min-width: var(--tf-sidebar-width) !important;
+  max-width: var(--tf-sidebar-width) !important;
   margin-block-start: 0 !important;                                 /* aligns the expand-on-hover
                                                                        overlay block with always-show
                                                                        (dialed in by eye to the px) */
