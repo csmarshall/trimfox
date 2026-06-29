@@ -124,7 +124,8 @@ menupopup * {
 #forward-button { display: none !important; }                /* hidden by default; shown at stack-start */
 #back-button, #forward-button {
   -moz-context-properties: fill !important;
-  fill: currentColor !important;
+  fill: var(--toolbar-color, #e8e8e8) !important;   /* explicit themed color — currentColor
+                                                        resolves dark on the nav buttons */
 }
 #back-button > .toolbarbutton-icon,
 #forward-button > .toolbarbutton-icon { transform: none !important; }
