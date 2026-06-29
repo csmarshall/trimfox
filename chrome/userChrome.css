@@ -149,6 +149,8 @@ menupopup * {
 #nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #forward-button {
   display: flex !important;
   list-style-image: url("chrome://devtools/skin/images/play.svg") !important;
+  padding-inline-start: 8px !important;   /* match #back-button's 8px native padding so the
+                                             icon sits in the SAME spot — no shift on swap */
 }
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
