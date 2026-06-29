@@ -684,10 +684,10 @@ findbar:not(:focus-within) {
    container id is a best guess — run the #13 probe in NEXT-SESSION.md to confirm it and
    the real gap sources, then refine. */
 :root {
-  --tf-pin-size: 28px;       /* faviconized pin square — TST's --faviconized-tab-size */
+  --tf-pin-size: 24px;       /* faviconized pin square (was 28 — tightened) */
   --tf-pin-favicon: 16px;    /* favicon inside it — TST's --favicon-size */
-  --tf-pin-pitch: 30px;      /* pin-to-pin step (size + gap) */
-  --tf-pins-per-row: 7;      /* wrap to a new row after this many (fits the sidebar) */
+  --tf-pin-pitch: 26px;      /* pin-to-pin step (size + small gap) — tighter */
+  --tf-pins-per-row: 7;      /* MUST match the 7n nth-child patterns + row ranges below */
 }
 
 /* per-pin: favicon-only square (these selectors are reliable) */
@@ -750,35 +750,34 @@ findbar:not(:focus-within) {
    :nth-child → --pin-i. Their snippet stacks vertically (top: i*spacing); we go HORIZONTAL
    (left: i*spacing) for a single row. */
 #pinned-tabs-container {
-  --tf-pin-rows: 1;
   position: relative !important;
   display: block !important;
-  width: 100% !important;
+  width: var(--tf-pin-area-width, 210px) !important;   /* scroll viewport — TUNE this to your
+                                                          expanded sidebar width if pins cut
+                                                          off early or there's dead space */
   min-width: 0 !important;
-  max-width: none !important;
-  height:     calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
-  min-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
-  max-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
-  overflow: visible !important;
+  max-width: 100% !important;
+  height:     calc(var(--tf-pin-size) + 6px) !important;   /* ONE row */
+  min-height: calc(var(--tf-pin-size) + 6px) !important;
+  max-height: calc(var(--tf-pin-size) + 6px) !important;
+  overflow-x: auto !important;                 /* slide left/right (trackpad / shift+wheel) */
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;            /* no visible bar; still scrolls */
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
 }
-/* grow the area as pins wrap to new rows (per-row = 7) */
-#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8))  { --tf-pin-rows: 2; }
-#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-rows: 3; }
-#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(22)) { --tf-pin-rows: 4; }
 
 .tabbrowser-tab[pinned] {
   position: absolute !important;
-  top:  calc(3px + var(--pin-row, 0) * var(--tf-pin-pitch)) !important;
-  left: calc(4px + var(--pin-col, 0) * var(--tf-pin-pitch)) !important;
+  top: 3px !important;                          /* all in ONE row */
+  left: calc(4px + (var(--pin-row, 0) * var(--tf-pins-per-row) + var(--pin-col, 0)) * var(--tf-pin-pitch)) !important;
   margin: 0 !important;
 }
-/* COLUMN = position modulo 7, via nth-child STEP patterns — these repeat forever, so ANY
-   number of pins lays out with no hand-numbering. (sibling-index() would collapse all of
-   this to one rule, but Firefox hasn't shipped it — Bug 1953973.) Keep the `7` here in
-   sync with --tf-pins-per-row (nth-child can't take a variable). */
+/* col + row from nth-child STEP patterns → each pin's ABSOLUTE index (row*per-row + col),
+   which places it in the single sliding row. The patterns repeat forever, so any number of
+   pins works with no hand-numbering. (sibling-index() would collapse this to one rule, but
+   Firefox hasn't shipped it — Bug 1953973.) Keep `7` in sync with --tf-pins-per-row. */
 .tabbrowser-tab[pinned]:nth-child(7n+1) { --pin-col: 0; }
 .tabbrowser-tab[pinned]:nth-child(7n+2) { --pin-col: 1; }
 .tabbrowser-tab[pinned]:nth-child(7n+3) { --pin-col: 2; }
@@ -794,6 +793,15 @@ findbar:not(:focus-within) {
 /* clean faviconized pins: no chunky button box unless selected/hovered */
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
+}
+/* hover highlight as you slide across the pins */
+.tabbrowser-tab[pinned]:hover .tab-background {
+  background-color: var(--tf-highlight) !important;
+  border-radius: 4px !important;
+}
+.tabbrowser-tab[pinned][selected] .tab-background,
+.tabbrowser-tab[pinned][visuallyselected] .tab-background {
+  border-radius: 4px !important;
 }
 /* the native pinned<->normal resizer #vertical-pinned-tabs-splitter is the ~11px gap
    + the off-width divider (D/E/F). Render it as a clean 1px FULL-WIDTH line in the
