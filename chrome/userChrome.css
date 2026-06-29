@@ -807,6 +807,33 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned]:nth-child(n+8):nth-child(-n+14)  { --pin-row: 1; }
 .tabbrowser-tab[pinned]:nth-child(n+15):nth-child(-n+21) { --pin-row: 2; }
 .tabbrowser-tab[pinned]:nth-child(n+22)                  { --pin-row: 3; }
+
+/* ── Non-macOS: WRAP to rows instead of the macOS one-row + two-finger scroll ───────
+   Two-finger horizontal scroll is the norm on macOS trackpads (what trimfox targets),
+   but NOT a safe assumption elsewhere (mice with no horizontal scroll). So off macOS,
+   pins WRAP to extra rows — all visible, no scroll needed. The base rules above are the
+   macOS slide; this block overrides the container + pin placement on other platforms.
+   (GitHub issue filed to test two-finger scroll on Linux/Windows; if it works there,
+   that platform can drop this block.) */
+@media not (-moz-platform: macos) {
+  #pinned-tabs-container {
+    --tf-pin-rows: 1;
+    width: 100% !important;
+    max-width: none !important;
+    height:     calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
+    min-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
+    max-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+  #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8))  { --tf-pin-rows: 2; }
+  #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-rows: 3; }
+  #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(22)) { --tf-pin-rows: 4; }
+  .tabbrowser-tab[pinned] {
+    top:  calc(3px + var(--pin-row, 0) * var(--tf-pin-pitch)) !important;
+    left: calc(var(--tf-pin-row-inset, 0px) + var(--pin-col, 0) * var(--tf-pin-pitch)) !important;
+  }
+}
 /* clean faviconized pins: no chunky button box unless selected/hovered */
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
