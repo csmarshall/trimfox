@@ -876,6 +876,32 @@ findbar:not(:focus-within) {
 #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-count: 15; }
 #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(16)) { --tf-pin-count: 16; }
 
+/* ── LIVE auto-fit: per-row tracks the ACTUAL expanded-sidebar width ──────────────────
+   Make the tab strip a query container, then a breakpoint ladder sets --tf-pins-per-row to
+   floor(width / pitch) live. Drag the sidebar wider → cross a rung → per-row ticks up → the
+   mod()/round() above instantly re-flow every pin's col/row AND the strip height. No restart.
+   Each rung is `min-width: 24*N + 2` so column N is added only once it FULLY fits (no clip).
+   This OVERRIDES the static --tf-pin-area-width computation; that knob remains the fallback
+   if container queries are ever unavailable (remove container-type → graceful fallback). The
+   skinny/collapsed strip (max-width) drops to a single vertical column, which is correct. */
+#tabbrowser-tabs { container-type: inline-size; container-name: tfpins; }
+@container tfpins (max-width: 49px) { #pinned-tabs-container { --tf-pins-per-row: 1; } }
+@container tfpins (min-width: 50px) { #pinned-tabs-container { --tf-pins-per-row: 2; } }
+@container tfpins (min-width: 74px) { #pinned-tabs-container { --tf-pins-per-row: 3; } }
+@container tfpins (min-width: 98px) { #pinned-tabs-container { --tf-pins-per-row: 4; } }
+@container tfpins (min-width: 122px) { #pinned-tabs-container { --tf-pins-per-row: 5; } }
+@container tfpins (min-width: 146px) { #pinned-tabs-container { --tf-pins-per-row: 6; } }
+@container tfpins (min-width: 170px) { #pinned-tabs-container { --tf-pins-per-row: 7; } }
+@container tfpins (min-width: 194px) { #pinned-tabs-container { --tf-pins-per-row: 8; } }
+@container tfpins (min-width: 218px) { #pinned-tabs-container { --tf-pins-per-row: 9; } }
+@container tfpins (min-width: 242px) { #pinned-tabs-container { --tf-pins-per-row: 10; } }
+@container tfpins (min-width: 266px) { #pinned-tabs-container { --tf-pins-per-row: 11; } }
+@container tfpins (min-width: 290px) { #pinned-tabs-container { --tf-pins-per-row: 12; } }
+@container tfpins (min-width: 314px) { #pinned-tabs-container { --tf-pins-per-row: 13; } }
+@container tfpins (min-width: 338px) { #pinned-tabs-container { --tf-pins-per-row: 14; } }
+@container tfpins (min-width: 362px) { #pinned-tabs-container { --tf-pins-per-row: 15; } }
+@container tfpins (min-width: 386px) { #pinned-tabs-container { --tf-pins-per-row: 16; } }
+
 /* The pinned row WRAPS on every platform now. We PREVIOUSLY ran a PLATFORM SPLIT here
    using Firefox's `@media (-moz-platform: macos)` feature: macOS got a single horizontal
    row meant to scroll via two-finger swipe, while `@media not (-moz-platform: macos)` got
