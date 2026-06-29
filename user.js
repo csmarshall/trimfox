@@ -93,3 +93,6 @@ user_pref("browser.newtabpage.enabled", false);
 user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
 user_pref("browser.newtabpage.activity-stream.showSearch", false);
 user_pref("browser.newtabpage.activity-stream.showWeather", false);
+
+// Faster tooltips (e.g. the pinned-tab title hint). Default is 500ms; global pref.
+user_pref("ui.tooltipDelay", 300);

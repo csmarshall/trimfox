@@ -820,6 +820,14 @@ findbar:not(:focus-within) {
 :root:-moz-window-inactive #vertical-pinned-tabs-splitter {
   background-color: var(--tf-line-solid-inactive) !important;
 }
+/* no extra gap between the pinned area and the first normal tab (the "taller top tab") */
+#tabbrowser-arrowscrollbox {
+  margin-block-start: 0 !important;
+  padding-block-start: 0 !important;
+}
+#tabbrowser-arrowscrollbox > .tabbrowser-tab:first-of-type {
+  margin-block-start: 0 !important;
+}
 
 /* ── #14: drag-to-reorder tabs ────────────────────────────────────────────────
    Native FF vertical tabs DO support drag-reorder (TST needed JS only because it
