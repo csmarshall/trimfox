@@ -704,17 +704,23 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned] .tab-close-button {
   display: none !important;
 }
+/* center the favicon BOTH axes within each pin square */
+.tabbrowser-tab[pinned] .tab-stack,
 .tabbrowser-tab[pinned] .tab-content {
-  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
   align-items: center !important;
+  justify-content: center !important;
   padding: 0 !important;
+  margin: 0 !important;
 }
-/* favicon sized like TST (16px in the 28px square) */
+/* favicon sized like TST (16px), centered in the 28px square */
 .tabbrowser-tab[pinned] .tab-icon-image,
 .tabbrowser-tab[pinned] .tab-icon-stack {
   width: var(--tf-pin-favicon) !important;
   height: var(--tf-pin-favicon) !important;
-  margin: 0 !important;
+  margin: auto !important;
 }
 /* neutralize the reskin's row-separator gradient + stray borders/outline on pins */
 .tabbrowser-tab[pinned] .tab-background {
