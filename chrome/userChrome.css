@@ -695,13 +695,28 @@ findbar:not(:focus-within) {
 :root {
   --tf-pin-size: 22px;       /* faviconized pin square (smaller) */
   --tf-pin-favicon: 14px;    /* favicon inside it (smaller — leaves clear highlight margin) */
-  --tf-pin-pitch: 24px;      /* pin-to-pin step (size + small gap) */
-  --tf-pins-per-row: 7;      /* MUST match the 7n nth-child patterns + row ranges below */
+  --tf-pin-pitch: 24px;      /* pin-to-pin step (size + 2px gap) — used for px placement */
+  --tf-pin-pitch-n: 24;      /* SAME value, UNITLESS, for the per-row division below */
+  /* Usable width of the expanded popout sidebar for pins, as a UNITLESS px number — the ONE
+     knob to match YOUR sidebar drag-width. columns-per-row is then COMPUTED, never hardcoded:
+        per-row = floor(usable-width / pitch)
+     (length÷length is illegal in CSS calc, which is exactly why these two are unitless.) */
+  --tf-pin-area-width: 230;
+  --tf-pins-per-row: max(1, round(down, var(--tf-pin-area-width) / var(--tf-pin-pitch-n)));
   --tf-pin-row-inset: 4px;   /* left inset of pin #1. LOWER (even negative) = further LEFT.
                                 4px so the hover-highlight BOX (wider than the icon) floats
                                 off the sidebar's left padding instead of jamming the edge;
                                 the icon then sits ~4px right of the favicons below. */
 }
+
+/* Register the grid's integer vars so the round()/mod()/division resolve to CONCRETE
+   integers (not nested expression-strings) — robust and cheap. */
+@property --tf-pins-per-row { syntax: "<integer>"; inherits: true;  initial-value: 7; }
+@property --tf-pin-count    { syntax: "<integer>"; inherits: true;  initial-value: 0; }
+@property --tf-pin-rows     { syntax: "<integer>"; inherits: true;  initial-value: 1; }
+@property --pin-i           { syntax: "<integer>"; inherits: false; initial-value: 0; }
+@property --pin-col         { syntax: "<integer>"; inherits: false; initial-value: 0; }
+@property --pin-row         { syntax: "<integer>"; inherits: false; initial-value: 0; }
 
 /* per-pin: favicon-only square (these selectors are reliable) */
 .tabbrowser-tab[pinned] {
@@ -784,7 +799,8 @@ findbar:not(:focus-within) {
    :nth-child → --pin-i. Their snippet stacks vertically (top: i*spacing); we go HORIZONTAL
    (left: i*spacing) for a single row. */
 #pinned-tabs-container {
-  --tf-pin-rows: 1;
+  --tf-pin-count: 0;   /* set by the :has() ladder below = number of pinned tabs */
+  --tf-pin-rows: max(1, round(up, var(--tf-pin-count) / var(--tf-pins-per-row)));  /* ceil */
   position: relative !important;
   display: block !important;
   width: 100% !important;
@@ -799,12 +815,9 @@ findbar:not(:focus-within) {
   margin: 0 !important;
   border: none !important;
 }
-/* WRAP to extra rows as pins exceed 7 per row (--tf-pins-per-row). Every pin stays
-   visible — no scroll, no overflow hint needed. (Single-row + horizontal scroll is
-   blocked by Firefox clamping this arrowscrollbox; full post-mortem in issue #18.) */
-#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8))  { --tf-pin-rows: 2; }
-#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-rows: 3; }
-#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(22)) { --tf-pin-rows: 4; }
+/* WRAP to as many rows as needed — every pin visible, no scroll. rows = ceil(count/per-row),
+   computed above from --tf-pin-count (the :has ladder below) and the per-row knob.
+   (Single-row + horizontal scroll is blocked by FF clamping this arrowscrollbox — see #18.) */
 /* 0 pins → collapse the empty pinned area AND drop the divider, so there's no dead gray
    band when the last pin is removed. */
 #pinned-tabs-container:not(:has(.tabbrowser-tab[pinned])) {
@@ -817,27 +830,51 @@ findbar:not(:focus-within) {
 }
 
 .tabbrowser-tab[pinned] {
+  /* col + row COMPUTED from the raw index --pin-i and the single per-row knob */
+  --pin-col: mod(var(--pin-i), var(--tf-pins-per-row));
+  --pin-row: round(down, var(--pin-i) / var(--tf-pins-per-row));
   position: absolute !important;
-  top:  calc(var(--pin-row, 0) * var(--tf-pin-pitch)) !important;   /* row N down */
-  left: calc(var(--tf-pin-row-inset, 0px) + var(--pin-col, 0) * var(--tf-pin-pitch)) !important; /* col M across */
+  top:  calc(var(--pin-row) * var(--tf-pin-pitch)) !important;
+  left: calc(var(--tf-pin-row-inset, 0px) + var(--pin-col) * var(--tf-pin-pitch)) !important;
   margin: 0 !important;
 }
-/* col + row from nth-child STEP patterns → each pin's ABSOLUTE index (row*per-row + col),
-   which places it in the single sliding row. The patterns repeat forever, so any number of
-   pins works with no hand-numbering. (sibling-index() would collapse this to one rule, but
-   Firefox hasn't shipped it — Bug 1953973.) Keep `7` in sync with --tf-pins-per-row. */
-.tabbrowser-tab[pinned]:nth-child(7n+1) { --pin-col: 0; }
-.tabbrowser-tab[pinned]:nth-child(7n+2) { --pin-col: 1; }
-.tabbrowser-tab[pinned]:nth-child(7n+3) { --pin-col: 2; }
-.tabbrowser-tab[pinned]:nth-child(7n+4) { --pin-col: 3; }
-.tabbrowser-tab[pinned]:nth-child(7n+5) { --pin-col: 4; }
-.tabbrowser-tab[pinned]:nth-child(7n+6) { --pin-col: 5; }
-.tabbrowser-tab[pinned]:nth-child(7n+7) { --pin-col: 6; }
-/* ROW = which block of 7 you're in (range rules, one per row) */
-.tabbrowser-tab[pinned]:nth-child(-n+7)                  { --pin-row: 0; }
-.tabbrowser-tab[pinned]:nth-child(n+8):nth-child(-n+14)  { --pin-row: 1; }
-.tabbrowser-tab[pinned]:nth-child(n+15):nth-child(-n+21) { --pin-row: 2; }
-.tabbrowser-tab[pinned]:nth-child(n+22)                  { --pin-row: 3; }
+/* Raw 0-based index per pin (--pin-i) + total count (--tf-pin-count), hardcoded to 16 pins
+   (sibling-index()/sibling-count() would each collapse to ONE rule, but FF hasn't shipped
+   them — Bug 1953973). EVERYTHING else — per-row, each pin's col/row, the container height —
+   is COMPUTED from these + the pitch + the sidebar width. Change --tf-pin-area-width and the
+   whole grid re-flows; raise this ladder's cap only if you keep >16 pinned tabs. */
+.tabbrowser-tab[pinned]:nth-child(1) { --pin-i: 0; }
+.tabbrowser-tab[pinned]:nth-child(2) { --pin-i: 1; }
+.tabbrowser-tab[pinned]:nth-child(3) { --pin-i: 2; }
+.tabbrowser-tab[pinned]:nth-child(4) { --pin-i: 3; }
+.tabbrowser-tab[pinned]:nth-child(5) { --pin-i: 4; }
+.tabbrowser-tab[pinned]:nth-child(6) { --pin-i: 5; }
+.tabbrowser-tab[pinned]:nth-child(7) { --pin-i: 6; }
+.tabbrowser-tab[pinned]:nth-child(8) { --pin-i: 7; }
+.tabbrowser-tab[pinned]:nth-child(9) { --pin-i: 8; }
+.tabbrowser-tab[pinned]:nth-child(10) { --pin-i: 9; }
+.tabbrowser-tab[pinned]:nth-child(11) { --pin-i: 10; }
+.tabbrowser-tab[pinned]:nth-child(12) { --pin-i: 11; }
+.tabbrowser-tab[pinned]:nth-child(13) { --pin-i: 12; }
+.tabbrowser-tab[pinned]:nth-child(14) { --pin-i: 13; }
+.tabbrowser-tab[pinned]:nth-child(15) { --pin-i: 14; }
+.tabbrowser-tab[pinned]:nth-child(16) { --pin-i: 15; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(1)) { --tf-pin-count: 1; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(2)) { --tf-pin-count: 2; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(3)) { --tf-pin-count: 3; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(4)) { --tf-pin-count: 4; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(5)) { --tf-pin-count: 5; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(6)) { --tf-pin-count: 6; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(7)) { --tf-pin-count: 7; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8)) { --tf-pin-count: 8; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(9)) { --tf-pin-count: 9; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(10)) { --tf-pin-count: 10; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(11)) { --tf-pin-count: 11; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(12)) { --tf-pin-count: 12; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(13)) { --tf-pin-count: 13; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(14)) { --tf-pin-count: 14; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-count: 15; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(16)) { --tf-pin-count: 16; }
 
 /* The pinned row WRAPS on every platform now. We PREVIOUSLY ran a PLATFORM SPLIT here
    using Firefox's `@media (-moz-platform: macos)` feature: macOS got a single horizontal
