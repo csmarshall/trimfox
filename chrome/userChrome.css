@@ -741,19 +741,22 @@ findbar:not(:focus-within) {
    UNCONDITIONAL — the mode-scoped selector wasn't matching expand-on-hover's DOM, so
    the grid never applied. Packed tight (justify/align start), bounded to ~3 rows then
    scrolls. */
-#pinned-tabs-container,
-#vertical-pinned-tabs-container {
+/* The whole vertical-tab strip is a ~13px base box that content OVERFLOWS (regular tab
+   labels extend right past it). Firefox forces #pinned-tabs-container to flex-column +
+   ~14px max-width MORE specifically than a bare #id, so a 3-id selector is needed to
+   win — and the pin ROW must overflow to the right like the labels do (width:max-content,
+   overflow:visible) since the parent box is only 13px. */
+#main-window #tabbrowser-tabs #pinned-tabs-container,
+#main-window #tabbrowser-tabs #vertical-pinned-tabs-container {
   display: flex !important;
   flex-flow: row nowrap !important;       /* ONE row */
   justify-content: flex-start !important;
   align-items: center !important;
-  width: 100% !important;
+  width: max-content !important;          /* size to the pins, not the 13px parent */
   min-width: 0 !important;
-  max-width: none !important;             /* probe found it clamped to 13px (collapsed
-                                             strip width) — unclamp so the row can spread */
-  overflow-x: auto !important;            /* scroll side-to-side if many pins */
-  overflow-y: hidden !important;
-  scrollbar-width: none !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: visible !important;           /* let the row extend right, like the labels */
   gap: 2px !important;
   padding: 2px 4px !important;
   margin: 0 !important;
