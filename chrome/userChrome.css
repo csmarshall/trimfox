@@ -684,7 +684,8 @@ findbar:not(:focus-within) {
    container id is a best guess — run the #13 probe in NEXT-SESSION.md to confirm it and
    the real gap sources, then refine. */
 :root {
-  --tf-pin-size: 30px;   /* faviconized pin square (TST uses 28) */
+  --tf-pin-size: 28px;       /* faviconized pin square — TST's --faviconized-tab-size */
+  --tf-pin-favicon: 16px;    /* favicon inside it — TST's --favicon-size */
 }
 
 /* per-pin: favicon-only square (these selectors are reliable) */
@@ -708,6 +709,13 @@ findbar:not(:focus-within) {
   align-items: center !important;
   padding: 0 !important;
 }
+/* favicon sized like TST (16px in the 28px square) */
+.tabbrowser-tab[pinned] .tab-icon-image,
+.tabbrowser-tab[pinned] .tab-icon-stack {
+  width: var(--tf-pin-favicon) !important;
+  height: var(--tf-pin-favicon) !important;
+  margin: 0 !important;
+}
 /* neutralize the reskin's row-separator gradient + stray borders/outline on pins */
 .tabbrowser-tab[pinned] .tab-background {
   background-image: none !important;
@@ -721,16 +729,31 @@ findbar:not(:focus-within) {
   clip-path: none !important;
 }
 
-/* the pinned AREA = a wrapping grid. Real native id is #pinned-tabs-container
-   (confirmed via probe; #vertical-pinned-tabs-container kept as a fallback). */
+/* pinned AREA — flat, no stray borders/gaps (real native id #pinned-tabs-container,
+   probe-confirmed; #vertical-pinned-tabs-container kept as a fallback). */
 #pinned-tabs-container,
 #vertical-pinned-tabs-container {
   display: flex !important;
-  flex-flow: row wrap !important;
-  gap: 0 !important;
-  padding: 4px !important;
+  gap: 2px !important;
+  padding: 2px 4px !important;
   margin: 0 !important;
   border: none !important;
+  box-shadow: none !important;
+}
+/* EXPANDED: faviconized pins as a horizontal WRAPPING grid — TST's exact model
+   (faviconized => flex-direction:row + flex-wrap:wrap), full width so they fill
+   across and wrap to new rows; the area is bounded to ~3 rows then scrolls (TST's
+   --pinned-tabs-area-size). They were stacking vertically only because the container
+   stayed narrow. */
+#tabbrowser-tabs[orient="vertical"][expanded] #pinned-tabs-container,
+#tabbrowser-tabs[orient="vertical"][expanded] #vertical-pinned-tabs-container {
+  flex-flow: row wrap !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+  max-height: 96px !important;           /* ~3 rows of 28px (TST bounds the pin area) */
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
 }
 
 /* ── #14: drag-to-reorder tabs ────────────────────────────────────────────────
