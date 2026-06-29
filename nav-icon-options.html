@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>trimfox — combined nav-button glyph options (#5)</title>
+<style>
+  :root { --ink:#e6e6e6; --bar:#2e2e2e; }
+  body { background:#202020; color:var(--ink); font:14px/1.5 -apple-system, system-ui, sans-serif; margin:0; padding:32px 40px; }
+  h1 { font-weight:600; font-size:19px; margin:0 0 4px; }
+  p.sub { color:#aaa; margin:0 0 28px; max-width:680px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:18px; }
+  .opt { background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:16px 18px; }
+  .opt.current { border-color:#888; }
+  .row { display:flex; align-items:center; gap:18px; }
+  .btn { width:34px; height:30px; background:var(--bar); border-radius:6px; display:flex; align-items:center; justify-content:center; }
+  .big { width:60px; height:60px; background:var(--bar); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  svg { fill:var(--ink); }
+  .label { font-weight:600; margin-top:14px; }
+  .tag { color:#bbb; font-weight:500; font-size:12px; }
+  .desc { color:#999; font-size:12.5px; margin-top:2px; }
+  .path { color:#777; font-family:ui-monospace, monospace; font-size:10.5px; margin-top:8px; word-break:break-all; }
+  .toolbar { margin-top:32px; padding:14px 16px; background:#1a1a1a; border:1px solid #333; border-radius:10px; display:inline-flex; align-items:center; gap:6px; }
+  .toolbar .btn { width:30px; height:28px; }
+  .toolbar .shield { opacity:.85; }
+  .note { color:#888; font-size:12px; margin-top:8px; }
+</style>
+</head>
+<body>
+  <h1>trimfox — combined nav-button glyph options</h1>
+  <p class="sub">All FILLED — Firefox's <code>context-fill</code> only themes <em>fill</em>, not stroke
+  (a stroked glyph renders blank). Left swatch = real toolbar size (16px); right = enlarged.
+  Tell me the <strong>letter</strong> and I'll drop its path into <code>#back-button</code>.</p>
+
+  <div class="grid">
+
+    <div class="opt current">
+      <div class="row">
+        <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg></div>
+        <div class="big"><svg width="40" height="40" viewBox="0 0 16 16"><path d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg></div>
+      </div>
+      <div class="label">A — Two play-triangles ◄► <span class="tag">★ currently live</span></div>
+      <div class="desc">The original back + forward triangles, side by side. Your stated pick.</div>
+      <div class="path">M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z</div>
+    </div>
+
+    <div class="opt">
+      <div class="row">
+        <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 4.5 L2.5 8 L6 11.5 Z M10 4.5 L13.5 8 L10 11.5 Z"/></svg></div>
+        <div class="big"><svg width="40" height="40" viewBox="0 0 16 16"><path d="M6 4.5 L2.5 8 L6 11.5 Z M10 4.5 L13.5 8 L10 11.5 Z"/></svg></div>
+      </div>
+      <div class="label">B — Triangles, wider gap</div>
+      <div class="desc">Same, with more breathing room between the two arrows.</div>
+      <div class="path">M6 4.5 L2.5 8 L6 11.5 Z M10 4.5 L13.5 8 L10 11.5 Z</div>
+    </div>
+
+    <div class="opt">
+      <div class="row">
+        <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M7.6 4.5 L3.2 8 L7.6 11.5 Z M8.4 4.5 L12.8 8 L8.4 11.5 Z"/></svg></div>
+        <div class="big"><svg width="40" height="40" viewBox="0 0 16 16"><path d="M7.6 4.5 L3.2 8 L7.6 11.5 Z M8.4 4.5 L12.8 8 L8.4 11.5 Z"/></svg></div>
+      </div>
+      <div class="label">C — Triangles, tight</div>
+      <div class="desc">Nearly touching — reads as one chunky double-arrow.</div>
+      <div class="path">M7.6 4.5 L3.2 8 L7.6 11.5 Z M8.4 4.5 L12.8 8 L8.4 11.5 Z</div>
+    </div>
+
+    <div class="opt">
+      <div class="row">
+        <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M7 3.5 L3 8 L7 12.5 Z M9 3.5 L13 8 L9 12.5 Z"/></svg></div>
+        <div class="big"><svg width="40" height="40" viewBox="0 0 16 16"><path d="M7 3.5 L3 8 L7 12.5 Z M9 3.5 L13 8 L9 12.5 Z"/></svg></div>
+      </div>
+      <div class="label">D — Triangles, taller/slimmer</div>
+      <div class="desc">Same idea, more elongated arrowheads.</div>
+      <div class="path">M7 3.5 L3 8 L7 12.5 Z M9 3.5 L13 8 L9 12.5 Z</div>
+    </div>
+
+    <div class="opt">
+      <div class="row">
+        <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 8 L5 5 L5 7.2 L7 7.2 L7 8.8 L5 8.8 L5 11 Z M14 8 L11 5 L11 7.2 L9 7.2 L9 8.8 L11 8.8 L11 11 Z"/></svg></div>
+        <div class="big"><svg width="40" height="40" viewBox="0 0 16 16"><path d="M2 8 L5 5 L5 7.2 L7 7.2 L7 8.8 L5 8.8 L5 11 Z M14 8 L11 5 L11 7.2 L9 7.2 L9 8.8 L11 8.8 L11 11 Z"/></svg></div>
+      </div>
+      <div class="label">E — Two arrows ← →</div>
+      <div class="desc">Proper arrows with shafts (heads + stems) pointing outward.</div>
+      <div class="path">M2 8 L5 5 L5 7.2 L7 7.2 L7 8.8 L5 8.8 L5 11 Z M14 8 L11 5 L11 7.2 L9 7.2 L9 8.8 L11 8.8 L11 11 Z</div>
+    </div>
+
+    <div class="opt">
+      <div class="row">
+        <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M1.5 8 L5 5 L5 7.25 L11 7.25 L11 5 L14.5 8 L11 11 L11 8.75 L5 8.75 L5 11 Z"/></svg></div>
+        <div class="big"><svg width="40" height="40" viewBox="0 0 16 16"><path d="M1.5 8 L5 5 L5 7.25 L11 7.25 L11 5 L14.5 8 L11 11 L11 8.75 L5 8.75 L5 11 Z"/></svg></div>
+      </div>
+      <div class="label">F — Slim double-headed ↔</div>
+      <div class="desc">One connected bar with a head on each end (thinner than my first try).</div>
+      <div class="path">M1.5 8 L5 5 L5 7.25 L11 7.25 L11 5 L14.5 8 L11 11 L11 8.75 L5 8.75 L5 11 Z</div>
+    </div>
+
+    <div class="opt">
+      <div class="row">
+        <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M1.5 8 L5.5 4 L5.5 6.5 L10.5 6.5 L10.5 4 L14.5 8 L10.5 12 L10.5 9.5 L5.5 9.5 L5.5 12 Z"/></svg></div>
+        <div class="big"><svg width="40" height="40" viewBox="0 0 16 16"><path d="M1.5 8 L5.5 4 L5.5 6.5 L10.5 6.5 L10.5 4 L14.5 8 L10.5 12 L10.5 9.5 L5.5 9.5 L5.5 12 Z"/></svg></div>
+      </div>
+      <div class="label">G — Thick double-headed ↔</div>
+      <div class="desc">My original try (here for comparison — the one that felt clunky).</div>
+      <div class="path">M1.5 8 L5.5 4 L5.5 6.5 L10.5 6.5 L10.5 4 L14.5 8 L10.5 12 L10.5 9.5 L5.5 9.5 L5.5 12 Z</div>
+    </div>
+
+  </div>
+
+  <h1 style="margin-top:40px;font-size:15px;">In-context preview (A, next to the shield/menu)</h1>
+  <div class="toolbar">
+    <div class="btn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg></div>
+    <div class="btn shield"><svg width="15" height="15" viewBox="0 0 16 16"><path d="M8 1 L14 3.2 V8 C14 11.5 11.4 13.8 8 15 C4.6 13.8 2 11.5 2 8 V3.2 Z" fill="none" stroke="#bbb" stroke-width="1.2"/><path d="M5.5 8 L7.2 9.6 L10.6 6" fill="none" stroke="#bbb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+  <div class="note">Open in Firefox: <code>file:///Users/charles/work/trimfox/nav-icon-options.html</code></div>
+</body>
+</html>

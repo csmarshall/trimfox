@@ -113,9 +113,40 @@ menupopup * {
   font-size: 7pt !important;
 }
 
-/* reduce back and forward button */
-#back-button,#forward-button{ list-style-image: url("chrome://devtools/skin/images/play.svg") !important; }
-#back-button > .toolbarbutton-icon{ transform: scaleX(-1) }
+/* #5: ONE history-aware nav button. Firefox sets [disabled] on #back-button / #forward-button
+   when you can't go that way; :has() reads both and swaps the glyph (all real devtools icons,
+   themed via context-fill):
+     - both ways          -> arrowhead-down  (⌄ — nudges "there's a menu / more here")
+     - newest (no forward) -> arrowhead-left  (‹  back-only)
+     - oldest (no back)    -> swap to the real Forward button -> arrowhead-right (›)
+     - fresh tab (neither) -> back button, greyed arrowhead-down
+   Left-click navigates; right-click = themed history menu. */
+#forward-button { display: none !important; }                /* hidden by default; shown at stack-start */
+#back-button, #forward-button {
+  -moz-context-properties: fill !important;
+  fill: var(--toolbar-color, #e8e8e8) !important;   /* explicit themed color (currentColor is dark here) */
+}
+#back-button > .toolbarbutton-icon,
+#forward-button > .toolbarbutton-icon { transform: none !important; }
+
+/* both ways (or neither -> greyed) -> arrowhead-down */
+#nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
+#nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
+  list-style-image: url("chrome://devtools/skin/images/arrowhead-down.svg") !important;
+}
+/* newest page (only back) -> arrowhead-left */
+#nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button {
+  list-style-image: url("chrome://devtools/skin/images/arrowhead-left.svg") !important;
+}
+/* oldest page (only forward) -> hide Back, reveal Forward -> arrowhead-right */
+#nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #back-button {
+  display: none !important;
+}
+#nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #forward-button {
+  display: flex !important;
+  list-style-image: url("chrome://devtools/skin/images/arrowhead-right.svg") !important;
+  padding-inline-start: 8px !important;   /* match back's padding — no shift on swap */
+}
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
    bookmarks. (GitHub #10) */
