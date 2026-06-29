@@ -784,29 +784,42 @@ findbar:not(:focus-within) {
    :nth-child → --pin-i. Their snippet stacks vertically (top: i*spacing); we go HORIZONTAL
    (left: i*spacing) for a single row. */
 #pinned-tabs-container {
+  --tf-pin-rows: 1;
   position: relative !important;
   display: block !important;
   width: 100% !important;
   max-width: none !important;
-  height:     calc(var(--tf-pin-size) + 6px) !important;   /* ONE row */
-  min-height: calc(var(--tf-pin-size) + 6px) !important;
-  max-height: calc(var(--tf-pin-size) + 6px) !important;
-  overflow: visible !important;                /* pins simply EXTEND; the sidebar clips any
-                                                  overflow. (Real horizontal scroll isn't
-                                                  possible — FF clamps this arrowscrollbox —
-                                                  so no dead "scroll viewport" to hide pins.) */
+  /* COMPACT: exactly N rows of pin-square, zero extra padding — the pinned area reads as
+     its own tight icon-only "compact strip" above the labelled tabs. */
+  height:     calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size)) !important;
+  min-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size)) !important;
+  max-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size)) !important;
+  overflow: visible !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
 }
-
-/* (overflow fade removed — it implied a clickable arrow that pure userChrome can't
-   provide; pins reachable by two-finger swipe in slide mode.) */
+/* WRAP to extra rows as pins exceed 7 per row (--tf-pins-per-row). Every pin stays
+   visible — no scroll, no overflow hint needed. (Single-row + horizontal scroll is
+   blocked by Firefox clamping this arrowscrollbox; full post-mortem in issue #18.) */
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8))  { --tf-pin-rows: 2; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-rows: 3; }
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(22)) { --tf-pin-rows: 4; }
+/* 0 pins → collapse the empty pinned area AND drop the divider, so there's no dead gray
+   band when the last pin is removed. */
+#pinned-tabs-container:not(:has(.tabbrowser-tab[pinned])) {
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+}
+#tabbrowser-tabs:not(:has(.tabbrowser-tab[pinned])) #vertical-pinned-tabs-splitter {
+  display: none !important;
+}
 
 .tabbrowser-tab[pinned] {
   position: absolute !important;
-  top: 3px !important;                          /* all in ONE row */
-  left: calc(var(--tf-pin-row-inset, 0px) + (var(--pin-row, 0) * var(--tf-pins-per-row) + var(--pin-col, 0)) * var(--tf-pin-pitch)) !important;
+  top:  calc(var(--pin-row, 0) * var(--tf-pin-pitch)) !important;   /* row N down */
+  left: calc(var(--tf-pin-row-inset, 0px) + var(--pin-col, 0) * var(--tf-pin-pitch)) !important; /* col M across */
   margin: 0 !important;
 }
 /* col + row from nth-child STEP patterns → each pin's ABSOLUTE index (row*per-row + col),
@@ -826,32 +839,13 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned]:nth-child(n+15):nth-child(-n+21) { --pin-row: 2; }
 .tabbrowser-tab[pinned]:nth-child(n+22)                  { --pin-row: 3; }
 
-/* ── Non-macOS: WRAP to rows instead of the macOS one-row + two-finger scroll ───────
-   Two-finger horizontal scroll is the norm on macOS trackpads (what trimfox targets),
-   but NOT a safe assumption elsewhere (mice with no horizontal scroll). So off macOS,
-   pins WRAP to extra rows — all visible, no scroll needed. The base rules above are the
-   macOS slide; this block overrides the container + pin placement on other platforms.
-   (GitHub issue filed to test two-finger scroll on Linux/Windows; if it works there,
-   that platform can drop this block.) */
-@media not (-moz-platform: macos) {
-  #pinned-tabs-container {
-    --tf-pin-rows: 1;
-    width: 100% !important;
-    max-width: none !important;
-    height:     calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
-    min-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
-    max-height: calc((var(--tf-pin-rows) - 1) * var(--tf-pin-pitch) + var(--tf-pin-size) + 6px) !important;
-    overflow: visible !important;
-    padding: 0 !important;
-  }
-  #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(8))  { --tf-pin-rows: 2; }
-  #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(15)) { --tf-pin-rows: 3; }
-  #pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(22)) { --tf-pin-rows: 4; }
-  .tabbrowser-tab[pinned] {
-    top:  calc(3px + var(--pin-row, 0) * var(--tf-pin-pitch)) !important;
-    left: calc(var(--tf-pin-row-inset, 0px) + var(--pin-col, 0) * var(--tf-pin-pitch)) !important;
-  }
-}
+/* The pinned row WRAPS on every platform now. We PREVIOUSLY ran a PLATFORM SPLIT here
+   using Firefox's `@media (-moz-platform: macos)` feature: macOS got a single horizontal
+   row meant to scroll via two-finger swipe, while `@media not (-moz-platform: macos)` got
+   the wrap fallback. The macOS slide was abandoned (FF clamps the pinned arrowscrollbox so
+   it can't scroll). If you want to revive a per-OS behavior, `-moz-platform` is the hook —
+   the exact removed @media block and the full why-it-failed post-mortem are preserved in
+   GitHub issue #18 and in this file's git history. */
 /* clean faviconized pins: no chunky button box unless selected/hovered */
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
