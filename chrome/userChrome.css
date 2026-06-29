@@ -784,20 +784,16 @@ findbar:not(:focus-within) {
 #pinned-tabs-container {
   position: relative !important;
   display: block !important;
-  width: var(--tf-pin-area-width, 210px) !important;   /* scroll viewport — TUNE this to your
-                                                          expanded sidebar width if pins cut
-                                                          off early or there's dead space */
-  min-width: 0 !important;
-  max-width: 100% !important;
+  width: 100% !important;
+  max-width: none !important;
   height:     calc(var(--tf-pin-size) + 6px) !important;   /* ONE row */
   min-height: calc(var(--tf-pin-size) + 6px) !important;
   max-height: calc(var(--tf-pin-size) + 6px) !important;
-  overflow-x: auto !important;                 /* slide left/right (trackpad / shift+wheel) */
-  overflow-y: hidden !important;
-  scrollbar-width: none !important;            /* no visible bar; still scrolls */
-  scroll-padding-inline-end: 8px !important;
-  padding: 0 8px 0 0 !important;               /* trailing gap so the last pin's hover
-                                                  highlight floats, never flush to the edge */
+  overflow: visible !important;                /* pins simply EXTEND; the sidebar clips any
+                                                  overflow. (Real horizontal scroll isn't
+                                                  possible — FF clamps this arrowscrollbox —
+                                                  so no dead "scroll viewport" to hide pins.) */
+  padding: 0 !important;
   margin: 0 !important;
   border: none !important;
 }
