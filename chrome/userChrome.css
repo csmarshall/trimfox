@@ -731,31 +731,31 @@ findbar:not(:focus-within) {
 
 /* pinned AREA — flat, no stray borders/gaps (real native id #pinned-tabs-container,
    probe-confirmed; #vertical-pinned-tabs-container kept as a fallback). */
+/* pinned AREA = horizontal WRAPPING grid (TST's faviconized model: flex row + wrap),
+   UNCONDITIONAL — the mode-scoped selector wasn't matching expand-on-hover's DOM, so
+   the grid never applied. Packed tight (justify/align start), bounded to ~3 rows then
+   scrolls. */
 #pinned-tabs-container,
 #vertical-pinned-tabs-container {
   display: flex !important;
-  gap: 2px !important;
-  padding: 2px 4px !important;
-  margin: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-/* EXPANDED: faviconized pins as a horizontal WRAPPING grid — TST's exact model
-   (faviconized => flex-direction:row + flex-wrap:wrap), full width so they fill
-   across and wrap to new rows; the area is bounded to ~3 rows then scrolls (TST's
-   --pinned-tabs-area-size). They were stacking vertically only because the container
-   stayed narrow. */
-#tabbrowser-tabs[orient="vertical"][expanded] #pinned-tabs-container,
-#tabbrowser-tabs[orient="vertical"][expanded] #vertical-pinned-tabs-container,
-#main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] #pinned-tabs-container,
-#main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] #vertical-pinned-tabs-container {
   flex-flow: row wrap !important;
+  justify-content: flex-start !important;
+  align-content: flex-start !important;
   align-items: flex-start !important;
   width: 100% !important;
   max-height: 96px !important;           /* ~3 rows of 28px (TST bounds the pin area) */
   overflow-x: hidden !important;
   overflow-y: auto !important;
   scrollbar-width: thin !important;
+  gap: 2px !important;
+  padding: 2px 4px !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+/* clean faviconized pins: no chunky button box unless selected/hovered */
+.tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
+  background-color: transparent !important;
 }
 /* the native pinned<->normal resizer #vertical-pinned-tabs-splitter is the ~11px gap
    + the off-width divider (D/E/F). Render it as a clean 1px FULL-WIDTH line in the
