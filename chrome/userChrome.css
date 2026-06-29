@@ -113,21 +113,41 @@ menupopup * {
   font-size: 7pt !important;
 }
 
-/* #5: combine Back + Forward into ONE button. Firefox has NO single combined back+forward
-   glyph (back.svg / forward.svg are separate), so this is a thin double-arrow drawn at the
-   native icon line-weight and themed via context-fill (the stroke uses the button's fill
-   color, so it tracks the scheme like a built-in icon). Hide Forward; left-click = back;
-   right-click = the themed XUL history menu (both directions reachable there). */
-#forward-button { display: none !important; }
-#back-button {
-  /* the two ORIGINAL play-triangles (back + forward) combined on one button, FILLED so
-     context-fill themes it (stroke doesn't bridge). See nav-icon-options.html to pick a
-     different glyph — swap the `d=` path with the chosen option's. */
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg>') !important;
-  -moz-context-properties: fill !important;   /* bridge the button's fill into the SVG */
-  fill: currentColor !important;              /* themed toolbar icon color */
+/* #5: ONE combined nav button whose glyph ADAPTS to your position in the history stack.
+   Firefox sets [disabled] on #back-button / #forward-button when you can't go that way, and
+   :has() reads both, so the single button shows:
+     - both ways available       -> two play-triangles ◄►
+     - newest page (no forward)   -> back-only ◄
+     - oldest page (no back, can forward) -> swap to the REAL Forward button so click works -> ►
+     - fresh tab (neither)        -> back button, greyed ◄►
+   Glyphs are FILLED play-triangles (the old back/fwd icon style) so context-fill themes them.
+   Left-click navigates; right-click = themed history menu. To restyle, swap the `d=` paths
+   in all three states together (see nav-icon-options.html). */
+#forward-button { display: none !important; }                 /* hidden by default; shown only at stack-start */
+#back-button, #forward-button {
+  -moz-context-properties: fill !important;
+  fill: currentColor !important;
 }
-#back-button > .toolbarbutton-icon { transform: none !important; }
+#back-button > .toolbarbutton-icon,
+#forward-button > .toolbarbutton-icon { transform: none !important; }
+
+/* both ways (or neither — greyed) -> ◄► */
+#nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
+#nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg>') !important;
+}
+/* newest page: can't go forward -> back-only ◄ */
+#nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button {
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M10.5 4 L4.5 8 L10.5 12 Z"/></svg>') !important;
+}
+/* oldest page: can't go back but CAN go forward -> hide Back, reveal real Forward as ► */
+#nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #back-button {
+  display: none !important;
+}
+#nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #forward-button {
+  display: flex !important;
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M5.5 4 L11.5 8 L5.5 12 Z"/></svg>') !important;
+}
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
    bookmarks. (GitHub #10) */
