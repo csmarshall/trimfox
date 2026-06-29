@@ -744,18 +744,16 @@ findbar:not(:focus-within) {
 #pinned-tabs-container,
 #vertical-pinned-tabs-container {
   display: flex !important;
-  flex-flow: row wrap !important;
+  flex-flow: row nowrap !important;       /* ONE row */
   justify-content: flex-start !important;
-  align-content: flex-start !important;
-  align-items: flex-start !important;
+  align-items: center !important;
   width: 100% !important;
   min-width: 0 !important;
   max-width: none !important;             /* probe found it clamped to 13px (collapsed
                                              strip width) — unclamp so the row can spread */
-  max-height: 96px !important;           /* ~3 rows of 28px (TST bounds the pin area) */
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  scrollbar-width: thin !important;
+  overflow-x: auto !important;            /* scroll side-to-side if many pins */
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
   gap: 2px !important;
   padding: 2px 4px !important;
   margin: 0 !important;
