@@ -113,13 +113,18 @@ menupopup * {
   font-size: 7pt !important;
 }
 
-/* #5: combine Back + Forward into ONE navigation button (the old unified-nav look). No JS:
-   hide Forward and keep the single Back button's NATIVE back-arrow icon — it already uses
-   Firefox's context-fill, so it adapts to the color scheme automatically (no custom glyph,
-   no flip). Left-click = go back; RIGHT-click = the themed XUL history menu (both directions
-   reachable there). (Left-click-opens-menu would need AutoConfig JS, wiped on every FF
-   update — deliberately out of scope.) */
+/* #5: combine Back + Forward into ONE button. Firefox has NO single combined back+forward
+   glyph (back.svg / forward.svg are separate), so this is a thin double-arrow drawn at the
+   native icon line-weight and themed via context-fill (the stroke uses the button's fill
+   color, so it tracks the scheme like a built-in icon). Hide Forward; left-click = back;
+   right-click = the themed XUL history menu (both directions reachable there). */
 #forward-button { display: none !important; }
+#back-button {
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="context-fill" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8 H13 M6 4.5 L2.5 8 L6 11.5 M10 4.5 L13.5 8 L10 11.5"/></svg>') !important;
+  -moz-context-properties: fill !important;   /* bridge the button's fill into the SVG */
+  fill: currentColor !important;              /* themed toolbar icon color */
+}
+#back-button > .toolbarbutton-icon { transform: none !important; }
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
    bookmarks. (GitHub #10) */
