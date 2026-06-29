@@ -728,6 +728,12 @@ findbar:not(:focus-within) {
 }
 .tabbrowser-tab[pinned] .tab-background {
   inset: 0 !important;
+  width: var(--tf-pin-size) !important;        /* FF sizes this to the 14px strip width;
+                                                  force it to the full square so the hover
+                                                  highlight is centered on the favicon */
+  min-width: var(--tf-pin-size) !important;
+  max-width: var(--tf-pin-size) !important;
+  height: var(--tf-pin-size) !important;
   margin: 0 !important;
 }
 .tabbrowser-tab[pinned] .tab-content {
