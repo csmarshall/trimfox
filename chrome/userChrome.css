@@ -113,17 +113,15 @@ menupopup * {
   font-size: 7pt !important;
 }
 
-/* #5: ONE combined nav button whose glyph ADAPTS to your position in the history stack.
-   Firefox sets [disabled] on #back-button / #forward-button when you can't go that way, and
-   :has() reads both, so the single button shows:
-     - both ways available       -> two play-triangles ◄►
-     - newest page (no forward)   -> back-only ◄
-     - oldest page (no back, can forward) -> swap to the REAL Forward button so click works -> ►
-     - fresh tab (neither)        -> back button, greyed ◄►
-   Glyphs are FILLED play-triangles (the old back/fwd icon style) so context-fill themes them.
-   Left-click navigates; right-click = themed history menu. To restyle, swap the `d=` paths
-   in all three states together (see nav-icon-options.html). */
-#forward-button { display: none !important; }                 /* hidden by default; shown only at stack-start */
+/* #5: ONE combined nav button whose glyph ADAPTS to your position in the history stack,
+   reusing Firefox's OWN themed back/forward icons for the single-direction states:
+     - both ways available       -> custom ◄► (Firefox has no native combined glyph)
+     - newest page (no forward)   -> NATIVE back arrow (the theme's own icon, no override)
+     - oldest page (no back)      -> swap to the REAL Forward button -> NATIVE forward arrow
+     - fresh tab (neither)        -> back button, greyed custom ◄►
+   [disabled] + :has() drive the switch. Left-click navigates; right-click = history menu.
+   Only the ◄► (both-ways) state uses a custom glyph; see nav-icon-options.html to restyle it. */
+#forward-button { display: none !important; }                 /* hidden by default; shown at stack-start */
 #back-button, #forward-button {
   -moz-context-properties: fill !important;
   fill: currentColor !important;
@@ -131,22 +129,20 @@ menupopup * {
 #back-button > .toolbarbutton-icon,
 #forward-button > .toolbarbutton-icon { transform: none !important; }
 
-/* both ways (or neither — greyed) -> ◄► */
+/* both ways (or neither -> greyed) -> custom ◄► (the only state with no native equivalent) */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
   list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M7 4.5 L2.5 8 L7 11.5 Z M9 4.5 L13.5 8 L9 11.5 Z"/></svg>') !important;
 }
-/* newest page: can't go forward -> back-only ◄ */
-#nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button {
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M10.5 4 L4.5 8 L10.5 12 Z"/></svg>') !important;
-}
-/* oldest page: can't go back but CAN go forward -> hide Back, reveal real Forward as ► */
+/* newest page (only back): NO override -> #back-button keeps Firefox's NATIVE themed back
+   arrow (the ◄► rule above doesn't match this state). */
+
+/* oldest page (only forward): hide Back, reveal the real Forward button with its NATIVE icon */
 #nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #back-button {
   display: none !important;
 }
 #nav-bar:has(#back-button[disabled]):has(#forward-button:not([disabled])) #forward-button {
   display: flex !important;
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" d="M5.5 4 L11.5 8 L5.5 12 Z"/></svg>') !important;
 }
 
 /* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
