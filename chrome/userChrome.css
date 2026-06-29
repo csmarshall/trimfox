@@ -770,6 +770,13 @@ findbar:not(:focus-within) {
   border: none !important;
 }
 
+/* overflow cue: once the pins exceed the viewport (~9th pin at the default width), fade
+   the right edge to signal "more — swipe/scroll right". (A clickable scroll arrow would
+   need JS, since native scroll buttons can't drive absolutely-positioned pins.) */
+#pinned-tabs-container:has(.tabbrowser-tab[pinned]:nth-child(9)) {
+  mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent) !important;
+}
+
 .tabbrowser-tab[pinned] {
   position: absolute !important;
   top: 3px !important;                          /* all in ONE row */
@@ -796,11 +803,11 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[pinned]:not([selected]):not([visuallyselected]):not(:hover) .tab-background {
   background-color: transparent !important;
 }
-/* hover highlight as you slide across the pins — on the tab itself (the .tab-background
-   wasn't filling the square), in the same raised color as a normal tab hover */
+/* hover highlight as you slide across the pins — clearly visible (raised was too faint
+   behind the favicon) */
 .tabbrowser-tab[pinned]:hover,
 .tabbrowser-tab[pinned]:hover .tab-background {
-  background-color: var(--tf-raised) !important;
+  background-color: var(--tf-select) !important;   /* #555 — clearly readable; tune if too hot */
   border-radius: 5px !important;
 }
 .tabbrowser-tab[pinned][selected] .tab-background,
