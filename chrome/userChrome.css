@@ -132,7 +132,7 @@ menupopup * {
 /* both ways (or neither -> greyed): two play.svg triangles + slim divider */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
-  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><g fill="context-fill" fill-rule="evenodd"><path transform="translate(7.34 3.5) scale(0.6)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><path transform="translate(8.66 3.5) scale(-0.6 0.6)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><rect x="7.55" y="5.2" width="0.9" height="5.6" rx="0.45"/></g></svg>') !important;
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="context-fill" fill-rule="evenodd" transform="translate(6.98 1.85) scale(0.62 0.82)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><path fill="context-fill" fill-rule="evenodd" transform="translate(9.02 1.85) scale(-0.62 0.82)" d="M4 12.5l8-5-8-5v10zm-1 0v-10a1 1 0 0 1 1.53-.848l8 5a1 1 0 0 1 0 1.696l-8 5A1 1 0 0 1 3 12.5z"/><rect fill="context-fill" x="7.55" y="4.2" width="0.9" height="7.6" rx="0.45"/></svg>') !important;
 }
 /* newest page (only back): the real play.svg, FLIPPED to point left ◀ */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button {
