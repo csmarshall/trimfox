@@ -62,6 +62,14 @@ user_pref("browser.toolbars.bookmarks.visibility", "never"); // no bookmarks too
 user_pref("browser.tabs.closeWindowWithLastTab", false);     // closing the last tab keeps the window
 
 // ============================================================================
+// XUL menus — swap native macOS menus (un-styleable) to styleable XUL so userChrome.css
+// can theme them. Covers right-click CONTEXT menus AND ANCHORED menus (the urlbar dropdown
+// + the click-and-hold Back/Forward HISTORY menu — the one #6 thought had no pref!).
+// ============================================================================
+user_pref("widget.macos.native-context-menus", false);       // default true (right-click menus)
+user_pref("widget.macos.native-anchored-menus", false);      // default true (anchored/button menus)
+
+// ============================================================================
 // Content fonts  (the *chrome* is forced to 7pt by userChrome.css; these are
 // the default web-page fonts)
 // ============================================================================

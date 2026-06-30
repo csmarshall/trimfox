@@ -113,6 +113,138 @@ menupopup * {
   font-size: 7pt !important;
 }
 
+/* #19: color-theme the (now-XUL) context + popup menus to match trimfox. Requires
+   widget.macos.native-context-menus=false (user.js). The click-and-hold Back/Forward history
+   menu stays NATIVE macOS and is unreachable (issue #6) — right-click gives this themed one. */
+menupopup {
+  appearance: none !important;
+  background-color: var(--tf-surface) !important;
+  color: var(--tf-text) !important;
+  border: 1px solid var(--tf-line-solid) !important;
+  border-radius: 6px !important;
+  padding-block: 1px !important;
+  padding-inline: 0 !important;             /* items reach the side borders → full-width separators (C) */
+  --menuitem-padding: 1px 9px !important;   /* macOS native is 4px 11px — way too tall; tighten hard */
+  --panel-background: var(--tf-surface) !important;
+  --panel-color: var(--tf-text) !important;
+}
+/* the popup wraps its items in a shadow <arrowscrollbox> (part="arrowscrollbox content",
+   exportparts scrollbox→arrowscrollbox-scrollbox). That container's inline padding insets every
+   row — zero it so favicons hug the left (A) and the separators reach the popup side borders (B).
+   A plain `menupopup arrowscrollbox` descendant can't cross the shadow boundary; ::part() can. */
+/* The popup's shadow <arrowscrollbox class="menupopup-arrowscrollbox"> carries 4px padding +
+   1px border (confirmed via probe: gapLeft/gapRight=6 = 1px popup border + 1px asb border + 4px
+   asb padding). That insets every row from the popup edge (B) and the asb's own 1px border sits
+   just inside the popup's top border, muddying it (A). ::part() can't override a UA widget's
+   internal style (inner !important wins); a direct class selector pierces the shadow tree from
+   userChrome. Zeroing both pulls items to the popup's inner border edge → full-width separators
+   + a single clean top border. */
+.menupopup-arrowscrollbox {
+  padding: 0 !important;
+  border-width: 0 !important;
+  border-radius: 5px !important;   /* match the popup's inner radius and clip so corner rows
+                                      (esp. the active-row accent bar / full-width fill) don't
+                                      poke past the rounded corners */
+  overflow: clip !important;
+}
+menupopup > menuitem,
+menupopup > menu {
+  appearance: none !important;
+  color: var(--tf-text) !important;
+  border-radius: 4px !important;
+}
+menupopup > menuitem[_moz-menuactive="true"]:not([disabled]),
+menupopup > menu[_moz-menuactive="true"]:not([disabled]) {
+  background-color: var(--tf-select) !important;
+  color: var(--tf-text) !important;
+}
+menupopup > menuitem[disabled="true"],
+menupopup > menu[disabled="true"] {
+  color: var(--tf-text-dim) !important;
+}
+menupopup > menuseparator {
+  appearance: none !important;
+  border-top: 1px solid var(--tf-line) !important;
+  margin-block: 3px !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+/* the page context menu's top icon row: back / forward / reload / bookmark */
+#context-navigation > menuitem {
+  -moz-context-properties: fill !important;
+  fill: var(--toolbar-color, #e8e8e8) !important;
+}
+#context-navigation > menuitem[_moz-menuactive="true"]:not([disabled]) {
+  background-color: var(--tf-select) !important;
+}
+/* The unified back/forward history menu. Once Firefox clones the popup onto the button it has
+   NO id (confirmed live), so target the .unified-nav-* classes it puts on the ITEMS instead. */
+/* current page: swap the native ✓ (macOS ::before { content: "\2713" }) for a dot */
+/* TAB-STRIP SKIN: make the history menu look like the vertical tab strip — current page =
+   the active-tab highlight, back/forward = inactive tab rows with the same --tf-line-solid
+   separators. The highlight is the "you are here", so the ✓/dot is dropped. */
+.unified-nav-back, .unified-nav-forward, .unified-nav-current {
+  border-radius: 0 !important;
+  border-bottom: 1px solid var(--tf-line-solid) !important;   /* tab separator */
+  margin-inline: 0 !important;
+  padding: 2px 8px !important;            /* 8px inline, 2px vertical (first/last rows get 6px at the menu ends) */
+  min-height: 0 !important;
+}
+/* extra breathing room at the very top of the menu (first row's top) */
+.unified-nav-back:first-child,
+.unified-nav-forward:first-child,
+.unified-nav-current:first-child {
+  padding-top: 6px !important;
+}
+/* last row: no separator (popup's bottom border closes it off, like the urlbar popup) + 6px bottom */
+.unified-nav-back:last-child,
+.unified-nav-forward:last-child,
+.unified-nav-current:last-child {
+  border-bottom: 0 !important;
+  padding-bottom: 6px !important;
+}
+/* Uniform 16px favicon column on EVERY row → labels align AND row heights match. Hard-clamp
+   the real favicons (max-height) so a high-DPI icon can't make its row taller than the rest. */
+.unified-nav-back .menu-icon, .unified-nav-forward .menu-icon, .unified-nav-current .menu-icon {
+  width: 16px !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  max-height: 16px !important;
+  object-fit: contain !important;
+}
+/* The current page isn't `menuitem-iconic` (Firefox gives it no favicon, and CSS can't
+   synthesize one from its uri attr), so its .menu-icon defaults to display:none + visibility:
+   hidden. Reveal both and fill the slot with a TRANSPARENT 16px spacer so the label still aligns
+   with the favicon rows — the active row is marked by the left accent bar + highlight, not a glyph. */
+.unified-nav-current .menu-icon {
+  display: inline-block !important;
+  visibility: visible !important;
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"/>') !important;
+}
+menuitem.unified-nav-current {
+  background-color: var(--tf-highlight) !important;            /* active-tab fill */
+  box-shadow: inset 3px 0 0 0 #d4d4d4 !important;             /* active-tab accent bar on the left edge */
+}
+/* kill the macOS needsgutter checkmark column on every history row so entries hug the left —
+   the favicon (or the current-page dot) is now the only thing in the left slot (B) */
+.unified-nav-back::before,
+.unified-nav-forward::before,
+.unified-nav-current::before {
+  display: none !important;
+}
+.unified-nav-back[_moz-menuactive], .unified-nav-forward[_moz-menuactive] {
+  background-color: var(--tf-raised) !important;              /* tab hover */
+}
+/* on hover, swap the favicon for our themed directional arrowhead (back / forward) */
+.unified-nav-back[_moz-menuactive]:-moz-locale-dir(ltr),
+.unified-nav-forward[_moz-menuactive]:-moz-locale-dir(rtl) {
+  --menuitem-icon: url("chrome://devtools/skin/images/arrowhead-left.svg") !important;
+}
+.unified-nav-forward[_moz-menuactive]:-moz-locale-dir(ltr),
+.unified-nav-back[_moz-menuactive]:-moz-locale-dir(rtl) {
+  --menuitem-icon: url("chrome://devtools/skin/images/arrowhead-right.svg") !important;
+}
+
 /* #5: ONE history-aware nav button. Firefox sets [disabled] on #back-button / #forward-button
    when you can't go that way; :has() reads both and swaps the glyph (all real devtools icons,
    themed via context-fill):
@@ -125,14 +257,37 @@ menupopup * {
 #back-button, #forward-button {
   -moz-context-properties: fill !important;
   fill: var(--toolbar-color, #e8e8e8) !important;   /* explicit themed color (currentColor is dark here) */
+  opacity: 1 !important;   /* never dim the combined nav button */
+}
+/* FF dims disabled toolbar buttons when the WINDOW is inactive
+   (.toolbarbutton-1:-moz-window-inactive[disabled] { opacity:0.5 }) — that's why the dash
+   looked dark in screenshots / with the Browser Toolbox focused. Force it full there too. */
+#back-button:-moz-window-inactive, #forward-button:-moz-window-inactive {
+  opacity: 1 !important;
+}
+#back-button:-moz-window-inactive > .toolbarbutton-icon,
+#forward-button:-moz-window-inactive > .toolbarbutton-icon {
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
 }
 #back-button > .toolbarbutton-icon,
 #forward-button > .toolbarbutton-icon { transform: none !important; }
 
-/* both ways (or neither -> greyed) -> arrowhead-down */
-#nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button,
-#nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
+/* both ways -> arrowhead-down (⌄, hints at the right-click menu) */
+#nav-bar:has(#back-button:not([disabled])):has(#forward-button:not([disabled])) #back-button {
   list-style-image: url("chrome://devtools/skin/images/arrowhead-down.svg") !important;
+}
+/* neither (fresh tab, no history either way) -> a DASH at the same weight as the chevrons
+   (h=2, rx=1 in the arrowheads' 24-viewBox) — honest "nothing to navigate to" */
+#nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
+  list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect fill="%23d4d4d4" x="5" y="11" width="14" height="2" rx="1"/></svg>') !important;
+  fill: var(--toolbar-color, #e8e8e8) !important;   /* match the chevrons (muted read as dark) */
+}
+/* override FF's disabled-button dimming — BOTH opacity and fill-opacity — so the dash reads */
+#nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button,
+#nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button > .toolbarbutton-icon {
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
 }
 /* newest page (only back) -> arrowhead-left */
 #nav-bar:has(#back-button:not([disabled])):has(#forward-button[disabled]) #back-button {
