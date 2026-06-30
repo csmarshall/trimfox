@@ -122,9 +122,9 @@ menupopup {
   color: var(--tf-text) !important;
   border: 1px solid var(--tf-line-solid) !important;
   border-radius: 6px !important;
-  padding-block: 1px !important;
-  padding-inline: 0 !important;             /* items reach the side borders → full-width separators (C) */
-  --menuitem-padding: 1px 9px !important;   /* macOS native is 4px 11px — way too tall; tighten hard */
+  /* -- CONTEXT / POPUP MENU DIALS (right-click menus, urlbar dropdown, etc.) -- */
+  padding: 4px !important;                  /* inset of the item list from the popup border */
+  --menuitem-padding: 3px 9px !important;   /* per-row padding (macOS native is 4px 11px) */
   --panel-background: var(--tf-surface) !important;
   --panel-color: var(--tf-text) !important;
 }
@@ -177,6 +177,26 @@ menupopup > menuseparator {
 #context-navigation > menuitem[_moz-menuactive="true"]:not([disabled]) {
   background-color: var(--tf-select) !important;
 }
+
+/* ============================================================================
+   HISTORY-MENU DIALS  --  back/forward tab-strip popup. Tune the strip HERE.
+   Kept SEPARATE from the context/popup-menu padding (set on `menupopup` above)
+   so the two menus can be adjusted independently.
+   ============================================================================ */
+:root {
+  --tf-hist-row-pad-block:  2px;      /* vertical padding inside each row */
+  --tf-hist-row-pad-inline: 8px;      /* left/right padding inside each row */
+  --tf-hist-end-pad:        6px;      /* extra pad at the menu ends (first row top, last row bottom) */
+  --tf-hist-favicon:        16px;     /* favicon / icon-column size */
+  --tf-hist-accent-width:   3px;      /* active-row left accent bar thickness */
+  --tf-hist-accent-color:   #d4d4d4;  /* active-row left accent bar color */
+}
+/* the history popup hugs its borders (full-width separators, accent bar to the edge); it is the
+   only popup with .unified-nav-* rows, so this is scoped to it and never touches context menus.
+   Top/bottom breathing comes from --tf-hist-end-pad on the first/last rows below. */
+menupopup:has(.unified-nav-current) {
+  padding: 0 !important;
+}
 /* The unified back/forward history menu. Once Firefox clones the popup onto the button it has
    NO id (confirmed live), so target the .unified-nav-* classes it puts on the ITEMS instead. */
 /* current page: swap the native ✓ (macOS ::before { content: "\2713" }) for a dot */
@@ -187,29 +207,29 @@ menupopup > menuseparator {
   border-radius: 0 !important;
   border-bottom: 1px solid var(--tf-line-solid) !important;   /* tab separator */
   margin-inline: 0 !important;
-  padding: 2px 8px !important;            /* 8px inline, 2px vertical (first/last rows get 6px at the menu ends) */
+  padding: var(--tf-hist-row-pad-block) var(--tf-hist-row-pad-inline) !important;
   min-height: 0 !important;
 }
 /* extra breathing room at the very top of the menu (first row's top) */
 .unified-nav-back:first-child,
 .unified-nav-forward:first-child,
 .unified-nav-current:first-child {
-  padding-top: 6px !important;
+  padding-top: var(--tf-hist-end-pad) !important;
 }
 /* last row: no separator (popup's bottom border closes it off, like the urlbar popup) + 6px bottom */
 .unified-nav-back:last-child,
 .unified-nav-forward:last-child,
 .unified-nav-current:last-child {
   border-bottom: 0 !important;
-  padding-bottom: 6px !important;
+  padding-bottom: var(--tf-hist-end-pad) !important;
 }
 /* Uniform 16px favicon column on EVERY row → labels align AND row heights match. Hard-clamp
    the real favicons (max-height) so a high-DPI icon can't make its row taller than the rest. */
 .unified-nav-back .menu-icon, .unified-nav-forward .menu-icon, .unified-nav-current .menu-icon {
-  width: 16px !important;
-  min-width: 16px !important;
-  height: 16px !important;
-  max-height: 16px !important;
+  width: var(--tf-hist-favicon) !important;
+  min-width: var(--tf-hist-favicon) !important;
+  height: var(--tf-hist-favicon) !important;
+  max-height: var(--tf-hist-favicon) !important;
   object-fit: contain !important;
 }
 /* The current page isn't `menuitem-iconic` (Firefox gives it no favicon, and CSS can't
@@ -223,7 +243,7 @@ menupopup > menuseparator {
 }
 menuitem.unified-nav-current {
   background-color: var(--tf-highlight) !important;            /* active-tab fill */
-  box-shadow: inset 3px 0 0 0 #d4d4d4 !important;             /* active-tab accent bar on the left edge */
+  box-shadow: inset var(--tf-hist-accent-width) 0 0 0 var(--tf-hist-accent-color) !important;  /* active-tab accent bar */
 }
 /* kill the macOS needsgutter checkmark column on every history row so entries hug the left —
    the favicon (or the current-page dot) is now the only thing in the left slot (B) */
