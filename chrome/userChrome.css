@@ -494,7 +494,7 @@ display: none;
 
 /* Needed for for FF 75 megabar */
 #urlbar {
-  --urlbar-toolbar-height: 34px !important;
+  /* 34px toolbar-height pin removed — FF 75 megabar relic; let density drive height (compact = 26px) */
 }
 
 /* URL bar text - ensure readable colors */
@@ -799,10 +799,19 @@ findbar:not(:focus-within) {
   display: none !important;
 }
 
-/* No new-tab button — Cmd+T exists. Hide the tab-list "+ New Tab" periphery. */
+/* No new-tab button — Cmd+T exists. Hide the tab-list "+ New Tab" periphery. NOT `display:none`:
+   that pulls the periphery out of the tab-list drop chain and breaks native drag-to-reorder (#14).
+   Collapse it to zero-height-in-layout instead (same trick as .buttons-wrapper) — invisible, but
+   FF's reorder still sees the end-of-list boundary. */
 #tabbrowser-arrowscrollbox-periphery,
 #vertical-tabs-newtab-button {
-  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* Hide the toolbar sidebar toggle button — Firefox won't let you drag it off,
