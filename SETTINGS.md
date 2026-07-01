@@ -23,6 +23,11 @@ There are three layers:
 | `sidebar.revamp.round-content-area` | `false` | drop the rounded inset gutter |
 | `sidebar.position_start` | `true` | sidebar on the left |
 | `sidebar.main.tools` | `""` | empty — launcher is hidden in CSS anyway |
+| `widget.macos.native-context-menus` | `false` | right-click menus become themeable XUL |
+| `widget.macos.native-anchored-menus` | `false` | urlbar dropdown + click-and-hold history menu become themeable XUL (resolves #6) |
+| `browser.theme.toolbar-theme` / `.content-theme` | `2` | chrome color-scheme follows the OS (needed for light/dark auto-switch) |
+| `extensions.activeThemeID` | `default-theme@mozilla.org` | "System theme — auto" (Add-ons Mgr owns it; toggle once if it doesn't take) |
+| `browser.tabs.inTitlebar` | `1` | tabs/chrome integrate with the titlebar |
 | `browser.tabs.hoverPreview.enabled` / `.showThumbnails` | `false` | no tab hover-preview card |
 | `browser.uidensity` | `1` | **compact** density |
 | `browser.compactmode.show` | `true` | exposes the Compact option in Settings |

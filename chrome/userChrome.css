@@ -739,6 +739,47 @@ findbar:not(:focus-within) {
   opacity: 0.5 !important;
 }
 
+/* ── Loading indicator ────────────────────────────────────────────────────────
+   Replace the native throbber (the spinner/"hourglass") with a fill wash while a
+   tab is [busy]. Firefox exposes only boolean [busy]/[progress] to CSS — no load
+   percentage — so this is an INDETERMINATE fill: it repeatedly sweeps to hint
+   "loading", not a real progress bar. VERTICAL (bottom→top) when collapsed,
+   LEFT→RIGHT when expanded. The fill sits on .tab-background, which paints under
+   the favicon/label, so it never hides them.
+   Dials: --tf-load-fill (color), --tf-load-opacity, --tf-load-speed. */
+:root {
+  --tf-load-fill:    var(--tf-accent);
+  --tf-load-opacity: 0.6;
+  --tf-load-speed:   1.4s;
+}
+.tabbrowser-tab .tab-throbber { display: none !important; }   /* hide the native hourglass */
+.tabbrowser-tab[busy] .tab-background { position: relative !important; }
+.tabbrowser-tab[busy] .tab-background::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background-color: var(--tf-load-fill) !important;
+  opacity: var(--tf-load-opacity) !important;
+  pointer-events: none !important;
+}
+/* Only animate when the user hasn't asked for reduced motion (ui.prefersReducedMotion /
+   prefers-reduced-motion). When reduced motion is on, the ::after above stays a STATIC full
+   wash over the busy tab — a calm "loading" indicator with no sweep. */
+@media (prefers-reduced-motion: no-preference) {
+  /* expanded: fill left → right */
+  #tabbrowser-tabs[orient="vertical"][expanded] .tabbrowser-tab[busy] .tab-background::after {
+    transform-origin: left center !important;
+    animation: tf-load-h var(--tf-load-speed) ease-in-out infinite !important;
+  }
+  /* collapsed: fill bottom → top */
+  #tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab[busy] .tab-background::after {
+    transform-origin: bottom center !important;
+    animation: tf-load-v var(--tf-load-speed) ease-in-out infinite !important;
+  }
+  @keyframes tf-load-h { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes tf-load-v { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+}
+
 /* Active tab: a clear flat highlight so you can tell which tab is current.
    (Photon theme makes tab_selected == sidebar bg, i.e. invisible, so we set it.)
    Dimmer when the window is unfocused, like the rest of the chrome. */

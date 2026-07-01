@@ -1,5 +1,8 @@
 # trimfox
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-cs__marshall-yellow?logo=buy-me-a-coffee)](https://buymeacoffee.com/cs_marshall)
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=github-sponsors)](https://github.com/sponsors/csmarshall)
+
 A minimal Firefox `userChrome` setup built around **native vertical tabs** — no
 Tree Style Tab, no sidebar extension, just the browser's own chrome restyled to
 get out of the way.
@@ -71,8 +74,11 @@ parentheses point at the comment that documents the fix.
 
 ### Palette & color tokens (`--tf-*`)
 
-The single source of truth: a neutral, zero-blue grayscale defined once in
-`:root` (`chrome/userChrome.css`), then mapped onto Firefox's own theme vars.
+The single source of truth. The **primitive tokens live in a swappable palette
+file** (`chrome/palettes/grayscale.css` by default) imported at the top of
+`chrome/userChrome.css`; userChrome maps those onto Firefox's own theme vars and
+never hardcodes a color. Each palette carries a dark set **and** a
+`@media (prefers-color-scheme: light)` set — see [Palette](#palette).
 
 - **Surfaces** — `--tf-field` (inset URL/search boxes), `--tf-content` (page bg),
   `--tf-surface` (toolbar/sidebar/tab strip), `--tf-raised` (hover/selected),
@@ -82,15 +88,26 @@ The single source of truth: a neutral, zero-blue grayscale defined once in
 - **Text** — `--tf-text`, `--tf-text-dim`.
 - **Lines & highlights** — `--tf-line` / `-inactive` (translucent separators),
   `--tf-line-solid` / `-inactive` (opaque form so an edge reads the same over the
-  active highlight and dark tabs, #2), `--tf-sep-inset` (separator inline-start
-  inset clearing the macOS frame, #2), `--tf-highlight` / `-inactive` (active-tab
+  active highlight and dark tabs, #2), `--tf-highlight` / `-inactive` (active-tab
   fill).
-- **Theme-var mapping** — `--toolbar-bgcolor`, `--lwt-*`, `--sidebar-*`,
-  `--urlbar-box-bgcolor`, the `--color-accent-primary*` set, the urlbar-popup /
-  autocomplete / chrome-selection highlight vars — all pointed at the tokens with
-  `!important`.
+- **Glyph & attention** — `--tf-glyph` (fixed glyph ink: nav dash, history accent
+  bar, neutral container marker — bright on dark / dark on light); `--tf-attention`
+  (download / update / media *attention* badges Firefox otherwise paints blue/
+  green/teal — neutralized so grayscale stays zero-blue; blue in the firefox
+  palette).
+- **Structural (not a color, stays in userChrome)** — `--tf-sep-inset` (separator
+  inline-start inset clearing the macOS frame, #2).
+- **Theme-var mapping** — `--toolbar-bgcolor`, `--lwt-*`, `--sidebar-*`, the urlbar
+  field backgrounds (`--toolbar-field-background-color[-focus]`, `--urlbar-box-*`),
+  the `--color-accent-primary*` and `*-attention*` sets, the arrowpanel/menu
+  surfaces (`--panel-background-color`, `--panel-border-color`,
+  `--toolbar-background-color`, `--button-background-color-hover/-active`), and the
+  urlbar-popup / autocomplete / chrome-selection highlight vars — all pointed at the
+  tokens with `!important`. (These panel/field mappings close the "leak" class of
+  bug — see [`docs/color-audit.md`](docs/color-audit.md).)
 - Most lines/dividers gain a `:root:-moz-window-inactive` variant so they dim when
-  the window loses focus.
+  the window loses focus. **Semantic colors are deliberately left unmapped** —
+  security red, warning yellow, and container colors stay bold.
 
 ### Window & titlebar
 
@@ -113,17 +130,28 @@ The single source of truth: a neutral, zero-blue grayscale defined once in
 ### Menus & fonts
 
 - Force the whole chrome to **7pt `-apple-system`** (`* { font-size: 7pt }`).
-- Compact menu-popup rows: trimmed padding, `min-height: 0`, 7pt text on
-  `menupopup` and all descendants (requires `widget.macos.native-context-menus =
-  false` — XUL menus only).
+- Theme the (now-XUL) context/popup menus: `--tf-surface` bg, `--tf-select` hover,
+  themed text/separators, trimmed padding, `min-height: 0`, 7pt (requires
+  `widget.macos.native-context-menus = false`). The tight padding is scoped to the
+  history popup via `:has(.unified-nav-current)` so context menus keep a comfortable
+  inset.
+- **Back/forward history menu** reskinned as the vertical **tab strip** (requires
+  `widget.macos.native-anchored-menus = false`, which also resolves #6): current
+  page = active-tab highlight + a `--tf-glyph` left accent bar; back/forward =
+  inactive-tab rows; full-width separators (none under the last row); a favicon
+  column; hover swaps the favicon for a themed arrowhead. Tune with the
+  `--tf-hist-*` dials (see [Tuning knobs](#tuning-knobs)).
 - Re-hide the searchmode-switcher placeholder glyph that the universal 7pt rule
   leaks (`.urlbar-visually-hidden`).
 
 ### URL bar
 
-- Field background `--tf-surface`, 7pt, readable `--tf-text` input incl. focused
-  state; selection forced to `--tf-select` bg / white text (HTML-namespaced
-  `input` selectors).
+- Field background pinned to `--tf-field` for **resting, focus, and hover**
+  (`--toolbar-field-background-color[-focus]`, the `--urlbar-box-background-color*`
+  set) so the field stays dark regardless of the base theme — the focus background
+  is otherwise unmapped and leaks a lighter gray on "System — auto". 7pt, readable
+  `--tf-text` input incl. focused state; selection forced to `--tf-select` bg /
+  white text (HTML-namespaced `input` selectors).
 - Tab-style 1px border on `.urlbar-background` matching the tabs/sidebar; when
   results open, the border frames field + popup as one window (#11).
 - **No-grow on focus**: pin the breakout-extend state back to the compact box
@@ -131,7 +159,9 @@ The single source of truth: a neutral, zero-blue grayscale defined once in
   `--urlbar-toolbar-height`) so only the results panel drops below (#11).
 - Hide the placeholder text, the "search with" one-offs, and the search-engine
   one-off row.
-- Megabar height fix (`--urlbar-toolbar-height: 34px`).
+- `--urlbar-toolbar-height: 34px` — **not** a height lever; it only feeds the
+  focus-centering `calc()`. Removing it breaks the focused-urlbar/results rendering
+  (to actually slim the bar, lower `--urlbar-min-height` or use UI density).
 
 ### URL bar dropdown / results
 
@@ -141,6 +171,11 @@ The single source of truth: a neutral, zero-blue grayscale defined once in
   row, #11), dimmed icon fill, 7pt.
 - Hide the redundant first row when it's a "search with" / "visit" item, and the
   title-separator + secondary text on row 0.
+- **Kill the field↔results divider** (`--urlbarview-separator-color: transparent`)
+  so the field and popup read as one seamless panel.
+- **"Switch to Tab" chiclet**: themed pill (`--tf-raised` bg, `--tf-line-solid`
+  border) with the tab glyph repainted via `mask` + `background-color: var(--tf-text)`
+  — Firefox's `context-fill` wouldn't take our color (same quirk as the nav dash).
 
 ### Vertical-tabs reskin
 
@@ -189,17 +224,28 @@ The single source of truth: a neutral, zero-blue grayscale defined once in
 - Active tab: flat `--tf-highlight` fill (Photon makes selected == sidebar bg,
   i.e. invisible) — `--tf-highlight-inactive` when unfocused.
 - Muted tabs dimmed to `opacity: 0.5` (TST parity).
+- **Loading indicator**: the native throbber (spinner/"hourglass") is hidden and
+  replaced with an animated fill wash while a tab is `[busy]` — **vertical**
+  (bottom→top) when collapsed, **left→right** when expanded. It's *indeterminate*
+  (loops to hint "loading") because Firefox exposes only boolean `[busy]`/
+  `[progress]` to CSS, not a load percentage — a real progress bar would need
+  userChrome.js. Dials: `--tf-load-fill`, `--tf-load-opacity`, `--tf-load-speed`.
 
 ### Container-tab indicators (#12)
 
-- A **dynamic** container-color line down the inline-start edge in both states,
-  using Firefox's live `var(--identity-tab-color)` — no hardcoded colors.
-- Expanded tabs also get the container **glyph** inset on the right, color-masked
-  to the container color (icon mapped per `usercontextid`: Personal / Work /
-  Banking / Shopping / Facebook, since FF exposes no var for the icon).
-- Collapsed strip shows only the line (glyph hidden); the line itself is
-  toggleable via `--tf-container-collapsed-flag` (`none` = clean strip). Both dim
-  on blur.
+- The marker color is **dynamic** — Firefox's live `var(--identity-tab-color)`, so
+  each container renders in its own color (Personal blue, Work orange, …). No
+  hardcoded colors, except `toolbar`-colored containers (e.g. the Facebook Container
+  add-on), which resolve to `currentColor` (white); those are pinned to `--tf-glyph`
+  so they read on-theme instead of stark white (per `usercontextid`).
+- **Two markers, one per mode** (so they never stack): a half-**pill** on the
+  inline-start (left) edge, and the container **glyph** on the right (icon mapped
+  per `usercontextid` — FF exposes no var for it). **Collapsed** shows the pill;
+  **expanded** shows the glyph.
+- Firefox's own native `.tab-context-line` is **hidden** (it duplicated our marker,
+  and stayed white for `toolbar` containers).
+- Both dim on blur. The collapsed pill is toggleable via
+  `--tf-container-collapsed-flag` (`none` = clean strip).
 
 ### Pinned tabs (#13)
 
@@ -248,6 +294,13 @@ The single source of truth: a neutral, zero-blue grayscale defined once in
 - **Enable the reskin**: `toolkit.legacyUserProfileCustomizations.stylesheets`,
   `sidebar.revamp`, `sidebar.verticalTabs`,
   `sidebar.revamp.round-content-area=false`.
+- **Themeable XUL menus**: `widget.macos.native-context-menus=false` (right-click
+  menus) and `widget.macos.native-anchored-menus=false` (urlbar dropdown +
+  click-and-hold history menu — the latter resolves #6).
+- **Color scheme follows the OS**: `browser.theme.toolbar-theme=2` /
+  `content-theme=2` + `extensions.activeThemeID=default-theme@mozilla.org` (System
+  — auto), so trimfox's light/dark palette tracks macOS Appearance — see
+  [Light / dark](#light--dark-auto-follows-macos). Also `browser.tabs.inTitlebar=1`.
 - **Behavior**: `sidebar.visibility="expand-on-hover"`, `sidebar.expandOnHover`,
   `sidebar.position_start` (left), animations off, and **instant** hover-expand
   (`...expand-on-hover.delay-duration-ms=0` / `duration-ms=0`). Empty
@@ -264,19 +317,34 @@ The single source of truth: a neutral, zero-blue grayscale defined once in
 
 ## Tuning knobs
 
-Most of the look is driven from a few spots near the top of the vertical-tabs
-section in `chrome/userChrome.css`:
+Colors come from the [palette](#palette). Everything else is driven by `--tf-*`
+dials, each defined in a labeled `:root` block right above the feature it controls
+in `chrome/userChrome.css`:
 
-| Knob | What it controls |
-|------|------------------|
-| `--tab-collapsed-background-width` | collapsed strip width (default `14px`) |
-| `--tab-min-height` | row height (default `22px`) |
-| `.tabbrowser-tab` `border-bottom` alpha | separator brightness |
-| `.tab-background` selected `background-color` | active-tab highlight |
-| `#sidebar-main` / `#vertical-tabs` `border-inline-end` | right divider color |
+| Knob | Default | What it controls |
+|------|---------|------------------|
+| **Tab strip** | | |
+| `--tab-min-height` | `22px` | row height |
+| `--tab-collapsed-background-width` | `14px` | collapsed strip width |
+| `--tf-sep-inset` | `1px` | tab-separator inline-start inset (clears the macOS frame) |
+| **Pinned grid** (`#13`) | | |
+| `--tf-pin-size` | `22px` | faviconized pin square |
+| `--tf-pin-favicon` | `14px` | favicon inside the square |
+| `--tf-pin-pitch` / `-pitch-n` | `24px` / `24` | pin-to-pin step (px + unitless) |
+| `--tf-pin-area-width` | `230` | fallback grid width (auto-fit overrides via `@container`) |
+| `--tf-pin-row-inset` | `4px` | left inset of pin #1 |
+| **History menu** (tab-strip skin) | | |
+| `--tf-hist-row-pad-block` / `-inline` | `2px` / `8px` | per-row padding |
+| `--tf-hist-end-pad` | `6px` | extra pad at the menu's top/bottom rows |
+| `--tf-hist-favicon` | `16px` | favicon column size |
+| `--tf-hist-accent-width` / `-color` | `3px` / `--tf-glyph` | active-row left accent bar |
+| **Loading indicator** | | |
+| `--tf-load-fill` / `-opacity` / `-speed` | `--tf-accent` / `0.6` / `1.4s` | busy-tab fill wash |
+| **Container markers** (`#12`) | | |
+| `--tf-container-collapsed-flag` | `block` | `none` = hide the pill in the collapsed strip |
 
-The divider and separators use `:-moz-window-inactive` so they dim when the
-window loses focus, matching the rest of the themed chrome.
+The dividers, separators, and container markers use `:-moz-window-inactive` so they
+dim when the window loses focus, matching the rest of the themed chrome.
 
 ## Palette
 
