@@ -1,0 +1,81 @@
+/* ============================================================================
+   trimfox palette — GRAYSCALE (zero-blue)   [default]
+   ----------------------------------------------------------------------------
+   This file defines ONLY the primitive --tf-* color tokens (surfaces, accent,
+   text, lines, highlight) for both dark and light appearance. userChrome.css
+   maps these onto Firefox's own theme vars and never hardcodes a color, so
+   swapping this one @import re-colors the entire theme.
+
+   To make a new theme version: copy this file, change the values, and point the
+   `@import url("palettes/…")` line at the top of userChrome.css at your copy.
+
+   Appearance follows macOS System Settings → Appearance (chrome
+   prefers-color-scheme). --tf-sep-inset is structural (not a color) and lives
+   in userChrome.css, not here.
+   ============================================================================ */
+
+/* ── DARK (default) ────────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces — dark inset → lighter raised */
+  --tf-field:    #121212;   /* inset fields: URL bar, search boxes */
+  --tf-content:  #1c1c1c;   /* page/web content background */
+  --tf-surface:  #202020;   /* chrome: toolbar, sidebar, tab strip */
+  --tf-raised:   #2e2e2e;   /* hover / selected tab / highlight */
+  --tf-select:   #555555;   /* text selection + urlbar dropdown selection */
+
+  /* Accent — replaces Firefox's teal/blue on buttons / focus / checkboxes */
+  --tf-accent:        #707070;
+  --tf-accent-hover:  #808080;
+  --tf-accent-active: #606060;
+
+  /* Text */
+  --tf-text:     #ffffff;
+  --tf-text-dim: #aaaaaa;
+
+  /* Lines & translucent highlight (each dims when the window is unfocused) */
+  --tf-line:                rgba(255, 255, 255, 0.18);   /* separators, dividers */
+  --tf-line-inactive:       rgba(255, 255, 255, 0.06);
+  --tf-line-solid:          #484848;   /* OPAQUE form of --tf-line over --tf-surface,
+                                          so a tab separator reads the SAME color over
+                                          the active-tab highlight and over dark
+                                          inactive tabs (#2). */
+  --tf-line-solid-inactive: #2d2d2d;   /* opaque --tf-line-inactive */
+  --tf-highlight:           rgba(255, 255, 255, 0.10);   /* active-tab fill */
+  --tf-highlight-inactive:  rgba(255, 255, 255, 0.05);
+
+  /* Fixed glyph ink — the nav dash + history-menu accent bar. A near-white that
+     reads on dark chrome; the light block below flips it. */
+  --tf-glyph: #d4d4d4;
+
+  /* Attention/notification badges (download-complete, ☰ update dot, tab media dot).
+     Zero-hue: uses the glyph ink so it stays visible without reintroducing blue. */
+  --tf-attention: var(--tf-glyph);
+}
+
+/* ── LIGHT (#15) — the grayscale ramp INVERTED ─────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --tf-field:    #ffffff;
+    --tf-content:  #f7f7f7;
+    --tf-surface:  #ececec;
+    --tf-raised:   #dcdcdc;
+    --tf-select:   #b8b8b8;
+
+    --tf-accent:        #707070;   /* neutral gray reads on light and dark alike */
+    --tf-accent-hover:  #808080;
+    --tf-accent-active: #606060;
+
+    --tf-text:     #111111;
+    --tf-text-dim: #666666;
+
+    --tf-line:                rgba(0, 0, 0, 0.18);
+    --tf-line-inactive:       rgba(0, 0, 0, 0.06);
+    --tf-line-solid:          #c4c4c4;
+    --tf-line-solid-inactive: #dadada;
+    --tf-highlight:           rgba(0, 0, 0, 0.10);
+    --tf-highlight-inactive:  rgba(0, 0, 0, 0.05);
+
+    --tf-glyph: #333333;   /* dark ink for the light surface */
+    --tf-attention: var(--tf-glyph);
+  }
+}

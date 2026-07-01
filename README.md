@@ -23,8 +23,9 @@ It's called *trimfox* because that's the point — trim everything that isn't a 
 
 - **Firefox 136+** (native vertical tabs); developed and verified on **152**.
 - **macOS.** Built and tuned on macOS only — see [Platform support](#platform-support).
-- A dark setup: the palette is a neutral grayscale (see `palette.html`) and the
-  separators/dividers assume a dark sidebar.
+- A swappable palette (see [Palette](#palette)): default is neutral grayscale,
+  zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview all
+  schemes in `palette.html`.
 
 ## Install
 
@@ -279,16 +280,74 @@ window loses focus, matching the rest of the themed chrome.
 
 ## Palette
 
-All colors are neutral-grayscale `--tf-*` tokens defined once at the top of
-`chrome/userChrome.css` (`:root`), with Firefox's own theme variables mapped onto
-them — so there's a single place to change any color. Open **`palette.html`** in a
-browser for a visual swatch reference and the token vocabulary: `field`,
-`content`, `surface`, `raised`, `select`, `accent`, `text`, `text-dim`, `line`,
-`highlight`.
+All colors are `--tf-*` tokens, and `userChrome.css` never hardcodes a color — it
+maps Firefox's own theme variables onto the tokens, so a whole theme is just one
+token set. The **primitive tokens live in a swappable palette file**, imported at
+the top of `chrome/userChrome.css`:
 
-The accent (`--tf-accent`) replaces Firefox's default teal on buttons, focus
-rings and checkboxes — in the chrome, on `about:` pages (`userContent.css`), and
-on privileged error pages (the optional AutoConfig in `chrome/autoconfig/`).
+```css
+@import url('./palettes/grayscale.css');   /* ← swap this one line */
+```
+
+Each file in **`chrome/palettes/`** defines the token set for **both dark and
+light**, so the scheme follows the OS automatically (see below):
+
+| file | look |
+|------|------|
+| `grayscale.css` *(default)* | neutral grayscale, zero-blue — dark + inverted light |
+| `firefox.css` | trimfox layout with Firefox's own default chrome colors + blue accent |
+
+Token vocabulary: `field`, `content`, `surface`, `raised`, `select`, `accent`
+(+ `-hover`/`-active`), `text`, `text-dim`, `line` (+ `-solid`/`-inactive`),
+`highlight`, `glyph`. The accent (`--tf-accent`) replaces Firefox's default teal
+on buttons, focus rings and checkboxes — in the chrome, on `about:` pages
+(`userContent.css`), and on privileged error pages (`chrome/autoconfig/`).
+
+**Palette explorer:** open **`palette.html`** in a browser for an interactive
+preview — a 4-way picker (trimfox dark/light, Firefox-default dark/light) that
+re-colors a live browser-chrome mockup and a full swatch table. Use it to compare
+schemes or design your own before editing a palette file.
+
+### Light / dark (auto-follows macOS)
+
+Each palette carries a dark set plus an `@media (prefers-color-scheme: light)`
+set, so trimfox switches with your **macOS Appearance** (System Settings →
+Appearance). No restart once it's wired — flip the OS and the chrome follows.
+
+**One-time setup — Firefox's chrome scheme is driven by its active *theme*, not by
+macOS directly.** A built-in **Dark** or **Light** theme hardcodes the scheme and
+*pins* the palette; you need **System theme — auto** so the chrome tracks the OS.
+trimfox's `user.js` sets `browser.theme.toolbar-theme` / `content-theme` to `2`
+(auto) and `extensions.activeThemeID` to `default-theme@mozilla.org`, but the
+**Add-ons Manager owns the active theme and often wins over the pref**. If light
+mode doesn't engage:
+
+> **☰ → Add-ons and themes → Themes**, and switch to **"System theme — auto".**
+> If it's already selected but stuck, toggle to any other theme and back — that
+> forces the Add-ons Manager to re-apply *auto* (the pref alone may not take).
+
+(trimfox overrides every chrome color regardless, so the theme choice only
+controls *which* light/dark palette engages — not the look otherwise.)
+
+> **Note:** `--tf-glyph` can't reach into `data:` SVG icons (CSS `var()` doesn't
+> resolve inside a data URI), so the no-history nav-button dash bakes its color
+> in. It ships a light-gray dash plus a dark-gray copy swapped in under
+> `@media (prefers-color-scheme: light)` — so a *custom* palette that flips
+> light/dark differently would need the same one-line media override.
+
+## docs/ (maintainer notes)
+
+Reverse-engineering method and hard-won gotchas from building trimfox — read
+these before a tricky chrome change:
+
+- **[`docs/theming-playbook.md`](docs/theming-playbook.md)** — how to reverse-
+  engineer Firefox chrome: reading FF's source out of `omni.ja`, live Browser-
+  Toolbox probes, piercing UA shadow DOM, SVG-icon theming, live-reactive
+  `:has()` selectors, condensed case studies (pinned grid, URL bar, menus, nav
+  button, drag-reorder), and a gotchas quick-reference.
+- **[`docs/color-audit.md`](docs/color-audit.md)** — when a chrome surface is the
+  wrong shade: the 5-minute procedure to find the unmapped Firefox variable and
+  bind it to a `--tf-*` token.
 
 ## reference/
 

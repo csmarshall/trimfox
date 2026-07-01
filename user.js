@@ -60,6 +60,30 @@ user_pref("browser.uidensity", 1);                           // compact density
 user_pref("browser.compactmode.show", true);                 // expose the Compact option in Settings
 user_pref("browser.toolbars.bookmarks.visibility", "never"); // no bookmarks toolbar
 user_pref("browser.tabs.closeWindowWithLastTab", false);     // closing the last tab keeps the window
+user_pref("browser.tabs.inTitlebar", 1);                     // tabs/chrome integrate with the titlebar
+                                                             // (trimfox removes the native window
+                                                             // controls via userChrome.css)
+
+// OPTIONAL: force all WEB CONTENT to dark regardless of OS appearance (0=dark, 1=light, 2=auto).
+// Leave commented to let pages follow the system. NOTE: if you set this to 0 and then switch
+// macOS to Light, the trimfox CHROME goes light but web pages stay dark — that's this pref, not
+// a theme bug.
+// user_pref("layout.css.prefers-color-scheme.content-override", 0);
+
+// ============================================================================
+// Chrome color scheme must FOLLOW THE OS for trimfox's light/dark palette to
+// auto-switch. The chrome prefers-color-scheme is set by the ACTIVE Firefox
+// THEME, not by macOS directly — so trimfox ships on "System theme — auto"
+// (default-theme@mozilla.org) with toolbar/content-theme = 2 (auto). A built-in
+// "Dark"/"Light" theme hardcodes the scheme and pins the palette; auto lets
+// @media (prefers-color-scheme) in palettes/*.css track macOS Appearance.
+// (trimfox overrides every chrome color regardless, so this only affects which
+// light/dark palette engages — not the look otherwise.)
+// NOTE: the active theme is owned by the Add-ons Manager; if these prefs don't
+// take, switch it once in about:addons → Themes → "System theme — auto".
+user_pref("browser.theme.toolbar-theme", 2);   // 0=dark 1=light 2=auto(OS)
+user_pref("browser.theme.content-theme", 2);
+user_pref("extensions.activeThemeID", "default-theme@mozilla.org");
 
 // ============================================================================
 // XUL menus — swap native macOS menus (un-styleable) to styleable XUL so userChrome.css

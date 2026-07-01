@@ -1,6 +1,10 @@
 /* Findbar */
 @import url('./refined-findbar/findbar.css');
 
+/* trimfox PALETTE — swap this one line to change the whole color scheme
+   (dark+light primitives live in the imported file). See palettes/ for variants. */
+@import url('./palettes/grayscale.css');
+
 /* IMPORTANT: Selection styles MUST come BEFORE namespace declaration */
 ::-moz-selection {
   background-color: var(--tf-select) !important;
@@ -16,45 +20,17 @@
 @namespace html url("http://www.w3.org/1999/xhtml"); /* HTML namespace for input elements */
 
 /* ============================================================================
-   trimfox palette — SINGLE SOURCE OF TRUTH (neutral grayscale, zero blue).
-   Visual reference + token vocabulary: palette.html
-   Everything below maps Firefox's own theme variables onto these tokens, so
-   there's one place to change a color.
+   trimfox — Firefox-var mappings.
+   The primitive --tf-* color tokens (surfaces, accent, text, lines, highlight,
+   for BOTH dark and light) live in the imported palette file at the top of this
+   sheet — palettes/grayscale.css by default. Change the color scheme by swapping
+   that one @import. Everything below maps those tokens onto Firefox's own theme
+   variables, so there is exactly one place to change a color.
    ============================================================================ */
 :root {
-  /* --- Surfaces (dark inset -> light raised) --- */
-  --tf-field:    #121212;   /* inset fields: URL bar, search boxes */
-  --tf-content:  #1c1c1c;   /* page/web content background */
-  --tf-surface:  #202020;   /* chrome: toolbar, sidebar, tab strip */
-  --tf-raised:   #2e2e2e;   /* hover / selected tab / highlight */
-  --tf-select:   #555555;   /* text selection + urlbar dropdown selection */
-
-  /* --- Accent (replaces Firefox's teal on buttons / focus / checkboxes) --- */
-  --tf-accent:        #707070;
-  --tf-accent-hover:  #808080;
-  --tf-accent-active: #606060;
-
-  /* --- Text --- */
-  --tf-text:     #ffffff;
-  --tf-text-dim: #aaaaaa;
-
-  /* --- Lines & translucent highlight (each dims when the window is unfocused) --- */
-  --tf-line:               rgba(255, 255, 255, 0.18);   /* separators, dividers */
-  --tf-line-inactive:      rgba(255, 255, 255, 0.06);
-  --tf-line-solid:          #484848;                     /* OPAQUE form of --tf-line as
-                                                            it renders over --tf-surface.
-                                                            Used for tab separators so an
-                                                            edge reads the SAME color over
-                                                            the active-tab highlight and
-                                                            over dark inactive tabs (#2). */
-  --tf-line-solid-inactive: #2d2d2d;                     /* opaque --tf-line-inactive */
-  --tf-sep-inset:          1px;                          /* tab-separator inline-start
-                                                            inset — just clears the macOS
-                                                            window frame so separators
-                                                            meet its inner edge without
-                                                            crossing into it (#2) */
-  --tf-highlight:          rgba(255, 255, 255, 0.10);   /* active-tab fill */
-  --tf-highlight-inactive: rgba(255, 255, 255, 0.05);
+  --tf-sep-inset: 1px;   /* tab-separator inline-start inset — STRUCTURAL (not a color,
+                            so it stays here, not in the palette). Just clears the macOS
+                            window frame so separators meet its inner edge (#2). */
 
   /* ---- Map Firefox theme vars onto the tokens ---- */
   --toolbar-bgcolor:              var(--tf-surface) !important;
@@ -62,7 +38,31 @@
   --lwt-toolbarbutton-background: var(--tf-raised)  !important;
   --sidebar-background-color:     var(--tf-surface) !important;
   --sidebar-border-color:         var(--tf-surface) !important;
-  --urlbar-box-bgcolor:           var(--tf-field)   !important;
+
+  /* URL-bar field backgrounds — pin resting + FOCUS + hover so the field (and the breakout-extend
+     pill that backs the results) stays --tf-field regardless of the underlying Firefox theme.
+     On "System — auto" (not the built-in Dark theme) the focus background is otherwise unmapped
+     and leaks the base theme's lighter gray. NOTE the FF 152 var names: `-background-color-focus`
+     (suffix order matters — `-focus-background-color` is a no-op). */
+  --toolbar-field-background-color:        var(--tf-field)      !important;   /* resting field */
+  --toolbar-field-background-color-focus:  var(--tf-field)      !important;   /* FOCUSED field + popup pill */
+  --toolbar-field-border-color:            var(--tf-line-solid) !important;
+  --urlbar-box-bgcolor:                    var(--tf-field)      !important;   /* legacy name (harmless) */
+  --urlbar-box-background-color:           var(--tf-field)      !important;   /* inner box (search mode) */
+  --urlbar-box-background-color-focus:     var(--tf-field)      !important;
+  --urlbar-box-background-color-hover:     var(--tf-raised)     !important;
+  --urlbar-box-background-color-active:    var(--tf-raised)     !important;
+
+  /* Arrowpanels (☰/app menu, Downloads, Bookmarks/Library, Protections, permission &
+     page-action/extension popups) + #navigator-toolbox/#sidebar-main + in-panel buttons.
+     Same leak class as the urlbar focus bug: unmapped on "System — auto", the
+     :root:not([lwtheme]) defaults paint these #42414d gray (panels), #2b2a33 (toolbar), and
+     a VIOLET (#75669f) button hover. Found via the color-leak audit — see docs/color-audit.md. */
+  --panel-background-color:          var(--tf-surface)    !important;
+  --panel-border-color:              var(--tf-line-solid) !important;
+  --toolbar-background-color:        var(--tf-surface)    !important;   /* #navigator-toolbox + #sidebar-main (Nova) */
+  --button-background-color-hover:   var(--tf-raised)     !important;   /* in-panel ghost buttons — kills the violet hover */
+  --button-background-color-active:  var(--tf-select)     !important;
 
   --toolbar-color:             var(--tf-text) !important;
   --lwt-text-color:            var(--tf-text) !important;
@@ -76,6 +76,17 @@
   --color-accent-primary-hover:  var(--tf-accent-hover)  !important;
   --color-accent-primary-active: var(--tf-accent-active) !important;
   accent-color:                  var(--tf-accent)        !important;
+
+  /* Attention / notification — DECORATIVE accent that Firefox paints blue/green/teal:
+     the download-complete badge, the ☰ update dot, "saved to Library" star, and the tab
+     media/attention dot. Route to --tf-attention so grayscale stays truly zero-blue.
+     (SAFETY colors — security red, warning yellow, cert errors — are deliberately NOT
+     mapped here: they carry meaning and should stay bold.) */
+  --toolbarbutton-icon-fill-attention:     var(--tf-attention) !important;
+  --lwt-toolbarbutton-icon-fill-attention: var(--tf-attention) !important;
+  --button-attention-dot-color:            var(--tf-attention) !important;
+  --tab-attention-dot-color:               var(--tf-attention) !important;
+  --color-accent-attention:                var(--tf-attention) !important;
 
   /* Selection / highlight (urlbar dropdown, field highlight, chrome selection) */
   --urlbar-popup-action-color:               var(--tf-text-dim) !important;
@@ -189,7 +200,7 @@ menupopup > menuseparator {
   --tf-hist-end-pad:        6px;      /* extra pad at the menu ends (first row top, last row bottom) */
   --tf-hist-favicon:        16px;     /* favicon / icon-column size */
   --tf-hist-accent-width:   3px;      /* active-row left accent bar thickness */
-  --tf-hist-accent-color:   #d4d4d4;  /* active-row left accent bar color */
+  --tf-hist-accent-color:   var(--tf-glyph);  /* active-row left accent bar (flips light/dark) */
 }
 /* the history popup hugs its borders (full-width separators, accent bar to the edge); it is the
    only popup with .unified-nav-* rows, so this is scoped to it and never touches context menus.
@@ -302,6 +313,14 @@ menuitem.unified-nav-current {
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
   list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect fill="%23d4d4d4" x="5" y="11" width="14" height="2" rx="1"/></svg>') !important;
   fill: var(--toolbar-color, #e8e8e8) !important;   /* match the chevrons (muted read as dark) */
+}
+/* LIGHT palette: the dash's fill is baked into the data: URI (CSS var() can't reach inside a
+   data URI), so the light-gray #d4d4d4 dash is invisible on a light toolbar. Swap in a
+   dark-fill copy whenever the light scheme is active (matches --tf-glyph's light value #333). */
+@media (prefers-color-scheme: light) {
+  #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
+    list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect fill="%23333333" x="5" y="11" width="14" height="2" rx="1"/></svg>') !important;
+  }
 }
 /* override FF's disabled-button dimming — BOTH opacity and fill-opacity — so the dash reads */
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button,
@@ -489,12 +508,49 @@ display: none;
 .urlbarView-row {
     fill: currentColor;
     fill-opacity: .6;
-    padding-block: unset !important; 
+    padding-block: unset !important;
 }
 
-/* Needed for for FF 75 megabar */
+/* "Switch to Tab" (and remote-tab / clipboard) action chiclet. FF draws its tab glyph
+   (view-opentabs.svg, fill="context-fill") via -moz-context-properties on the chiclet, but the
+   fill resolves near-black on our dark theme and the border (--border-color-deemphasized) is
+   invisible. Target the chiclet class DIRECTLY, re-assert -moz-context-properties, and force a
+   full-white icon + a themed pill so it reads clearly. */
+.urlbarView-action.urlbarView-switchToTab {
+  color: var(--tf-text) !important;
+  background-color: var(--tf-raised) !important;
+  border-color: var(--tf-line-solid) !important;
+  /* FF's context-fill icon won't take our fill (context-fill is unreliable — same issue as the
+     nav dash). Drop it and repaint the glyph via mask + background-color, which we control. */
+  background-image: none !important;
+  padding-inline-start: 8px !important;   /* reset the room FF reserved for its bg-image icon */
+}
+.urlbarView-action.urlbarView-switchToTab::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 14px !important;
+  height: 14px !important;
+  vertical-align: -2px !important;
+  margin-inline-end: 5px !important;
+  background-color: var(--tf-text) !important;   /* the glyph color — full white / dark in light */
+  mask: url("chrome://browser/content/firefoxview/view-opentabs.svg") center / contain no-repeat !important;
+}
+
+/* #11: kill the divider line between the urlbar field and the results (and the inter-row
+   lines) so the field + popup read as ONE seamless panel. FF draws these as borders using
+   --urlbarview-separator-color (view-nova border-top/bottom on the rows). */
+#urlbar-results,
+.urlbarView {
+  --urlbarview-separator-color: transparent !important;
+}
+
+/* Defines --urlbar-toolbar-height for the breakout-extend centering calc above (line ~440).
+   NOT a navbar-height lever: FF 152 doesn't use this var for layout — it ONLY feeds our
+   top:calc(). Removing it leaves that calc undefined and breaks the focused-urlbar / results-
+   popup rendering (learned the hard way). To actually slim the nav/url bar, lower
+   --urlbar-min-height or switch UI density (compact field = 26px) instead. */
 #urlbar {
-  /* 34px toolbar-height pin removed — FF 75 megabar relic; let density drive height (compact = 26px) */
+  --urlbar-toolbar-height: 34px !important;
 }
 
 /* URL bar text - ensure readable colors */
@@ -863,6 +919,10 @@ findbar:not(:focus-within) {
 .tabbrowser-tab[usercontextid="4"] { --tf-container-icon: url("resource://usercontext-content/cart.svg"); }        /* Shopping */
 .tabbrowser-tab[usercontextid="6"] { --tf-container-icon: url("resource://usercontext-content/fence.svg"); }       /* Facebook */
 
+/* "toolbar"-colored containers (Facebook / id 6, via the Facebook Container add-on) render the
+   marker white — handled AFTER the pseudo rules below (FF sets the color via a class, so a tab-
+   level --identity-tab-color override doesn't win; the pseudo-elements are recolored directly). */
+
 /* positioning context for the container line + glyph markers below */
 .tabbrowser-tab[usercontextid] { position: relative !important; }
 .tabbrowser-tab[usercontextid]::after {
@@ -880,28 +940,51 @@ findbar:not(:focus-within) {
   mask-repeat: no-repeat !important;
   pointer-events: none !important;
 }
-/* a thin container-color LINE down the inline-start edge — the constant "this tab is
-   container X" marker, shown collapsed AND expanded. Same dynamic color as the glyph. */
+/* a thin container-color LINE down the inline-START (left) edge — the constant "this tab is
+   container X" marker, shown collapsed AND expanded. Same dynamic color as the glyph. On the
+   LEFT so it frames the tab opposite the right-edge glyph, instead of stacking beside it. */
 .tabbrowser-tab[usercontextid]::before {
   content: "" !important;
   position: absolute !important;
-  inset-inline-end: 0 !important;     /* right edge — same side as the glyph */
+  inset-inline-start: 1px !important;   /* flush against the left rail (0 overlapped it, 2 left a gap) */
   top: 3px !important;
   bottom: 3px !important;
   width: 3px !important;
-  border-radius: 2px 0 0 2px !important;
+  border-radius: 0 2px 2px 0 !important;   /* HALF pill: flat on the edge side, rounded toward the label */
   background-color: var(--identity-tab-color) !important;
   pointer-events: none !important;
 }
-/* compact strip: no room for the glyph — hide it, leave just the line.
-   EASY OFF: set --tf-container-collapsed-flag to `none` to also hide the line when
-   collapsed (the expanded glyph + line are unaffected). */
-:root { --tf-container-collapsed-flag: block; }   /* ← `none` = clean collapsed strip */
-#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab[usercontextid]::after {
+/* Facebook (id 6) is "toolbar"-colored → FF's `.identity-color-toolbar { --identity-tab-color:
+   currentColor }` (usercontext.css) makes the marker white. The var override earlier lost that
+   cascade, so force BOTH the line (::before) and glyph (::after) to the neutral accent DIRECTLY
+   here — after the generic rules, so it wins. Pill + glyph render the identical color. */
+.tabbrowser-tab[usercontextid="6"]::before,
+.tabbrowser-tab[usercontextid="6"]::after {
+  background-color: var(--tf-glyph) !important;   /* #d4d4d4/#333 — reads like the labels &
+                                                     the Settings icon (was --tf-accent #707070,
+                                                     which looked too dim next to white text) */
+}
+/* Firefox ALSO renders its own native container marker — <hbox class="tab-context-line">,
+   styled `background: var(--identity-tab-color)` (tabs.css). We draw our own line (::before) +
+   glyph (::after) above, so the native one is a redundant DUPLICATE — and for "toolbar"-colored
+   containers it stays currentColor (white), mismatching our neutral markers (confirmed via probe:
+   native_tab_context_line = rgb(251,251,254)). Hide it so there's exactly ONE container marker. */
+.tabbrowser-tab .tab-context-line {
   display: none !important;
 }
+/* One marker per mode, so they never stack:
+   - COLLAPSED strip: show the PILL (::before) — no room for the glyph; hide the glyph.
+   - EXPANDED: show the GLYPH (::after, sits by the label) — hide the pill; it'd be redundant.
+   EASY OFF: set --tf-container-collapsed-flag to `none` to also drop the pill when collapsed. */
+:root { --tf-container-collapsed-flag: block; }   /* ← `none` = clean collapsed strip */
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab[usercontextid]::after {
+  display: none !important;                                        /* collapsed: no glyph */
+}
 #tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab[usercontextid]::before {
-  display: var(--tf-container-collapsed-flag, block) !important;
+  display: var(--tf-container-collapsed-flag, block) !important;   /* collapsed: show pill */
+}
+#tabbrowser-tabs[orient="vertical"][expanded] .tabbrowser-tab[usercontextid]::before {
+  display: none !important;                                        /* expanded: hide pill (glyph shows) */
 }
 /* dim with the window on blur, like the rest of the chrome (covers line + glyph) */
 :root:-moz-window-inactive .tabbrowser-tab[usercontextid]::before,

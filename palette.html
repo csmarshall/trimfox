@@ -3,246 +3,221 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>trimfox palette</title>
+<title>trimfox — palette explorer</title>
 <style>
-  /* ===== trimfox palette — single source of truth (neutral grayscale, zero blue) =====
-     These --tf-* token names are our shared vocabulary. Reference them by name. */
   :root {
-    /* Surfaces — darkest (inset) to lightest (raised) */
-    --tf-field:    #121212;   /* rgb(18,18,18)   inset fields: URL bar, search boxes */
-    --tf-content:  #1c1c1c;   /* rgb(28,28,28)   web/page content background */
-    --tf-surface:  #202020;   /* rgb(32,32,32)   chrome: toolbar, sidebar, tab strip */
-    --tf-raised:   #2e2e2e;   /* rgb(46,46,46)   hover / selected tab / highlight */
-
-    /* Accent — replaces Firefox's teal on buttons / focus / checkboxes */
-    --tf-accent:        #707070;  /* rgb(112,112,112) */
-    --tf-accent-hover:  #808080;
-    --tf-accent-active: #606060;
-
-    /* Text */
-    --tf-text:     #ffffff;   /* primary text */
-    --tf-text-dim: #aaaaaa;   /* rgb(170,170,170) secondary text, icons */
-
-    /* Lines — separators / dividers, as white at low alpha (dims with focus) */
-    --tf-line:          rgba(255,255,255,0.18);  /* focused */
-    --tf-line-inactive: rgba(255,255,255,0.06);  /* window unfocused */
-
-    color-scheme: dark;
+    --ui-bg: #17161c; --ui-panel: #211f28; --ui-line: #34323d; --ui-text: #e9e9ef;
+    --ui-dim: #a0a0ab; --ui-accent: #7bb2ff;
   }
-
   * { box-sizing: border-box; }
   body {
-    margin: 0; padding: 40px;
-    background: var(--tf-content);
-    color: var(--tf-text);
-    font: 14px/1.5 -apple-system, system-ui, sans-serif;
+    margin: 0; background: var(--ui-bg); color: var(--ui-text);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    padding: 28px clamp(16px, 4vw, 56px);
   }
-  h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; }
-  .sub { color: var(--tf-text-dim); margin: 0 0 32px; }
-  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em;
-       color: var(--tf-text-dim); margin: 36px 0 14px; font-weight: 600; }
+  h1 { font-size: 20px; font-weight: 650; margin: 0 0 4px; }
+  p.sub { color: var(--ui-dim); margin: 0 0 22px; max-width: 720px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; }
-  .swatch {
-    border: 1px solid var(--tf-line);
-    border-radius: 8px; overflow: hidden; background: var(--tf-surface);
+  /* ── palette selector ─────────────────────────────────────────── */
+  .picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+  .picker button {
+    appearance: none; cursor: pointer; border: 1px solid var(--ui-line);
+    background: var(--ui-panel); color: var(--ui-text); border-radius: 9px;
+    padding: 9px 15px; font: inherit; font-weight: 550; display: flex;
+    align-items: center; gap: 9px; transition: border-color .12s, background .12s;
   }
-  .chip { height: 78px; }
-  .meta { padding: 10px 12px; }
-  .name { font-weight: 600; font-size: 14px; }
-  .hex  { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--tf-text-dim); font-size: 12px; margin-top: 2px; }
-  .role { color: var(--tf-text-dim); font-size: 12px; margin-top: 6px; }
+  .picker button:hover { border-color: #4c4a57; }
+  .picker button[aria-pressed="true"] { border-color: var(--ui-accent); background: #2b2935; }
+  .picker .dot { width: 13px; height: 13px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); }
 
-  /* Line sample */
-  .line-row { display:flex; gap:24px; align-items:center; }
-  .line-demo { flex:1; height:1px; background: var(--tf-line); }
-  .line-demo.inactive { background: var(--tf-line-inactive); }
+  .layout { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; gap: 30px; align-items: start; }
+  @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
 
-  /* ===== In-context mockups: mini browser chrome built from the tokens ===== */
-  .platforms { display: grid; gap: 24px; }
-  .plat figcaption { font-size: 14px; font-weight: 600; margin: 0 0 8px; display: flex; align-items: center; }
-  .tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-left: 10px;
-         text-transform: uppercase; letter-spacing: .05em; }
-  .tag.actual { background: var(--tf-accent); color: #fff; }
-  .tag.approx { background: transparent; color: var(--tf-text-dim); border: 1px solid var(--tf-line); }
+  /* ── swatches ─────────────────────────────────────────────────── */
+  .card { background: var(--ui-panel); border: 1px solid var(--ui-line); border-radius: 14px; padding: 18px 20px; }
+  .card h2 { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ui-dim); margin: 0 0 14px; font-weight: 600; }
+  .swatches { display: flex; flex-direction: column; gap: 8px; }
+  .sw { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 12px; }
+  .sw .chip { width: 30px; height: 30px; border-radius: 7px; border: 1px solid rgba(128,128,128,.35); }
+  .sw .name { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  .sw .val  { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: var(--ui-dim); }
+  .grouplabel { font-size: 11px; color: var(--ui-dim); margin: 12px 0 2px; font-weight: 600; letter-spacing: .04em; }
 
-  .mock { border: 1px solid var(--tf-line); border-radius: 10px; overflow: hidden; max-width: 720px; }
-  .mock-toolbar { background: var(--tf-surface); padding: 9px 12px; display: flex; gap: 10px; align-items: center; }
-  .mock-lower { display: flex; height: 240px; }
-  .mock-sidebar {
-    width: 170px; background: var(--tf-surface);
-    border-top: 1px solid var(--tf-line);      /* top divider */
-    border-right: 1px solid var(--tf-line);    /* right divider */
-    display: flex; flex-direction: column; padding: 6px 0;
+  /* ── browser-chrome mockup (driven entirely by the --tf-* vars) ── */
+  .mockup {
+    --tf-sep-inset: 1px;
+    border: 1px solid var(--tf-line-solid); border-radius: 12px; overflow: hidden;
+    display: grid; grid-template-columns: 210px 1fr; height: 440px;
+    background: var(--tf-content); box-shadow: 0 10px 40px rgba(0,0,0,.35);
   }
-  .mock-tab { display: flex; align-items: center; gap: 8px; padding: 5px 12px;
-              color: var(--tf-text-dim); font-size: 12px; border-bottom: 1px solid var(--tf-line);
-              white-space: nowrap; overflow: hidden; }
-  .mock-tab.sel { background: var(--tf-raised); color: var(--tf-text); }
-  .fav { width: 12px; height: 12px; border-radius: 50%; background: var(--tf-text-dim); flex: none; opacity: .8; }
-  .mock-content { flex: 1; background: var(--tf-content); padding: 16px; color: var(--tf-text); }
-  .mock-content p { margin: 0 0 10px; } .mock-content .dim { color: var(--tf-text-dim); }
+  /* sidebar / vertical tabs */
+  .sidebar { background: var(--tf-surface); border-right: 1px solid var(--tf-line-solid); padding: 8px 0; overflow: hidden; }
+  .vtab {
+    display: flex; align-items: center; gap: 9px; padding: 5px 12px; color: var(--tf-text);
+    border-bottom: 1px solid var(--tf-line-solid); font-size: 13px; white-space: nowrap;
+  }
+  .vtab .fav { width: 15px; height: 15px; border-radius: 4px; background: var(--tf-accent); flex: none; opacity: .85; }
+  .vtab.active { background: var(--tf-highlight); box-shadow: inset 3px 0 0 0 var(--tf-glyph); font-weight: 600; }
+  .vtab.dim { color: var(--tf-text-dim); }
+  .pinrow { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--tf-line-solid); }
+  .pin { width: 22px; height: 22px; border-radius: 5px; background: var(--tf-raised); display: grid; place-items: center; }
+  .pin i { width: 12px; height: 12px; border-radius: 3px; background: var(--tf-accent); opacity: .8; }
 
-  .winctl { display: flex; gap: 8px; align-items: center; }
-  .winctl.right { margin-left: auto; }                 /* Windows/Linux controls sit right */
-  .mac-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--tf-text-dim); opacity: .55; }
-  .pc-btn { color: var(--tf-text-dim); font: 13px/1 ui-monospace, Menlo, monospace; }
-  .nav { display: flex; gap: 8px; align-items: center; }
-  .navicon { width: 15px; height: 15px; fill: none; stroke: var(--tf-text-dim);
-             stroke-width: 1.3; stroke-linejoin: round; flex: none; }
-  .mock-url { flex: 1; background: var(--tf-field); color: var(--tf-text-dim); border-radius: 6px;
-              padding: 5px 10px; font-size: 12px; font-family: ui-monospace, Menlo, monospace;
-              display: flex; align-items: center; gap: 7px; }
-  .urlicon { width: 13px; height: 13px; flex: none; fill: none; stroke: var(--tf-text-dim);
-             stroke-width: 1.1; stroke-linejoin: round; stroke-linecap: round; }
-  .urlicon.shield { stroke: var(--tf-text); }
-  .urlicon circle { fill: var(--tf-text-dim); stroke: none; }
-  .btn { background: var(--tf-accent); color: #fff; border: none; border-radius: 6px;
-         padding: 6px 14px; font-size: 13px; cursor: pointer; }
-  a { color: var(--tf-text-dim); }
+  /* main pane: toolbar + urlbar + faux menu */
+  .main { display: flex; flex-direction: column; background: var(--tf-content); min-width: 0; }
+  .toolbar { background: var(--tf-surface); border-bottom: 1px solid var(--tf-line-solid); padding: 8px 10px; display: flex; align-items: center; gap: 8px; }
+  .navbtn { width: 26px; height: 24px; border-radius: 6px; background: var(--tf-raised); display: grid; place-items: center; color: var(--tf-text); font-size: 13px; flex: none; }
+  .urlbar {
+    flex: 1; min-width: 0; height: 26px; background: var(--tf-field); border: 1px solid var(--tf-line-solid);
+    border-radius: 7px; display: flex; align-items: center; padding: 0 10px; gap: 8px; color: var(--tf-text); font-size: 12.5px;
+  }
+  .urlbar .lock { width: 11px; height: 11px; border-radius: 3px; background: var(--tf-text-dim); flex: none; }
+  .urlbar .dim { color: var(--tf-text-dim); }
+  .pane-body { flex: 1; position: relative; padding: 18px; color: var(--tf-text); }
+  /* faux dropdown / menu, to show popup + selection colors */
+  .menu {
+    position: absolute; top: 14px; left: 18px; width: 240px; background: var(--tf-surface);
+    border: 1px solid var(--tf-line-solid); border-radius: 8px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,.4);
+  }
+  .mi { padding: 6px 12px; font-size: 13px; color: var(--tf-text); display: flex; align-items: center; gap: 9px; }
+  .mi + .mi { border-top: 1px solid var(--tf-line); }
+  .mi.sel { background: var(--tf-select); }
+  .mi .g { width: 14px; height: 14px; border-radius: 4px; background: var(--tf-accent); opacity: .8; flex: none; }
+  .btnrow { margin-top: 12px; display: flex; gap: 8px; }
+  .accent-btn { background: var(--tf-accent); color: #fff; border: none; border-radius: 7px; padding: 7px 14px; font: inherit; font-weight: 600; font-size: 12.5px; }
+  .ghost-btn { background: transparent; color: var(--tf-text); border: 1px solid var(--tf-line-solid); border-radius: 7px; padding: 7px 14px; font: inherit; font-size: 12.5px; }
+  .caption { color: var(--ui-dim); font-size: 12px; margin-top: 12px; }
 </style>
 </head>
 <body>
-  <h1>trimfox palette</h1>
-  <p class="sub">Neutral grayscale — every value has R=G=B, so nothing reads blue. Token names below are our shared vocabulary.</p>
+  <h1>trimfox — palette explorer</h1>
+  <p class="sub">Every trimfox rule routes through these <code>--tf-*</code> primitive tokens, so a whole
+  theme is just this token set. Pick a palette to preview it live — the swatches and the browser-chrome
+  mockup both re-color from the same variables. Each maps to a file in <code>chrome/palettes/</code>;
+  set it by editing the one <code>@import</code> line in <code>userChrome.css</code> (light/dark auto-follows macOS appearance).</p>
 
-  <h2>Surfaces</h2>
-  <div class="grid">
-    <div class="swatch"><div class="chip" style="background:var(--tf-field)"></div>
-      <div class="meta"><div class="name">field</div><div class="hex">#121212 · rgb(18,18,18)</div>
-      <div class="role">Inset fields — URL bar, search boxes</div></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--tf-content)"></div>
-      <div class="meta"><div class="name">content</div><div class="hex">#1c1c1c · rgb(28,28,28)</div>
-      <div class="role">Web / page content background</div></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--tf-surface)"></div>
-      <div class="meta"><div class="name">surface</div><div class="hex">#202020 · rgb(32,32,32)</div>
-      <div class="role">Chrome — toolbar, sidebar, tab strip</div></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--tf-raised)"></div>
-      <div class="meta"><div class="name">raised</div><div class="hex">#2e2e2e · rgb(46,46,46)</div>
-      <div class="role">Hover / selected tab / highlight</div></div></div>
-  </div>
+  <div class="picker" id="picker"></div>
 
-  <h2>Accent <span style="text-transform:none;letter-spacing:0;font-weight:400">(replaces Firefox's teal)</span></h2>
-  <div class="grid">
-    <div class="swatch"><div class="chip" style="background:var(--tf-accent)"></div>
-      <div class="meta"><div class="name">accent</div><div class="hex">#707070 · rgb(112,112,112)</div>
-      <div class="role">Primary buttons, focus rings, checkboxes</div></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--tf-accent-hover)"></div>
-      <div class="meta"><div class="name">accent-hover</div><div class="hex">#808080</div>
-      <div class="role">Button hover</div></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--tf-accent-active)"></div>
-      <div class="meta"><div class="name">accent-active</div><div class="hex">#606060</div>
-      <div class="role">Button pressed</div></div></div>
-  </div>
+  <div class="layout">
+    <div class="card">
+      <h2>Tokens</h2>
+      <div class="swatches" id="swatches"></div>
+    </div>
 
-  <h2>Text</h2>
-  <div class="grid">
-    <div class="swatch"><div class="chip" style="background:var(--tf-text)"></div>
-      <div class="meta"><div class="name">text</div><div class="hex">#ffffff</div>
-      <div class="role">Primary text</div></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--tf-text-dim)"></div>
-      <div class="meta"><div class="name">text-dim</div><div class="hex">#aaaaaa · rgb(170,170,170)</div>
-      <div class="role">Secondary text, icons</div></div></div>
-  </div>
-
-  <h2>Lines</h2>
-  <div class="line-row" style="margin-bottom:8px"><span style="width:90px">line</span><div class="line-demo"></div>
-    <span class="hex">rgba(255,255,255,.18)</span></div>
-  <div class="line-row"><span style="width:90px;color:var(--tf-text-dim)">line-inactive</span><div class="line-demo inactive"></div>
-    <span class="hex">rgba(255,255,255,.06)</span></div>
-
-  <h2>In context</h2>
-  <p class="sub">The tokens assembled into Firefox chrome. <b style="color:var(--tf-text)">macOS</b>
-  is the real layout (from screenshots) — note trimfox removes the traffic-light controls.
-  <b style="color:var(--tf-text)">Windows</b> &amp;
-  <b style="color:var(--tf-text)">Linux</b> are approximations — window controls move to the
-  right — and are exactly what a cross-platform PR would refine.</p>
-
-  <div class="platforms">
-
-    <figure class="plat">
-      <figcaption>macOS <span class="tag actual">actual</span></figcaption>
-      <div class="mock">
-        <div class="mock-toolbar">
-          <!-- trimfox removes the macOS traffic-light window controls entirely -->
-          <div class="nav">
-            <svg class="navicon" viewBox="0 0 16 16"><path d="M10 3.5 L4.5 8 L10 12.5 Z"/></svg>
-            <svg class="navicon" viewBox="0 0 16 16"><path d="M6 3.5 L11.5 8 L6 12.5 Z"/></svg>
+    <div>
+      <div class="mockup" id="mockup">
+        <div class="sidebar">
+          <div class="pinrow">
+            <div class="pin"><i></i></div><div class="pin"><i></i></div>
+            <div class="pin"><i></i></div><div class="pin"><i></i></div>
           </div>
-          <div class="mock-url">
-            <svg class="urlicon shield" viewBox="0 0 16 16"><path d="M8 2 L13 4 V8 C13 11 11 13 8 14 C5 13 3 11 3 8 V4 Z"/><path d="M5.8 8.2 L7.2 9.6 L10.2 6.2"/></svg>
-            <svg class="urlicon" viewBox="0 0 16 16"><line x1="3.5" y1="6" x2="12.5" y2="6"/><line x1="3.5" y1="10" x2="12.5" y2="10"/><circle cx="10.5" cy="6" r="1.7"/><circle cx="5.5" cy="10" r="1.7"/></svg>
-            <span>example.com</span>
-          </div>
-          <svg class="navicon" viewBox="0 0 16 16"><line x1="3" y1="5" x2="13" y2="5"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="11" x2="13" y2="11"/></svg>
+          <div class="vtab"><span class="fav"></span>Inbox — Fastmail</div>
+          <div class="vtab active"><span class="fav"></span>trimfox palette explorer</div>
+          <div class="vtab"><span class="fav"></span>Bugzilla — Widget: Cocoa</div>
+          <div class="vtab dim"><span class="fav"></span>The Verge</div>
+          <div class="vtab dim"><span class="fav"></span>Hacker News</div>
         </div>
-        <div class="mock-lower">
-          <div class="mock-sidebar">
-            <div class="mock-tab"><i class="fav"></i>Mozilla</div>
-            <div class="mock-tab sel"><i class="fav"></i>r/FirefoxCSS</div>
-            <div class="mock-tab"><i class="fav"></i>GitHub</div>
-            <div class="mock-tab"><i class="fav"></i>Hacker News</div>
+        <div class="main">
+          <div class="toolbar">
+            <div class="navbtn">‹›</div>
+            <div class="urlbar"><span class="lock"></span>trimfox.dev<span class="dim">/palette</span></div>
           </div>
-          <div class="mock-content">
-            <p>Primary text on <span class="dim">content</span>.</p>
-            <p class="dim">Secondary text uses text-dim.</p>
-            <p><button class="btn">Primary</button></p>
+          <div class="pane-body">
+            <div class="menu">
+              <div class="mi"><span class="g"></span>New Tab</div>
+              <div class="mi sel"><span class="g"></span>Save Page As…</div>
+              <div class="mi"><span class="g"></span>Inspect</div>
+            </div>
+            <div style="height:120px"></div>
+            <div class="btnrow">
+              <button class="accent-btn">Accent action</button>
+              <button class="ghost-btn">Secondary</button>
+            </div>
+            <div class="caption">Active tab: highlight + left accent bar · menu row selected · accent button + focus ring.</div>
           </div>
         </div>
       </div>
-    </figure>
-
-    <figure class="plat">
-      <figcaption>Windows <span class="tag approx">approximation</span></figcaption>
-      <div class="mock">
-        <div class="mock-toolbar">
-          <div class="nav">&#8592; &#8594;</div>
-          <div class="mock-url">&#128274;&nbsp; example.com</div>
-          <svg class="navicon" viewBox="0 0 16 16"><line x1="3" y1="5" x2="13" y2="5"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="11" x2="13" y2="11"/></svg>
-          <div class="winctl right"><span class="pc-btn">&#8211;</span><span class="pc-btn">&#9633;</span><span class="pc-btn">&#10005;</span></div>
-        </div>
-        <div class="mock-lower">
-          <div class="mock-sidebar">
-            <div class="mock-tab"><i class="fav"></i>Mozilla</div>
-            <div class="mock-tab sel"><i class="fav"></i>r/FirefoxCSS</div>
-            <div class="mock-tab"><i class="fav"></i>GitHub</div>
-            <div class="mock-tab"><i class="fav"></i>Hacker News</div>
-          </div>
-          <div class="mock-content">
-            <p>Primary text on <span class="dim">content</span>.</p>
-            <p class="dim">Min / max / close move to the right.</p>
-            <p><button class="btn">Primary</button></p>
-          </div>
-        </div>
-      </div>
-    </figure>
-
-    <figure class="plat">
-      <figcaption>Linux <span class="tag approx">approximation</span></figcaption>
-      <div class="mock">
-        <div class="mock-toolbar">
-          <div class="nav">&#8592; &#8594;</div>
-          <div class="mock-url">&#128274;&nbsp; example.com</div>
-          <svg class="navicon" viewBox="0 0 16 16"><line x1="3" y1="5" x2="13" y2="5"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="11" x2="13" y2="11"/></svg>
-          <div class="winctl right"><span class="pc-btn">&#8211;</span><span class="pc-btn">&#9633;</span><span class="pc-btn">&#10005;</span></div>
-        </div>
-        <div class="mock-lower">
-          <div class="mock-sidebar">
-            <div class="mock-tab"><i class="fav"></i>Mozilla</div>
-            <div class="mock-tab sel"><i class="fav"></i>r/FirefoxCSS</div>
-            <div class="mock-tab"><i class="fav"></i>GitHub</div>
-            <div class="mock-tab"><i class="fav"></i>Hacker News</div>
-          </div>
-          <div class="mock-content">
-            <p>Primary text on <span class="dim">content</span>.</p>
-            <p class="dim">Controls &amp; decorations vary by desktop environment.</p>
-            <p><button class="btn">Primary</button></p>
-          </div>
-        </div>
-      </div>
-    </figure>
-
+    </div>
   </div>
 
+<script>
+/* The 4 palettes — kept in lockstep with chrome/palettes/*.css.
+   Each has a `dark` and `light` token set; the explorer shows either scheme. */
+const PALETTES = {
+  "trimfox-dark":   { label: "trimfox · Dark",   scheme: "dark",  dot: "#202020", tokens: tf("dark") },
+  "trimfox-light":  { label: "trimfox · Light",  scheme: "light", dot: "#ececec", tokens: tf("light") },
+  "firefox-dark":   { label: "Firefox default · Dark",  scheme: "dark",  dot: "#2b2a33", tokens: ff("dark") },
+  "firefox-light":  { label: "Firefox default · Light", scheme: "light", dot: "#f9f9fb", tokens: ff("light") },
+};
+
+function tf(mode){ return mode === "dark" ? {
+  "--tf-field":"#121212","--tf-content":"#1c1c1c","--tf-surface":"#202020","--tf-raised":"#2e2e2e","--tf-select":"#555555",
+  "--tf-accent":"#707070","--tf-accent-hover":"#808080","--tf-accent-active":"#606060",
+  "--tf-text":"#ffffff","--tf-text-dim":"#aaaaaa",
+  "--tf-line":"rgba(255,255,255,0.18)","--tf-line-inactive":"rgba(255,255,255,0.06)","--tf-line-solid":"#484848","--tf-line-solid-inactive":"#2d2d2d",
+  "--tf-highlight":"rgba(255,255,255,0.10)","--tf-highlight-inactive":"rgba(255,255,255,0.05)","--tf-glyph":"#d4d4d4","--tf-attention":"#d4d4d4"
+} : {
+  "--tf-field":"#ffffff","--tf-content":"#f7f7f7","--tf-surface":"#ececec","--tf-raised":"#dcdcdc","--tf-select":"#b8b8b8",
+  "--tf-accent":"#707070","--tf-accent-hover":"#808080","--tf-accent-active":"#606060",
+  "--tf-text":"#111111","--tf-text-dim":"#666666",
+  "--tf-line":"rgba(0,0,0,0.18)","--tf-line-inactive":"rgba(0,0,0,0.06)","--tf-line-solid":"#c4c4c4","--tf-line-solid-inactive":"#dadada",
+  "--tf-highlight":"rgba(0,0,0,0.10)","--tf-highlight-inactive":"rgba(0,0,0,0.05)","--tf-glyph":"#333333","--tf-attention":"#333333"
+};}
+
+function ff(mode){ return mode === "dark" ? {
+  "--tf-field":"#1c1b22","--tf-content":"#2b2a33","--tf-surface":"#2b2a33","--tf-raised":"#42414d","--tf-select":"#5b5b66",
+  "--tf-accent":"#5a87fd","--tf-accent-hover":"#7bb2ff","--tf-accent-active":"#455fe7",
+  "--tf-text":"#fbfbfe","--tf-text-dim":"#8f8f9d",
+  "--tf-line":"rgba(255,255,255,0.15)","--tf-line-inactive":"rgba(255,255,255,0.06)","--tf-line-solid":"#52525e","--tf-line-solid-inactive":"#3a3944",
+  "--tf-highlight":"rgba(255,255,255,0.08)","--tf-highlight-inactive":"rgba(255,255,255,0.04)","--tf-glyph":"#cfcfd8","--tf-attention":"#5a87fd"
+} : {
+  "--tf-field":"#ffffff","--tf-content":"#f9f9fb","--tf-surface":"#f9f9fb","--tf-raised":"#ffffff","--tf-select":"#cfcfd8",
+  "--tf-accent":"#0061e0","--tf-accent-hover":"#0250bb","--tf-accent-active":"#053e94",
+  "--tf-text":"#15141a","--tf-text-dim":"#5b5b66",
+  "--tf-line":"rgba(0,0,0,0.13)","--tf-line-inactive":"rgba(0,0,0,0.05)","--tf-line-solid":"#cfcfd8","--tf-line-solid-inactive":"#e3e2e7",
+  "--tf-highlight":"rgba(0,0,0,0.07)","--tf-highlight-inactive":"rgba(0,0,0,0.04)","--tf-glyph":"#2b2a33","--tf-attention":"#0061e0"
+};}
+
+const GROUPS = [
+  ["Surfaces", ["--tf-field","--tf-content","--tf-surface","--tf-raised","--tf-select"]],
+  ["Accent",   ["--tf-accent","--tf-accent-hover","--tf-accent-active","--tf-attention"]],
+  ["Text",     ["--tf-text","--tf-text-dim"]],
+  ["Lines & highlight", ["--tf-line","--tf-line-inactive","--tf-line-solid","--tf-line-solid-inactive","--tf-highlight","--tf-highlight-inactive","--tf-glyph"]],
+];
+
+const picker = document.getElementById("picker");
+const swatches = document.getElementById("swatches");
+const mockup = document.getElementById("mockup");
+let current = "trimfox-dark";
+
+function apply(key){
+  current = key;
+  const p = PALETTES[key];
+  // drive the mockup from the token set
+  for (const [k,v] of Object.entries(p.tokens)) mockup.style.setProperty(k, v);
+  // rebuild swatches
+  swatches.innerHTML = "";
+  for (const [label, names] of GROUPS){
+    const gl = document.createElement("div"); gl.className = "grouplabel"; gl.textContent = label; swatches.appendChild(gl);
+    for (const n of names){
+      const v = p.tokens[n];
+      const row = document.createElement("div"); row.className = "sw";
+      row.innerHTML = `<span class="chip" style="background:${v}"></span><span class="name">${n.replace('--tf-','')}</span><span class="val">${v}</span>`;
+      swatches.appendChild(row);
+    }
+  }
+  // reflect pressed state
+  [...picker.children].forEach(b => b.setAttribute("aria-pressed", String(b.dataset.key === key)));
+}
+
+for (const [key, p] of Object.entries(PALETTES)){
+  const b = document.createElement("button"); b.dataset.key = key;
+  b.innerHTML = `<span class="dot" style="background:${p.dot}"></span>${p.label}`;
+  b.onclick = () => apply(key);
+  picker.appendChild(b);
+}
+apply(current);
+</script>
 </body>
 </html>

@@ -1,0 +1,68 @@
+/* ============================================================================
+   trimfox palette — FIREFOX DEFAULT-ALIGNED
+   ----------------------------------------------------------------------------
+   Maps trimfox's --tf-* tokens onto Firefox 152's OWN default chrome colors
+   (the Photon ramp from the design-system tokens: gray-05 #fbfbfe … gray-100
+   #15141a, surfaces #2b2a33 / #f9f9fb, blue accent). Use this to get the trimfox
+   *layout* (vertical tabs, compact rows, combined nav button) with the stock
+   Firefox *look* — including its blue accent.
+
+   Swap in by pointing the `@import` at the top of userChrome.css here:
+       @import url('./palettes/firefox.css');
+   ============================================================================ */
+
+/* ── DARK (Firefox "Dark" theme) ───────────────────────────────────────────── */
+:root {
+  --tf-field:    #1c1b22;   /* urlbar / inset fields  (gray-90) */
+  --tf-content:  #2b2a33;   /* content / ntp background */
+  --tf-surface:  #2b2a33;   /* toolbar / sidebar / tab strip */
+  --tf-raised:   #42414d;   /* hover / selected tab */
+  --tf-select:   #5b5b66;   /* selection / dropdown selection (gray-70) */
+
+  --tf-accent:        #5a87fd;   /* Firefox blue (blue-40) */
+  --tf-accent-hover:  #7bb2ff;   /* blue-30 */
+  --tf-accent-active: #455fe7;   /* blue-50 */
+
+  --tf-text:     #fbfbfe;   /* gray-05 */
+  --tf-text-dim: #8f8f9d;   /* gray-60 */
+
+  --tf-line:                rgba(255, 255, 255, 0.15);
+  --tf-line-inactive:       rgba(255, 255, 255, 0.06);
+  --tf-line-solid:          #52525e;
+  --tf-line-solid-inactive: #3a3944;
+  --tf-highlight:           rgba(255, 255, 255, 0.08);
+  --tf-highlight-inactive:  rgba(255, 255, 255, 0.04);
+
+  --tf-glyph: #cfcfd8;
+
+  /* Attention/notification badges — Firefox's own accent blue (matches stock). */
+  --tf-attention: var(--tf-accent);
+}
+
+/* ── LIGHT (Firefox "Light" theme) ─────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --tf-field:    #ffffff;
+    --tf-content:  #f9f9fb;
+    --tf-surface:  #f9f9fb;   /* stock light toolbar */
+    --tf-raised:   #ffffff;   /* selected tab reads as a raised white pill */
+    --tf-select:   #cfcfd8;
+
+    --tf-accent:        #0061e0;   /* Firefox blue (light) */
+    --tf-accent-hover:  #0250bb;
+    --tf-accent-active: #053e94;
+
+    --tf-text:     #15141a;   /* gray-100 */
+    --tf-text-dim: #5b5b66;   /* gray-70 */
+
+    --tf-line:                rgba(0, 0, 0, 0.13);
+    --tf-line-inactive:       rgba(0, 0, 0, 0.05);
+    --tf-line-solid:          #cfcfd8;
+    --tf-line-solid-inactive: #e3e2e7;
+    --tf-highlight:           rgba(0, 0, 0, 0.07);
+    --tf-highlight-inactive:  rgba(0, 0, 0, 0.04);
+
+    --tf-glyph: #2b2a33;
+    --tf-attention: var(--tf-accent);
+  }
+}
