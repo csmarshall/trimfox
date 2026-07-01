@@ -106,4 +106,8 @@ Done.
   1. Fully quit Firefox (Cmd+Q on macOS / close all windows), then relaunch.
   2. user.js sets toolkit.legacyUserProfileCustomizations.stylesheets=true; the
      restart is what makes userChrome.css take effect.
+  3. No vertical-tab strip but the chrome IS themed? The sidebar panel is closed on
+     this profile — open it once via View -> Sidebar (trimfox hides the toggle
+     button); the tab strip appears and stays after you close the panel.
+  4. For light/dark to follow the OS: about:addons -> Themes -> "System theme - auto".
 EOF

@@ -49,6 +49,29 @@ load at startup.
 To revert: restore the `.bak-*` files (or delete `chrome/` and `user.js`) and
 restart.
 
+### After install — two one-time steps
+
+1. **Theme → "System theme — auto"** (`about:addons` → Themes) so light/dark
+   follows the OS. The Add-ons Manager owns the active theme, so you may need to
+   switch it once even though `user.js` sets the pref (toggle to another theme and
+   back if it doesn't take).
+2. **Sidebar width** — drag the expanded sidebar edge to your taste (~240px) once;
+   Firefox persists it.
+
+### Troubleshooting: chrome is themed but the tab strip is missing
+
+If the URL bar / toolbar are clearly restyled but there's **no vertical-tab strip
+on the left**, the sidebar *panel* is closed on that profile — and trimfox hides
+the sidebar toggle button, so there's no obvious way to reopen it. **Open the
+sidebar once** via **View → Sidebar** (macOS menu bar), or open any panel (e.g.
+History) — the tab strip appears and **stays** after you close the panel. You only
+need to do this once per profile.
+
+(If the chrome *isn't* themed either, `userChrome.css` didn't load: confirm
+`toolkit.legacyUserProfileCustomizations.stylesheets` is `true`, that `chrome/` +
+`user.js` landed in the **running** profile — `about:support` → Profile Directory —
+and that you fully **Cmd+Q**'d before relaunching.)
+
 ## What's in here
 
 ```
