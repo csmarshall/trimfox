@@ -468,6 +468,10 @@ menuitem.unified-nav-current {
   padding: var(--urlbar-container-padding) !important;   /* compact 1px — on focus it jumps
                                                             to 6px/5px and shoves the icons +
                                                             text around. Pin to compact. */
+  /* FF 152 "Nova" DOUBLES the field border-width on [breakout-extend] (padding:0 + 2×border),
+     which grows the field ~2px and makes it shift up when you focus/type. Pin it to 1× so the
+     box stays the same size whether empty, focused, or showing results. */
+  border-width: var(--urlbar-container-border-width, 1px) !important;
 }
 
 /* trimfox: was `#TabsToolbar { visibility: collapse; }` — hid the tab bar for
