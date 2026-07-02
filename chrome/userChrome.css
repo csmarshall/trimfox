@@ -33,9 +33,14 @@
                             window frame so separators meet its inner edge (#2). */
 
   /* ---- FONT DIALS (fork here) — every font declaration below routes through these,
-          so the whole chrome's typeface/size is two lines. STRUCTURAL, not per-palette. ---- */
+          so the whole chrome's typeface/size is two lines. STRUCTURAL, not per-palette.
+          CONVENTION: never hardcode a size. Base text = var(--tf-font-size); anything meant
+          larger/smaller uses calc() off the base so it SCALES with the dial. Examples:
+              header  25% larger  ->  font-size: calc(var(--tf-font-size) * 1.25);
+              caption 10% smaller ->  font-size: calc(var(--tf-font-size) * 0.9);
+          Prefer calc over em: explicit, anchored to the base, and it does not compound. ---- */
   --tf-font-family: -apple-system;   /* chrome-wide typeface */
-  --tf-font-size:   8pt;             /* chrome-wide font size */
+  --tf-font-size:   7pt;             /* chrome-wide font size */
 
   /* ---- Map Firefox theme vars onto the tokens ---- */
   --toolbar-bgcolor:              var(--tf-surface) !important;
@@ -123,9 +128,14 @@ menupopup > menucaption, menupopup > menuseparator {
    descendant sweep so the text label is definitely caught). NOTE: this only works
    when menus are XUL — `widget.macos.native-context-menus` must be `false`
    (native macOS menus can't be styled by CSS at all). */
+/* Popups + panels are top-level widgets that don't inherit :root's font, so give them the size
+   explicitly. menupopup = context/history menus; panel = the app (☰) menu, downloads, permissions,
+   bookmarks, page-action popups. (This is the container-scoped replacement for the old global `*`.) */
 menupopup,
 menupopup > *,
-menupopup * {
+menupopup *,
+panel,
+panel * {
   font-size: var(--tf-font-size) !important;
 }
 
@@ -374,18 +384,16 @@ menuitem.unified-nav-current {
   padding: 0 !important;
 }
 
-/* change font — routed through the --tf-font-* dials at the top of :root */
-* {
-    font-size: var(--tf-font-size) !important;
-    font-family: var(--tf-font-family) !important;
-}
-
-/* The searchmode-switcher placeholder is a literal "a" that Firefox hides
-   with font-size:0; our universal 7pt above defeats that and leaks the glyph.
-   Force it back to invisible (keep the element so the moz-button still sizes). */
-.urlbar-visually-hidden {
-  font-size: 0 !important;
-  color: transparent !important;
+/* CHROME FONT (#20 step 2) — set on :root and let it INHERIT, instead of a blunt `*` that
+   also hammered non-text nodes. `font-family` inherits cleanly everywhere; `font-size` inherits
+   to most text but XUL/form widgets that reset their own size get explicit rules below (menupopup,
+   #urlbar, results). Routed through the --tf-font-* dials.
+   NOTE: this removes the old `.urlbar-visually-hidden { font-size:0 }` workaround — it only existed
+   because the `*` rule's !important defeated Firefox's native font-size:0 that hides the searchmode
+   glyph. With :root inheritance, FF's own reset stands, so the glyph stays hidden on its own. */
+:root {
+  font-size: var(--tf-font-size) !important;
+  font-family: var(--tf-font-family) !important;
 }
 
 /* URL dropdown title + results list — match the 7pt chrome font */
@@ -509,7 +517,7 @@ display: none;
     padding-block-start: 0 !important;
     padding-block-end: 6px !important;   /* #11: breathing room under the last result so it
                                             doesn't jam against the rounded bottom edge */
-    font-size: small;
+    font-size: var(--tf-font-size);      /* was `small` (absolute, ignored the dial); now scales */
     white-space: nowrap;
 }
 
