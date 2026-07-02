@@ -35,7 +35,7 @@
   /* ---- FONT DIALS (fork here) — every font declaration below routes through these,
           so the whole chrome's typeface/size is two lines. STRUCTURAL, not per-palette. ---- */
   --tf-font-family: -apple-system;   /* chrome-wide typeface */
-  --tf-font-size:   7pt;             /* chrome-wide font size */
+  --tf-font-size:   8pt;             /* chrome-wide font size */
 
   /* ---- Map Firefox theme vars onto the tokens ---- */
   --toolbar-bgcolor:              var(--tf-surface) !important;
