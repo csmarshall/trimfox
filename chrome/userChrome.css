@@ -40,7 +40,24 @@
               caption 10% smaller ->  font-size: calc(var(--tf-font-size) * 0.9);
           Prefer calc over em: explicit, anchored to the base, and it does not compound. ---- */
   --tf-font-family: -apple-system;   /* chrome-wide typeface */
-  --tf-font-size:   7pt;             /* chrome-wide font size */
+  --tf-font-size:   7pt;             /* chrome-wide font size (the 1.0x base) */
+
+  /* ---- FONT SCALE MODE + TIERS (fork here) — reproduce Firefox's own chrome font hierarchy,
+          scaled off --tf-font-size. Ratios sourced from docs/font-hierarchy.md.
+          --tf-fs-lift: 1 = FULL proportional (FF's whole hierarchy). 0 = middle path (the larger
+          cues still scale, the many smaller bits stay flat). Any fraction blends. Set every tier
+          to var(--tf-font-size) for fully flat. ---- */
+  --tf-fs-lift: 1;
+  /* larger tiers — apply in BOTH modes (these are the "middle path") */
+  --tf-fs-md:    calc(var(--tf-font-size) * 1.15);   /* minor headers / descriptions */
+  --tf-fs-field: calc(var(--tf-font-size) * 1.1);    /* URL bar field (FF uses 1.25; damped for density) */
+  --tf-fs-lg:    calc(var(--tf-font-size) * 1.25);   /* rich chiclet */
+  --tf-fs-h:   calc(var(--tf-font-size) * 1.3);    /* panel / customize / sidebar headers */
+  --tf-fs-xl:  calc(var(--tf-font-size) * 1.5);    /* large hero headers */
+  --tf-fs-xxl: calc(var(--tf-font-size) * 2);      /* biggest hero headers (Relay) */
+  /* smaller tiers — gated by --tf-fs-lift (flat at 0, full ratio at 1) */
+  --tf-fs-sm:  calc(var(--tf-font-size) * (1 - 0.15 * var(--tf-fs-lift)));   /* -> 0.85x */
+  --tf-fs-xs:  calc(var(--tf-font-size) * (1 - 0.25 * var(--tf-fs-lift)));   /* -> 0.75x */
 
   /* ---- Map Firefox theme vars onto the tokens ---- */
   --toolbar-bgcolor:              var(--tf-surface) !important;
@@ -416,7 +433,7 @@ menuitem.unified-nav-current {
 #urlbar-results .urlbarView-row .urlbarView-url {
   color: var(--tf-text-dim) !important;
   -moz-context-properties: none !important;
-  font-size: var(--tf-font-size);
+  font-size: var(--tf-fs-sm) !important;   /* FF's --urlbarView-small-font-size (0.85x) for url/action/secondary */
 }
 
 /* Override any link styling */
@@ -441,12 +458,30 @@ menuitem.unified-nav-current {
   color: var(--tf-text) !important;
 }
 
-/* URL bar field — surface background + 7pt */
+/* URL bar field — surface background + FF's 1.25x field size (proportional tier) */
 #urlbar {
   /* light background: #FAFAFA !important;*/
   background: var(--tf-surface) !important;
-  font-size: var(--tf-font-size) !important;
+  font-size: var(--tf-fs-field) !important;   /* dedicated field tier (1.1x); FF uses 1.25 but it reads
+                                                 too big at trimfox's small/dense base */
  }
+
+/* PROPORTIONAL headers/labels (#20) — reproduce the sizes Firefox enlarges/shrinks, via the
+   --tf-fs-* tiers (toggle everything with --tf-fs-lift). IDs/classes here beat the flat
+   panel* / :root rules. Per-element source cited in docs/font-hierarchy.md. */
+#sidebar-header,
+#sidebar-panel-header > h4,
+#customization-panelHeader,
+.protections-popup-message-title           { font-size: var(--tf-fs-h)  !important; }  /* ~1.3x headers
+       (#sidebar-panel-header > h4 was a hardcoded 15px in the DEPRECATED places sidebar — see below) */
+#customization-header,
+#customization-panelDescription,
+#confirmation-hint-message,
+#protections-popup-no-trackers-found-description { font-size: var(--tf-fs-md) !important; }  /* ~1.1-1.2x */
+.subview-subheader,
+#identity-popup-security-httpsonlymode-info { font-size: var(--tf-fs-sm) !important; }  /* 0.85x sub-text */
+.relay-integration-header                  { font-size: var(--tf-fs-xxl) !important; } /* 2.0x hero */
+.relay-integration-header-variation        { font-size: var(--tf-fs-xl)  !important; } /* 1.5x hero */
 
 /* ── #11: URL bar tab-style border + merge with the results popup ──────────────
    Give the URL bar the same 1px line border the tabs/sidebar use. .urlbar-background

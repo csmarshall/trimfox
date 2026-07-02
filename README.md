@@ -152,7 +152,12 @@ never hardcodes a color. Each palette carries a dark set **and** a
 
 ### Menus & fonts
 
-- Force the whole chrome to **7pt `-apple-system`** (`* { font-size: 7pt }`).
+- Chrome font is driven by two dials — **`--tf-font-family`** (`-apple-system`) +
+  **`--tf-font-size`** (`7pt`, the 1.0× base) — set on `:root` and inherited (not a
+  blunt `*`; popups get explicit `menupopup`/`panel` rules). Non-base sizes reproduce
+  **Firefox's own proportional hierarchy** via `--tf-fs-*` tiers, toggled by
+  **`--tf-fs-lift`** (`1` = full proportional, `0` = flat-ish middle path). Ratios &
+  the regeneration recipe live in [`docs/font-hierarchy.md`](docs/font-hierarchy.md).
 - Theme the (now-XUL) context/popup menus: `--tf-surface` bg, `--tf-select` hover,
   themed text/separators, trimmed padding, `min-height: 0`, 7pt (requires
   `widget.macos.native-context-menus = false`). The tight padding is scoped to the
@@ -346,6 +351,11 @@ in `chrome/userChrome.css`:
 
 | Knob | Default | What it controls |
 |------|---------|------------------|
+| **Font** | | |
+| `--tf-font-family` | `-apple-system` | chrome-wide typeface |
+| `--tf-font-size` | `7pt` | chrome-wide base size (the 1.0× anchor; everything scales from it) |
+| `--tf-fs-lift` | `1` | `1` = full proportional (FF's hierarchy), `0` = middle path, fractions blend |
+| `--tf-fs-field` / `-md` / `-h` / … | `1.1×` … | per-tier `calc()` ratios (see [`docs/font-hierarchy.md`](docs/font-hierarchy.md)) |
 | **Tab strip** | | |
 | `--tab-min-height` | `22px` | row height |
 | `--tab-collapsed-background-width` | `14px` | collapsed strip width |

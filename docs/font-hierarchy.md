@@ -187,5 +187,61 @@ the **URL bar field at `1.25×`** (it's the one place FF deliberately enlarges
 text). A middle path — proportional for the URL bar + panel headings, flat
 everywhere else — keeps trimfox's density while restoring the one hierarchy cue
 users actually read. A full proportional pass is a straight swap of the pinned
-`var(--tf-font-size)` for the `calc(…)` in the tables above, gated behind a
-`--tf-font-scale-mode` toggle if both modes should ship.
+`var(--tf-font-size)` for the `calc(…)` in the tables above.
+
+**Shipped in trimfox:** full proportional, via `--tf-fs-*` tiers + a `--tf-fs-lift`
+toggle in `userChrome.css` `:root` (`lift: 1` = full, `0` = middle path, fractions
+blend). The tables above are the source of truth for the tier values.
+
+---
+
+## 6. Regenerating this chart (do this when Firefox changes its UI)
+
+**This chart was pulled from Firefox 152.0.4 (macOS).** Redo it after a major Firefox
+version bump or a chrome redesign (a new Proton/"Nova" iteration, sidebar rework,
+etc.), or whenever chrome text starts looking mis-sized. Everything here is *derived*
+from Firefox's shipping CSS — never eyeballed — so regeneration is mechanical.
+
+```sh
+BR=/Applications/Firefox.app/Contents/Resources/browser/omni.ja   # browser skin
+TK=/Applications/Firefox.app/Contents/Resources/omni.ja           # toolkit/global skin
+# (bump the version note above to whatever `Firefox > About Firefox` reports)
+```
+
+**1. Confirm the two base fonts.**
+```sh
+# macOS chrome window default — Mozilla states it in a comment:
+unzip -p "$BR" chrome/browser/skin/classic/browser/browser.css | grep -niE 'font size is|font: menu'
+# design-system rem root (the token-scale anchor):
+unzip -p "$TK" chrome/toolkit/skin/classic/global/design-system/tokens-brand.css | grep -niE 'font-size-root'
+```
+
+**2. Extract the design-system token scale (§2 of this doc).**
+```sh
+for f in tokens-brand.css tokens-shared.css; do
+  unzip -p "$TK" "chrome/toolkit/skin/classic/global/design-system/$f" | grep -nE '\-\-font-size'
+done
+```
+
+**3. Sweep every chrome font-size, ranked by frequency (finds what matters).**
+```sh
+{ for f in $(unzip -l "$BR"|grep -iE 'skin/classic/browser.*\.css'|awk '{print $4}'); do unzip -p "$BR" "$f"; done
+  for f in $(unzip -l "$TK"|grep -iE 'toolkit/skin/classic/global.*\.css'|awk '{print $4}'); do unzip -p "$TK" "$f"; done
+} | grep -oiE 'font-size:[^;!]+' | sort | uniq -c | sort -rn
+```
+
+**4. For any element, find its rule + source file.**
+```sh
+unzip -p "$BR" chrome/browser/skin/classic/browser/browser.css | grep -niE '\.urlbar\b.*font-size'
+```
+
+**5. Convert value → ratio → tier.**
+- `em` value → the ratio *is* the em number (chrome base = 1.0×). `1.25em` = `1.25×`.
+- `rem` / `--font-size-*` token → ratio = value ÷ `15px` (design-system root).
+- bare `px` → ratio = px ÷ ~`11px` (macOS chrome base), or ÷ `15px` if it's token-driven
+  (note which, as §3 does for `#sidebar-box`).
+- Round to the nearest tier N (`0.75 · 0.85 · 0.9 · 1.0 · 1.15 · 1.25 · 1.3 · 1.5 · 1.6 · 2.2`)
+  and point the element at the matching `--tf-fs-*` tier in `userChrome.css`.
+
+The tiers + `--tf-fs-lift` toggle live in `userChrome.css` `:root`; the per-element
+rules are in the "PROPORTIONAL headers/labels" block and the URL-bar rules.
