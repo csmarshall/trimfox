@@ -32,6 +32,11 @@
                             so it stays here, not in the palette). Just clears the macOS
                             window frame so separators meet its inner edge (#2). */
 
+  /* ---- FONT DIALS (fork here) — every font declaration below routes through these,
+          so the whole chrome's typeface/size is two lines. STRUCTURAL, not per-palette. ---- */
+  --tf-font-family: -apple-system;   /* chrome-wide typeface */
+  --tf-font-size:   7pt;             /* chrome-wide font size */
+
   /* ---- Map Firefox theme vars onto the tokens ---- */
   --toolbar-bgcolor:              var(--tf-surface) !important;
   --lwt-accent-color:             var(--tf-surface) !important;
@@ -121,7 +126,7 @@ menupopup > menucaption, menupopup > menuseparator {
 menupopup,
 menupopup > *,
 menupopup * {
-  font-size: 7pt !important;
+  font-size: var(--tf-font-size) !important;
 }
 
 /* #19: color-theme the (now-XUL) context + popup menus to match trimfox. Requires
@@ -369,10 +374,10 @@ menuitem.unified-nav-current {
   padding: 0 !important;
 }
 
-/* change font */
+/* change font — routed through the --tf-font-* dials at the top of :root */
 * {
-    font-size: 7pt !important;
-    font-family: -apple-system !important;
+    font-size: var(--tf-font-size) !important;
+    font-family: var(--tf-font-family) !important;
 }
 
 /* The searchmode-switcher placeholder is a literal "a" that Firefox hides
@@ -386,7 +391,7 @@ menuitem.unified-nav-current {
 /* URL dropdown title + results list — match the 7pt chrome font */
 .ac-title,
 .urlbarView-results {
-   font-size: 7pt;
+   font-size: var(--tf-font-size);
  }
 
 /* URL dropdown - force gray color on URLs (override teal accent) */
@@ -403,7 +408,7 @@ menuitem.unified-nav-current {
 #urlbar-results .urlbarView-row .urlbarView-url {
   color: var(--tf-text-dim) !important;
   -moz-context-properties: none !important;
-  font-size: 7pt;
+  font-size: var(--tf-font-size);
 }
 
 /* Override any link styling */
@@ -432,7 +437,7 @@ menuitem.unified-nav-current {
 #urlbar {
   /* light background: #FAFAFA !important;*/
   background: var(--tf-surface) !important;
-  font-size: 7pt !important;
+  font-size: var(--tf-font-size) !important;
  }
 
 /* ── #11: URL bar tab-style border + merge with the results popup ──────────────
