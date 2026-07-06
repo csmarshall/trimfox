@@ -395,8 +395,9 @@ light**, so the scheme follows the OS automatically (see below):
 
 | file | look |
 |------|------|
-| `grayscale.css` *(default)* | neutral grayscale, zero-blue — dark + inverted light |
+| `grayscale.css` *(default — stock)* | neutral grayscale, zero-blue — dark + inverted light. The exact reference look. |
 | `firefox.css` | trimfox layout with Firefox's own default chrome colors + blue accent |
+| `tinted.css` *(adjustable)* | parametric one-hue tint — derives the whole ramp from `--tf-hue` + `--tf-chroma` (see below) |
 
 Token vocabulary: `field`, `content`, `surface`, `raised`, `select`, `accent`
 (+ `-hover`/`-active`), `text`, `text-dim`, `line` (+ `-solid`/`-inactive`),
@@ -408,6 +409,20 @@ on buttons, focus rings and checkboxes — in the chrome, on `about:` pages
 preview — a 4-way picker (trimfox dark/light, Firefox-default dark/light) that
 re-colors a live browser-chrome mockup and a full swatch table. Use it to compare
 schemes or design your own before editing a palette file.
+
+**Tinted palette (`palettes/tinted.css`) — adjustable.** An opt-in alternative to
+the stock grayscale. Two knobs at the top drive the whole theme, keeping trimfox's
+exact lightness/contrast ramp and just tinting it:
+
+| knob | range | meaning |
+|------|-------|---------|
+| `--tf-hue` | 0–360 | which color the tint leans toward |
+| `--tf-chroma` | 0–~0.05 | how much color (`0` = neutral) |
+
+`--tf-chroma: 0` reproduces grayscale — for the *exact* stock look, use
+`grayscale.css` itself. Swap the `@import` to `palettes/tinted.css` and set the two
+values. Example hues: **slate `260`**, **terracotta `40`**, **forest `150`**,
+**plum `330`** (chroma ~0.025–0.035).
 
 ### Light / dark (auto-follows macOS)
 

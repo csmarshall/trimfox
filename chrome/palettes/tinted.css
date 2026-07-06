@@ -1,0 +1,101 @@
+/* ============================================================================
+   trimfox palette — TINTED (parametric, one-hue)   [OPT-IN ALTERNATIVE]
+   ----------------------------------------------------------------------------
+   STOCK vs ADJUSTABLE: the shipped trimfox default is palettes/grayscale.css
+   (fixed, exact values — that's the reference look). THIS file is the opt-in
+   ADJUSTABLE palette: same --tf-* token list, same dark/light structure, but
+   every color is DERIVED from two knobs instead of a fixed hex:
+
+     --tf-hue     0–360   OKLCH hue angle. 260 = slate, 40 = terracotta,
+                          150 = forest, 330 = plum.
+     --tf-chroma  0–~0.05 OKLCH chroma (colorfulness) at the subtle end of the
+                          ramp. Each token multiplies this up or down by role,
+                          so one knob re-tints the whole theme in proportion.
+
+   --tf-chroma: 0  ==  neutral grayscale (a near-identical PARAMETRIC equivalent
+   of grayscale.css — for the EXACT stock look use grayscale.css itself; every L
+   below was computed from grayscale.css's actual hexes, so at chroma 0 the two
+   match to within ~0.1% rounding).
+
+   Raise --tf-chroma gradually. ~0.02–0.03 = "you can tell something's different
+   but can't say what". ~0.04–0.05 = a confident, still neutral-reading tint.
+   Above ~0.06 it starts to read as a color theme rather than a tinted grayscale.
+
+   Chroma is scaled PER TOKEN so contrast/legibility survive the tint:
+     • surfaces / text-dim / opaque lines: 1× base — the "quiet chrome".
+     • accent + hover/active: 3.5× base — the one place the tint reads clearly.
+     • text: 0.1× base, glyph: 0.2× base — near-neutral for legibility.
+   All key off the SAME --tf-hue so the UI tints as one coherent color.
+
+   The translucent rgba() line/highlight tokens stay hue-agnostic white/black
+   alpha (tinting thin composited layers adds little and risks muddiness). The
+   OPAQUE line tokens ARE tinted.
+
+   To use: point the @import at the top of userChrome.css at palettes/tinted.css
+   instead of palettes/grayscale.css, then set --tf-hue / --tf-chroma to taste.
+   (Once user-overrides.css exists, set them there instead — see the README.)
+   Appearance follows macOS System Settings → Appearance.
+   ============================================================================ */
+
+/* ── DARK (default) ────────────────────────────────────────────────────────── */
+:root {
+  /* ── Knobs ── */
+  --tf-hue:    260;   /* 0-360. 260 = slate/blue-violet (see README table). */
+  --tf-chroma: 0;     /* 0 = neutral (≈ grayscale.css). Try 0.02-0.05 for a tint. */
+
+  /* Surfaces — dark inset → lighter raised (L = OKLCH lightness of the grayscale hex) */
+  --tf-field:    oklch(0.182 var(--tf-chroma) var(--tf-hue));   /* ~#121212 */
+  --tf-content:  oklch(0.226 var(--tf-chroma) var(--tf-hue));   /* ~#1c1c1c */
+  --tf-surface:  oklch(0.244 var(--tf-chroma) var(--tf-hue));   /* ~#202020 */
+  --tf-raised:   oklch(0.301 var(--tf-chroma) var(--tf-hue));   /* ~#2e2e2e */
+  --tf-select:   oklch(0.450 var(--tf-chroma) var(--tf-hue));   /* ~#555555 */
+
+  /* Accent — chroma scaled 3.5× so it stays the most saturated element */
+  --tf-accent:        oklch(0.545 calc(var(--tf-chroma) * 3.5) var(--tf-hue));   /* ~#707070 */
+  --tf-accent-hover:  oklch(0.600 calc(var(--tf-chroma) * 3.5) var(--tf-hue));   /* ~#808080 */
+  --tf-accent-active: oklch(0.489 calc(var(--tf-chroma) * 3.5) var(--tf-hue));   /* ~#606060 */
+
+  /* Text — chroma 0.1× so body copy stays effectively neutral */
+  --tf-text:     oklch(1.000 calc(var(--tf-chroma) * 0.1) var(--tf-hue));   /* ~#ffffff */
+  --tf-text-dim: oklch(0.738 var(--tf-chroma) var(--tf-hue));               /* ~#aaaaaa */
+
+  /* Lines & translucent highlight — rgba() stay hue-agnostic; opaque lines tint */
+  --tf-line:                rgba(255, 255, 255, 0.18);
+  --tf-line-inactive:       rgba(255, 255, 255, 0.06);
+  --tf-line-solid:          oklch(0.402 var(--tf-chroma) var(--tf-hue));   /* ~#484848 */
+  --tf-line-solid-inactive: oklch(0.297 var(--tf-chroma) var(--tf-hue));   /* ~#2d2d2d */
+  --tf-highlight:           rgba(255, 255, 255, 0.10);
+  --tf-highlight-inactive:  rgba(255, 255, 255, 0.05);
+
+  /* Glyph ink — chroma 0.2×, a hair more allowance than body text (decorative) */
+  --tf-glyph:     oklch(0.870 calc(var(--tf-chroma) * 0.2) var(--tf-hue));   /* ~#d4d4d4 */
+  --tf-attention: var(--tf-glyph);
+}
+
+/* ── LIGHT (#15) — the tinted ramp INVERTED ────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --tf-field:    oklch(1.000 var(--tf-chroma) var(--tf-hue));   /* ~#ffffff */
+    --tf-content:  oklch(0.976 var(--tf-chroma) var(--tf-hue));   /* ~#f7f7f7 */
+    --tf-surface:  oklch(0.943 var(--tf-chroma) var(--tf-hue));   /* ~#ececec */
+    --tf-raised:   oklch(0.895 var(--tf-chroma) var(--tf-hue));   /* ~#dcdcdc */
+    --tf-select:   oklch(0.783 var(--tf-chroma) var(--tf-hue));   /* ~#b8b8b8 */
+
+    --tf-accent:        oklch(0.545 calc(var(--tf-chroma) * 3.5) var(--tf-hue));   /* ~#707070 */
+    --tf-accent-hover:  oklch(0.600 calc(var(--tf-chroma) * 3.5) var(--tf-hue));   /* ~#808080 */
+    --tf-accent-active: oklch(0.489 calc(var(--tf-chroma) * 3.5) var(--tf-hue));   /* ~#606060 */
+
+    --tf-text:     oklch(0.178 calc(var(--tf-chroma) * 0.1) var(--tf-hue));   /* ~#111111 */
+    --tf-text-dim: oklch(0.510 var(--tf-chroma) var(--tf-hue));               /* ~#666666 */
+
+    --tf-line:                rgba(0, 0, 0, 0.18);
+    --tf-line-inactive:       rgba(0, 0, 0, 0.06);
+    --tf-line-solid:          oklch(0.820 var(--tf-chroma) var(--tf-hue));   /* ~#c4c4c4 */
+    --tf-line-solid-inactive: oklch(0.888 var(--tf-chroma) var(--tf-hue));   /* ~#dadada */
+    --tf-highlight:           rgba(0, 0, 0, 0.10);
+    --tf-highlight-inactive:  rgba(0, 0, 0, 0.05);
+
+    --tf-glyph:     oklch(0.321 calc(var(--tf-chroma) * 0.2) var(--tf-hue));   /* ~#333333 */
+    --tf-attention: var(--tf-glyph);
+  }
+}
