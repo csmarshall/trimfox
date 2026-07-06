@@ -1,0 +1,353 @@
+<title>trimfox · tint picker</title>
+<style>
+  :root {
+    --ui-bg: #17161c; --ui-panel: #201f27; --ui-panel-2: #2a2833;
+    --ui-line: #34323d; --ui-line-soft: #2b2933;
+    --ui-text: #e9e9ef; --ui-dim: #9a9aa6; --ui-faint: #6f6e7a;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sys: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ui-bg); color: var(--ui-text); font: 14px/1.5 var(--sys); padding: 30px clamp(16px, 4vw, 52px) 64px; }
+  h1 { font-size: 21px; font-weight: 640; margin: 0 0 5px; letter-spacing: -0.01em; display: flex; align-items: baseline; gap: 10px; }
+  h1 .tag { font: 600 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ui-faint); border: 1px solid var(--ui-line); border-radius: 999px; padding: 4px 9px; }
+  p.sub { color: var(--ui-dim); margin: 0 0 24px; max-width: 78ch; }
+  code { font-family: var(--mono); font-size: .9em; color: #cdccd6; }
+  .card { background: var(--ui-panel); border: 1px solid var(--ui-line); border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; }
+  h2 { font: 600 11px/1 var(--sys); letter-spacing: .07em; text-transform: uppercase; color: var(--ui-dim); margin: 0 0 14px; }
+
+  /* controls row */
+  .controls { display: grid; grid-template-columns: 1.15fr 1fr 1.05fr; gap: 26px; }
+  @media (max-width: 860px) { .controls { grid-template-columns: 1fr; gap: 22px; } }
+  .ctl { margin-bottom: 18px; }
+  .ctl:last-child { margin-bottom: 0; }
+  .ctl .row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 9px; }
+  .ctl label { font-weight: 550; }
+  .ctl .val { font: 600 13px/1 var(--mono); color: var(--ui-text); font-variant-numeric: tabular-nums; }
+  .ctl .hint { color: var(--ui-faint); font-size: 12px; margin-top: 8px; }
+
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; cursor: pointer; margin: 0; }
+  input[type=range]:focus-visible { outline: 2px solid #8f8fa0; outline-offset: 4px; border-radius: 4px; }
+  input[type=range]::-webkit-slider-runnable-track { height: 10px; border-radius: 6px; border: 1px solid rgba(0,0,0,.4); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; margin-top: -5px; border-radius: 50%; background: #f4f4f8; border: 2px solid #17161c; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+  #hue::-webkit-slider-runnable-track { background: linear-gradient(to right, oklch(.72 .15 0), oklch(.72 .15 40), oklch(.72 .15 80), oklch(.72 .15 120), oklch(.72 .15 160), oklch(.72 .15 200), oklch(.72 .15 240), oklch(.72 .15 280), oklch(.72 .15 320), oklch(.72 .15 360)); }
+  #chroma::-webkit-slider-runnable-track { background: linear-gradient(to right, oklch(.72 0 var(--h)), oklch(.72 .09 var(--h))); }
+  .colorwell { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; border: 1px solid var(--ui-line); border-radius: 10px; background: var(--ui-panel-2); cursor: pointer; padding: 5px; }
+  .colorwell::-webkit-color-swatch-wrapper { padding: 0; }
+  .colorwell::-webkit-color-swatch { border: 1px solid rgba(255,255,255,.12); border-radius: 6px; }
+  .colorwell:focus-visible { outline: 2px solid #8f8fa0; outline-offset: 3px; }
+
+  /* presets — stock separated from adjustable */
+  .presetgroup { margin-bottom: 16px; }
+  .presetgroup:last-child { margin-bottom: 0; }
+  .grouptag { font: 600 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ui-faint); margin-bottom: 9px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip-btn { appearance: none; cursor: pointer; font: 550 13px/1 var(--sys); background: var(--ui-panel-2); color: var(--ui-text); border: 1px solid var(--ui-line); border-radius: 999px; padding: 8px 13px; display: inline-flex; align-items: center; gap: 8px; }
+  .chip-btn:hover { border-color: #4c4a57; }
+  .chip-btn[aria-pressed=true] { border-color: #d7d7e0; background: #33313d; }
+  .chip-btn .dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); }
+  .chip-btn.stock { border-color: #5a5866; }
+  .chip-btn.stock::after { content: "STOCK"; font: 600 8.5px/1 var(--mono); letter-spacing: .08em; color: var(--ui-faint); }
+
+  .out pre.code { margin: 0; background: #131218; border: 1px solid var(--ui-line-soft); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font: 12.5px/1.7 var(--mono); color: #d4d3dd; }
+  pre.code .k { color: #9a9aa6; } pre.code .v { color: #fff; font-weight: 600; }
+  .out { position: relative; }
+  .copy { position: absolute; top: 34px; right: 0; appearance: none; cursor: pointer; font: 600 11px/1 var(--sys); letter-spacing: .03em; background: #33313d; color: var(--ui-text); border: 1px solid var(--ui-line); border-radius: 7px; padding: 6px 10px; }
+  .copy:hover { border-color: #4c4a57; }
+  .out .note { color: var(--ui-faint); font-size: 12px; margin-top: 10px; }
+
+  .seg { display: inline-flex; border: 1px solid var(--ui-line); border-radius: 999px; overflow: hidden; }
+  .seg button { appearance: none; cursor: pointer; font: 550 12.5px/1 var(--sys); color: var(--ui-dim); background: transparent; border: 0; padding: 8px 15px; }
+  .seg button[aria-pressed=true] { background: #33313d; color: var(--ui-text); }
+  .comparehead { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
+  .comparehead h2 { margin: 0; }
+
+  /* the two-up compare */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  @media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
+  .col { min-width: 0; }
+  .collabel { display: flex; align-items: baseline; gap: 8px; font: 600 11px/1 var(--sys); letter-spacing: .06em; text-transform: uppercase; color: var(--ui-dim); margin-bottom: 9px; }
+  .collabel .sub2 { font: 500 11px/1 var(--mono); letter-spacing: 0; text-transform: none; color: var(--ui-faint); }
+  .col.stockcol .collabel { color: #c7c6d0; }
+
+  .previewwrap { padding: 16px; background: repeating-linear-gradient(45deg, #1b1a21 0 10px, #1e1d25 10px 20px); border: 1px solid var(--ui-line); border-radius: 12px; }
+  .mockup { --tf-sep-inset: 1px; border: 1px solid var(--tf-line-solid); border-radius: 10px; overflow: hidden; display: grid; grid-template-columns: 150px 1fr; height: 340px; background: var(--tf-content); box-shadow: 0 10px 34px rgba(0,0,0,.4); }
+  /* parametric tokens — IDENTICAL to chrome/palettes/tinted.css (drives the "yours" mockup) */
+  .mockup[data-scheme=dark] {
+    --tf-field: oklch(0.182 var(--c) var(--h)); --tf-content: oklch(0.226 var(--c) var(--h)); --tf-surface: oklch(0.244 var(--c) var(--h));
+    --tf-raised: oklch(0.301 var(--c) var(--h)); --tf-select: oklch(0.450 var(--c) var(--h));
+    --tf-accent: oklch(0.545 calc(var(--c)*3.5) var(--h)); --tf-accent-hover: oklch(0.600 calc(var(--c)*3.5) var(--h)); --tf-accent-active: oklch(0.489 calc(var(--c)*3.5) var(--h));
+    --tf-text: oklch(1.000 calc(var(--c)*0.1) var(--h)); --tf-text-dim: oklch(0.738 var(--c) var(--h));
+    --tf-line: rgba(255,255,255,0.18); --tf-line-solid: oklch(0.402 var(--c) var(--h)); --tf-highlight: rgba(255,255,255,0.10);
+    --tf-glyph: oklch(0.870 calc(var(--c)*0.2) var(--h));
+  }
+  .mockup[data-scheme=light] {
+    --tf-field: oklch(1.000 var(--c) var(--h)); --tf-content: oklch(0.976 var(--c) var(--h)); --tf-surface: oklch(0.943 var(--c) var(--h));
+    --tf-raised: oklch(0.895 var(--c) var(--h)); --tf-select: oklch(0.783 var(--c) var(--h));
+    --tf-accent: oklch(0.545 calc(var(--c)*3.5) var(--h)); --tf-accent-hover: oklch(0.600 calc(var(--c)*3.5) var(--h)); --tf-accent-active: oklch(0.489 calc(var(--c)*3.5) var(--h));
+    --tf-text: oklch(0.178 calc(var(--c)*0.1) var(--h)); --tf-text-dim: oklch(0.510 var(--c) var(--h));
+    --tf-line: rgba(0,0,0,0.18); --tf-line-solid: oklch(0.820 var(--c) var(--h)); --tf-highlight: rgba(0,0,0,0.10);
+    --tf-glyph: oklch(0.321 calc(var(--c)*0.2) var(--h));
+  }
+  .sidebar { background: var(--tf-surface); border-right: 1px solid var(--tf-line-solid); padding: 8px 0; overflow: hidden; }
+  .pinrow { display: flex; gap: 5px; padding: 8px 10px; border-bottom: 1px solid var(--tf-line-solid); }
+  .pin { width: 18px; height: 18px; border-radius: 5px; background: var(--tf-raised); display: grid; place-items: center; }
+  .pin i { width: 10px; height: 10px; border-radius: 3px; background: var(--tf-accent); opacity: .85; }
+  .vtab { display: flex; align-items: center; gap: 8px; padding: 5px 10px; color: var(--tf-text); border-bottom: 1px solid var(--tf-line-solid); font-size: 11.5px; white-space: nowrap; overflow: hidden; }
+  .vtab .fav { width: 13px; height: 13px; border-radius: 4px; background: var(--tf-accent); flex: none; opacity: .85; }
+  .vtab.active { background: var(--tf-highlight); box-shadow: inset 3px 0 0 0 var(--tf-glyph); font-weight: 600; }
+  .vtab.dim { color: var(--tf-text-dim); }
+  .main { display: flex; flex-direction: column; background: var(--tf-content); min-width: 0; }
+  .barrow { background: var(--tf-surface); border-bottom: 1px solid var(--tf-line-solid); padding: 7px 9px; display: flex; align-items: center; gap: 7px; }
+  .navbtn { width: 22px; height: 21px; border-radius: 6px; background: var(--tf-raised); display: grid; place-items: center; color: var(--tf-text); font-size: 11px; flex: none; }
+  .urlbar { flex: 1; min-width: 0; height: 23px; background: var(--tf-field); border: 1px solid var(--tf-line-solid); border-radius: 7px; display: flex; align-items: center; padding: 0 9px; gap: 7px; color: var(--tf-text); font-size: 11px; overflow: hidden; }
+  .urlbar .lock { width: 9px; height: 9px; border-radius: 3px; background: var(--tf-text-dim); flex: none; }
+  .urlbar .dim { color: var(--tf-text-dim); }
+  .pane { flex: 1; position: relative; padding: 14px; }
+  .fmenu { position: absolute; top: 10px; left: 14px; width: 180px; background: var(--tf-surface); border: 1px solid var(--tf-line-solid); border-radius: 8px; overflow: hidden; box-shadow: 0 8px 26px rgba(0,0,0,.42); }
+  .mi { padding: 5px 11px; font-size: 11.5px; color: var(--tf-text); display: flex; align-items: center; gap: 8px; }
+  .mi + .mi { border-top: 1px solid var(--tf-line); }
+  .mi.sel { background: var(--tf-select); }
+  .mi .g { width: 12px; height: 12px; border-radius: 4px; background: var(--tf-accent); opacity: .8; flex: none; }
+  .btnrow { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 7px; }
+  .accent-btn { background: var(--tf-accent); color: #fff; border: none; border-radius: 7px; padding: 6px 12px; font: 600 11px var(--sys); }
+  .ghost-btn { background: transparent; color: var(--tf-text); border: 1px solid var(--tf-line-solid); border-radius: 7px; padding: 6px 12px; font: 11px var(--sys); }
+
+  /* two-column swatches: token | stock | yours */
+  .swhead, .sw { display: grid; grid-template-columns: 130px 1fr 1fr; align-items: center; gap: 12px; }
+  .swhead { font: 600 10px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ui-faint); padding: 0 0 8px; border-bottom: 1px solid var(--ui-line-soft); margin-bottom: 8px; }
+  .grouplabel { font: 600 10.5px/1 var(--mono); letter-spacing: .04em; color: var(--ui-faint); margin: 15px 0 7px; text-transform: uppercase; }
+  .sw { padding: 2px 0; }
+  .sw .swname { font: 12px/1.2 var(--mono); }
+  .cell { display: flex; align-items: center; gap: 9px; }
+  .cell .chip { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(128,128,128,.4); flex: none; }
+  .cell .cval { font: 11px/1.2 var(--mono); color: var(--ui-dim); font-variant-numeric: tabular-nums; }
+  .cell.diff .cval { color: #d7d7e0; }
+</style>
+
+<h1>trimfox <span style="color:var(--ui-faint)">·</span> tint picker <span class="tag">tinted.css</span></h1>
+<p class="sub">trimfox ships <strong>grayscale</strong> — that's the stock look, fixed on the left as your reference.
+Everything else here is optional: pick a base color, or dial <strong>hue</strong> + <strong>tint strength</strong>, and
+compare your palette (right) against stock. It drives the exact <code>tinted.css</code> <code>oklch()</code> formula.
+A grey, or tint strength <code>0</code>, is grayscale.</p>
+
+<div class="controls card">
+  <div>
+    <h2>Pick a color</h2>
+    <div class="ctl">
+      <div class="row"><label for="basecolor">Base color</label></div>
+      <input type="color" id="basecolor" value="#808080" class="colorwell">
+      <div class="hint">Any color works — trimfox takes its <strong>hue</strong> and a damped amount of its saturation, then builds the palette proportionally off the grayscale ramp. A grey gives grayscale.</div>
+    </div>
+    <div class="ctl">
+      <div class="row"><label for="hue">Hue</label><span class="val"><span id="hueval">260</span>°</span></div>
+      <input type="range" id="hue" min="0" max="360" step="1" value="260">
+    </div>
+    <div class="ctl">
+      <div class="row"><label for="chroma">Tint strength</label><span class="val" id="chromaval">0.000</span></div>
+      <input type="range" id="chroma" min="0" max="0.06" step="0.002" value="0">
+    </div>
+  </div>
+
+  <div>
+    <h2>Starting points</h2>
+    <div class="presetgroup">
+      <div class="grouptag">Stock — ships by default</div>
+      <div class="chips" id="stockpreset"></div>
+    </div>
+    <div class="presetgroup">
+      <div class="grouptag">Optional tints — for your consideration</div>
+      <div class="chips" id="tintpresets"></div>
+    </div>
+  </div>
+
+  <div class="out">
+    <h2>Copy into tinted.css</h2>
+    <pre class="code" id="code"></pre>
+    <button class="copy" id="copy">Copy</button>
+    <div class="note">Point <code>userChrome.css</code>'s <code>@import</code> at <code>palettes/tinted.css</code>, then set these. Stock needs nothing — it's <code>grayscale.css</code>.</div>
+  </div>
+</div>
+
+<div class="comparehead">
+  <h2>Compare — stock vs yours</h2>
+  <div class="seg" role="group" aria-label="Preview appearance">
+    <button id="dark" aria-pressed="true">Dark</button>
+    <button id="light" aria-pressed="false">Light</button>
+  </div>
+</div>
+<div class="compare">
+  <div class="col stockcol">
+    <div class="collabel">Stock <span class="sub2">grayscale.css</span></div>
+    <div class="previewwrap"><div class="mockup" id="stock" data-scheme="dark"></div></div>
+  </div>
+  <div class="col">
+    <div class="collabel">Your palette <span class="sub2" id="yourssub">grayscale</span></div>
+    <div class="previewwrap"><div class="mockup" id="mockup" data-scheme="dark"></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Tokens — stock vs yours</h2>
+  <div class="swhead"><span>token</span><span>stock</span><span>yours</span></div>
+  <div id="swatches"></div>
+</div>
+
+<template id="mocktpl">
+  <div class="sidebar">
+    <div class="pinrow"><div class="pin"><i></i></div><div class="pin"><i></i></div><div class="pin"><i></i></div></div>
+    <div class="vtab"><span class="fav"></span>Inbox</div>
+    <div class="vtab active"><span class="fav"></span>tint picker</div>
+    <div class="vtab"><span class="fav"></span>Bugzilla</div>
+    <div class="vtab dim"><span class="fav"></span>The Verge</div>
+    <div class="vtab dim"><span class="fav"></span>Hacker News</div>
+  </div>
+  <div class="main">
+    <div class="barrow"><div class="navbtn">‹›</div><div class="urlbar"><span class="lock"></span>trimfox.dev<span class="dim">/tint</span></div></div>
+    <div class="pane">
+      <div class="fmenu">
+        <div class="mi"><span class="g"></span>New Tab</div>
+        <div class="mi sel"><span class="g"></span>Save Page As…</div>
+        <div class="mi"><span class="g"></span>Inspect</div>
+      </div>
+      <div class="btnrow"><button class="accent-btn">Accent</button><button class="ghost-btn">Secondary</button></div>
+    </div>
+  </div>
+</template>
+
+<script>
+  /* ──────────────────────────────────────────────────────────────────────────
+     MAINTENANCE — keep in sync with chrome/palettes/*.css.
+       • GRAYSCALE = the EXACT committed default (chrome/palettes/grayscale.css) —
+         the authoritative STOCK look, shown fixed on the left. NOT parametric.
+       • The parametric .mockup[data-scheme] CSS above = the tinted.css formula.
+     If you ADD/MOVE/RENAME/RECOLOR any --tf-* token or change the tinted.css
+     formula, UPDATE THIS FILE — otherwise the picker misrepresents the theme.
+     ────────────────────────────────────────────────────────────────────────── */
+  const GRAYSCALE = {
+    dark: { "--tf-field":"#121212","--tf-content":"#1c1c1c","--tf-surface":"#202020","--tf-raised":"#2e2e2e","--tf-select":"#555555","--tf-accent":"#707070","--tf-accent-hover":"#808080","--tf-accent-active":"#606060","--tf-text":"#ffffff","--tf-text-dim":"#aaaaaa","--tf-line":"rgba(255,255,255,0.18)","--tf-line-inactive":"rgba(255,255,255,0.06)","--tf-line-solid":"#484848","--tf-line-solid-inactive":"#2d2d2d","--tf-highlight":"rgba(255,255,255,0.10)","--tf-highlight-inactive":"rgba(255,255,255,0.05)","--tf-glyph":"#d4d4d4","--tf-attention":"#d4d4d4" },
+    light: { "--tf-field":"#ffffff","--tf-content":"#f7f7f7","--tf-surface":"#ececec","--tf-raised":"#dcdcdc","--tf-select":"#b8b8b8","--tf-accent":"#707070","--tf-accent-hover":"#808080","--tf-accent-active":"#606060","--tf-text":"#111111","--tf-text-dim":"#666666","--tf-line":"rgba(0,0,0,0.18)","--tf-line-inactive":"rgba(0,0,0,0.06)","--tf-line-solid":"#c4c4c4","--tf-line-solid-inactive":"#dadada","--tf-highlight":"rgba(0,0,0,0.10)","--tf-highlight-inactive":"rgba(0,0,0,0.05)","--tf-glyph":"#333333","--tf-attention":"#333333" }
+  };
+  const TOKENS = Object.keys(GRAYSCALE.dark);
+  const STOCK = { name: "trimfox default", h: 260, c: 0, dot: "#202020" };
+  const TINTS = [
+    { name: "Slate",      h: 260, c: 0.03,  dot: "oklch(.62 .105 260)" },
+    { name: "Terracotta", h: 40,  c: 0.035, dot: "oklch(.62 .1225 40)" },
+    { name: "Forest",     h: 150, c: 0.025, dot: "oklch(.62 .0875 150)" },
+    { name: "Plum",       h: 330, c: 0.03,  dot: "oklch(.62 .105 330)" },
+  ];
+  const GROUPS = [
+    ["Surfaces", ["field","content","surface","raised","select"]],
+    ["Accent", ["accent","accent-hover","accent-active","attention"]],
+    ["Text", ["text","text-dim"]],
+    ["Lines & highlight", ["line","line-inactive","line-solid","line-solid-inactive","highlight","highlight-inactive","glyph"]],
+  ];
+
+  const $ = id => document.getElementById(id);
+  const hue = $("hue"), chroma = $("chroma"), hueval = $("hueval"), chromaval = $("chromaval");
+  const mockup = $("mockup"), stock = $("stock"), swatches = $("swatches");
+  const codeEl = $("code"), yourssub = $("yourssub"), dark = $("dark"), light = $("light");
+  const tpl = $("mocktpl").content;
+  mockup.appendChild(tpl.cloneNode(true));
+  stock.appendChild(tpl.cloneNode(true));
+
+  // hidden probes inside each mockup to read the resolved token colors
+  const mkProbe = el => { const p = document.createElement("div"); p.style.cssText = "position:absolute;width:0;height:0;visibility:hidden"; el.appendChild(p); return p; };
+  const probeYours = mkProbe(mockup), probeStock = mkProbe(stock);
+  const resolved = (token, probe) => { probe.style.background = `var(--tf-${token})`; return getComputedStyle(probe).backgroundColor; };
+
+  function applyGrayscale(el, scheme) { const set = GRAYSCALE[scheme]; for (const [k, v] of Object.entries(set)) el.style.setProperty(k, v); }
+
+  function render() {
+    const h = +hue.value, c = +chroma.value, grayscale = c === 0, scheme = mockup.dataset.scheme;
+    document.documentElement.style.setProperty("--h", h);
+    document.documentElement.style.setProperty("--c", c);
+    hueval.textContent = h; chromaval.textContent = c.toFixed(3);
+    hue.style.opacity = grayscale ? 0.4 : 1;
+    yourssub.textContent = grayscale ? "grayscale" : `hue ${h}° · chroma ${c.toFixed(3)}`;
+
+    // STOCK column: always the exact committed grayscale for the active scheme
+    applyGrayscale(stock, scheme);
+
+    // YOURS column: exact grayscale at c=0, else the parametric tinted.css formula
+    if (grayscale) { applyGrayscale(mockup, scheme); }
+    else { for (const k of TOKENS) mockup.style.removeProperty(k); mockup.style.setProperty("--h", h); mockup.style.setProperty("--c", c); }
+
+    codeEl.innerHTML = grayscale
+      ? `<span class="k">/* Stock — that's grayscale.css. */</span>\n<span class="k">/* Nothing to set. */</span>`
+      : `<span class="k">/* palettes/tinted.css: */</span>\n<span class="k">--tf-hue:</span>    <span class="v">${h}</span>;\n<span class="k">--tf-chroma:</span> <span class="v">${c.toFixed(3)}</span>;`;
+    buildSwatches();
+    syncPresets();
+  }
+
+  function buildSwatches() {
+    let html = "";
+    for (const [label, names] of GROUPS) {
+      html += `<div class="grouplabel">${label}</div>`;
+      for (const n of names) {
+        const sv = resolved(n, probeStock), yv = resolved(n, probeYours);
+        const diff = sv !== yv ? " diff" : "";
+        html += `<div class="sw"><span class="swname">${n}</span>` +
+          `<span class="cell"><span class="chip" style="background:${sv}"></span><span class="cval">${sv}</span></span>` +
+          `<span class="cell${diff}"><span class="chip" style="background:${yv}"></span><span class="cval">${yv}</span></span></div>`;
+      }
+    }
+    swatches.innerHTML = html;
+  }
+
+  function setScheme(s) {
+    mockup.dataset.scheme = s; stock.dataset.scheme = s;
+    dark.setAttribute("aria-pressed", s === "dark"); light.setAttribute("aria-pressed", s === "light");
+    render();
+  }
+
+  function syncPresets() {
+    const h = +hue.value, c = +chroma.value;
+    const all = [STOCK, ...TINTS];
+    document.querySelectorAll(".chip-btn").forEach((b, i) => {
+      const p = all[i]; b.setAttribute("aria-pressed", c === p.c && (c === 0 || h === p.h));
+    });
+  }
+
+  function mkChip(p, stockFlag) {
+    const b = document.createElement("button");
+    b.className = "chip-btn" + (stockFlag ? " stock" : "");
+    b.innerHTML = `<span class="dot" style="background:${p.dot}"></span>${p.name}`;
+    b.onclick = () => { hue.value = p.h; chroma.value = p.c; render(); };
+    return b;
+  }
+  $("stockpreset").appendChild(mkChip(STOCK, true));
+  TINTS.forEach(p => $("tintpresets").appendChild(mkChip(p, false)));
+
+  dark.onclick = () => setScheme("dark");
+  light.onclick = () => setScheme("light");
+  hue.oninput = render; chroma.oninput = render;
+
+  /* sRGB hex -> OKLCH so the colour well drives the same two knobs */
+  function hexToOklch(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    const lin = v => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+    const r = lin((n >> 16 & 255) / 255), g = lin((n >> 8 & 255) / 255), b = lin((n & 255) / 255);
+    const l = Math.cbrt(0.4122214708*r + 0.5363325363*g + 0.0514459929*b);
+    const m = Math.cbrt(0.2119034982*r + 0.6806995451*g + 0.1073969566*b);
+    const s = Math.cbrt(0.0883024619*r + 0.2817188376*g + 0.6299787005*b);
+    const A = 1.9779984951*l - 2.4285922050*m + 0.4505937099*s;
+    const B = 0.0259040371*l + 0.7827717662*m - 0.8086757660*s;
+    let H = Math.atan2(B, A) * 180 / Math.PI; if (H < 0) H += 360;
+    return { H, C: Math.hypot(A, B) };
+  }
+  $("basecolor").oninput = e => {
+    const { H, C } = hexToOklch(e.target.value);
+    chroma.value = Math.min(0.06, C).toFixed(3); hue.value = Math.round(H); render();
+  };
+
+  $("copy").onclick = async e => {
+    const c = +chroma.value;
+    const text = c === 0 ? "/* trimfox default — keep palettes/grayscale.css */" : `--tf-hue:    ${hue.value};\n--tf-chroma: ${c.toFixed(3)};`;
+    try { await navigator.clipboard.writeText(text); e.target.textContent = "Copied"; }
+    catch { e.target.textContent = "Copy failed"; }
+    setTimeout(() => e.target.textContent = "Copy", 1400);
+  };
+
+  render();
+</script>

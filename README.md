@@ -405,10 +405,15 @@ Token vocabulary: `field`, `content`, `surface`, `raised`, `select`, `accent`
 on buttons, focus rings and checkboxes — in the chrome, on `about:` pages
 (`userContent.css`), and on privileged error pages (`chrome/autoconfig/`).
 
-**Palette explorer:** open **`palette.html`** in a browser for an interactive
-preview — a 4-way picker (trimfox dark/light, Firefox-default dark/light) that
-re-colors a live browser-chrome mockup and a full swatch table. Use it to compare
-schemes or design your own before editing a palette file.
+**Interactive tools** — self-contained HTML; open locally, or try them live on
+GitHub Pages:
+
+- **[Tint picker](https://csmarshall.github.io/trimfox/tint-picker.html)** (`tint-picker.html`) —
+  pick a base color, or dial hue + tint strength, and compare your palette against
+  *stock* grayscale side by side; copy the two `tinted.css` values.
+- **[Palette explorer](https://csmarshall.github.io/trimfox/palette.html)** (`palette.html`) —
+  a 4-way preview (trimfox dark/light, Firefox-default dark/light) that re-colors a
+  live browser-chrome mockup and a full swatch table.
 
 **Tinted palette (`palettes/tinted.css`) — adjustable.** An opt-in alternative to
 the stock grayscale. Two knobs at the top drive the whole theme, keeping trimfox's
