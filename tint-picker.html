@@ -69,6 +69,10 @@
   .collabel { display: flex; align-items: baseline; gap: 8px; font: 600 11px/1 var(--sys); letter-spacing: .06em; text-transform: uppercase; color: var(--ui-dim); margin-bottom: 9px; }
   .collabel .sub2 { font: 500 11px/1 var(--mono); letter-spacing: 0; text-transform: none; color: var(--ui-faint); }
   .col.stockcol .collabel { color: #c7c6d0; }
+  .prov { font: 600 9.5px/1 var(--mono); letter-spacing: .05em; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--ui-line); text-transform: none; }
+  .prov.stock { color: #c7c6d0; border-color: #5a5866; background: #23222b; }
+  .prov.example { color: #9a9aa6; }
+  .prov.custom { color: #16151b; border-color: #d7d7e0; background: #d7d7e0; }
 
   .previewwrap { padding: 16px; background: repeating-linear-gradient(45deg, #1b1a21 0 10px, #1e1d25 10px 20px); border: 1px solid var(--ui-line); border-radius: 12px; }
   .mockup { --tf-sep-inset: 1px; border: 1px solid var(--tf-line-solid); border-radius: 10px; overflow: hidden; display: grid; grid-template-columns: 150px 1fr; height: 340px; background: var(--tf-content); box-shadow: 0 10px 34px rgba(0,0,0,.4); }
@@ -156,9 +160,10 @@ A grey, or tint strength <code>0</code>, is grayscale.</p>
       <div class="chips" id="stockpreset"></div>
     </div>
     <div class="presetgroup">
-      <div class="grouptag">Optional tints — for your consideration</div>
+      <div class="grouptag">Example tints — suggestions, not official palettes</div>
       <div class="chips" id="tintpresets"></div>
     </div>
+    <div class="hint" style="margin-top:14px">The <strong>Your palette</strong> badge tags where the current colors come from — <em>Stock</em> (grayscale, what ships), <em>Example</em> (a suggested tint, not an official palette), or <em>Custom</em> (your own pick).</div>
   </div>
 
   <div class="out">
@@ -182,7 +187,7 @@ A grey, or tint strength <code>0</code>, is grayscale.</p>
     <div class="previewwrap"><div class="mockup" id="stock" data-scheme="dark"></div></div>
   </div>
   <div class="col">
-    <div class="collabel">Your palette <span class="sub2" id="yourssub">grayscale</span></div>
+    <div class="collabel">Your palette <span class="prov stock" id="yourssub">STOCK · grayscale</span></div>
     <div class="previewwrap"><div class="mockup" id="mockup" data-scheme="dark"></div></div>
   </div>
 </div>
@@ -258,13 +263,22 @@ A grey, or tint strength <code>0</code>, is grayscale.</p>
 
   function applyGrayscale(el, scheme) { const set = GRAYSCALE[scheme]; for (const [k, v] of Object.entries(set)) el.style.setProperty(k, v); }
 
+  /* provenance of the current palette: stock (grayscale) / example (a suggested tint) / custom */
+  function sourceOf(h, c) {
+    if (c === 0) return { kind: "stock", text: "STOCK · grayscale" };
+    const ex = TINTS.find(p => p.h === h && p.c === c);
+    if (ex) return { kind: "example", text: "EXAMPLE · " + ex.name };
+    return { kind: "custom", text: `CUSTOM · ${h}° / ${c.toFixed(3)}` };
+  }
+
   function render() {
     const h = +hue.value, c = +chroma.value, grayscale = c === 0, scheme = mockup.dataset.scheme;
     document.documentElement.style.setProperty("--h", h);
     document.documentElement.style.setProperty("--c", c);
     hueval.textContent = h; chromaval.textContent = c.toFixed(3);
     hue.style.opacity = grayscale ? 0.4 : 1;
-    yourssub.textContent = grayscale ? "grayscale" : `hue ${h}° · chroma ${c.toFixed(3)}`;
+    const src = sourceOf(h, c);
+    yourssub.textContent = src.text; yourssub.className = "prov " + src.kind;
 
     // STOCK column: always the exact committed grayscale for the active scheme
     applyGrayscale(stock, scheme);
