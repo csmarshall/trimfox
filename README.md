@@ -566,6 +566,11 @@ screenshot or even a plain "works / doesn't" is genuinely useful). Grab a
 [`user-testing` issue](https://github.com/csmarshall/trimfox/labels/user-testing)
 and comment.
 
+**Porting or sending a PR?** See **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to gate
+per-OS changes with `@media (-moz-platform: …)`, the "don't change the macOS look" rule,
+and the **before/after screenshots every visual PR needs**. The maintainer runs macOS
+only, so a platform PR can't be reviewed without them.
+
 ## Acknowledgements
 
 trimfox builds on other people's work:
