@@ -566,6 +566,19 @@ screenshot or even a plain "works / doesn't" is genuinely useful). Grab a
 [`user-testing` issue](https://github.com/csmarshall/trimfox/labels/user-testing)
 and comment.
 
+## Acknowledgements
+
+trimfox builds on other people's work:
+
+- **[refined-findbar](https://github.com/ravindUwU/firefox-refined-findbar)** by ravindUwU
+  (MIT) — the compact find bar in `chrome/refined-findbar/findbar.css` is adapted from it;
+  the MIT notice is retained in that file.
+- **[Tree Style Tab](https://github.com/piroor/treestyletab)** by Piro — trimfox reproduces
+  its vertical-tab look using Firefox's own native vertical tabs (this profile was migrated
+  *off* TST; see `reference/`). Inspiration, not code.
+- **The [r/FirefoxCSS](https://www.reddit.com/r/FirefoxCSS/) community** — for the userChrome
+  techniques this builds on, including hiding the macOS traffic-light window controls.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
