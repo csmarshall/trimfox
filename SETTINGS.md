@@ -10,36 +10,94 @@ There are three layers:
 
 ---
 
-## 1. Preferences (`user.js`, applied automatically)
+## 1. Preferences (`user.js`)
 
-| Pref | Value | Effect |
-|------|-------|--------|
-| `toolkit.legacyUserProfileCustomizations.stylesheets` | `true` | **Required** — lets `userChrome.css` load |
-| `sidebar.revamp` / `sidebar.verticalTabs` | `true` | native vertical tabs |
-| `sidebar.visibility` | `expand-on-hover` | collapse to a strip, expand on hover |
-| `sidebar.expandOnHover` | `true` | hover behavior |
-| `sidebar.animation.enabled` | `false` | no slide animation |
-| `sidebar.animation.expand-on-hover.delay-duration-ms` / `.duration-ms` | `0` | instant expand |
-| `sidebar.revamp.round-content-area` | `false` | drop the rounded inset gutter |
-| `sidebar.position_start` | `true` | sidebar on the left |
-| `sidebar.main.tools` | `""` | empty — launcher is hidden in CSS anyway |
-| `widget.macos.native-context-menus` | `false` | right-click menus become themeable XUL |
-| `widget.macos.native-anchored-menus` | `false` | urlbar dropdown + click-and-hold history menu become themeable XUL (resolves #6) |
-| `browser.theme.toolbar-theme` / `.content-theme` | `2` | chrome color-scheme follows the OS (needed for light/dark auto-switch) |
-| `extensions.activeThemeID` | `default-theme@mozilla.org` | "System theme — auto" (Add-ons Mgr owns it; toggle once if it doesn't take) |
-| `browser.tabs.inTitlebar` | `1` | tabs/chrome integrate with the titlebar |
-| `browser.tabs.hoverPreview.enabled` / `.showThumbnails` | `false` | no tab hover-preview card |
-| `browser.uidensity` | `1` | **compact** density |
-| `browser.compactmode.show` | `true` | exposes the Compact option in Settings |
-| `browser.toolbars.bookmarks.visibility` | `never` | no bookmarks toolbar |
-| `browser.tabs.closeWindowWithLastTab` | `false` | closing the last tab keeps the window |
-| `font.size.variable.x-western` / `.monospace.x-western` | `12` / `14` | default content fonts (chrome is 7pt via CSS) |
-| `devtools.chrome.enabled` / `devtools.debugger.remote-enabled` | `true` | enables the Browser Toolbox for live `userChrome` editing |
+> **How install handles prefs.** `install.sh` **replaces** your profile's `user.js`
+> with trimfox's (your old one is backed up to `user.js.bak-<timestamp>`), then
+> **appends `user-overrides.js`** — a gitignored file for your own prefs that survives
+> every update (Firefox uses the *last* value seen for a pref, so yours win). Copy
+> `user-overrides.example.js` → `user-overrides.js` and put personal prefs there;
+> migrating from your own `user.js` means copying the prefs you want to keep out of the
+> backup and into it.
 
-**Optional personal block** (delete from `user.js` if you only want the look):
-minimal URL bar (`browser.urlbar.suggest.*` off, `openViewOnFocus` off,
-`groupLabels` off) and a stripped new-tab page (`browser.newtabpage.enabled`
-off, `browser.startup.page = 3` to restore the session, topsites/search/weather off).
+Every pref trimfox sets, with its Firefox default:
+
+### Required — the theme won't work without these
+
+| Pref | trimfox | FF default | Effect |
+|------|---------|------------|--------|
+| `toolkit.legacyUserProfileCustomizations.stylesheets` | `true` | `false` | lets `userChrome.css` / `userContent.css` load at all |
+| `sidebar.revamp` | `true` | `false` | revamped sidebar that hosts native vertical tabs |
+| `sidebar.verticalTabs` | `true` | `false` | tab strip goes vertical |
+| `sidebar.revamp.round-content-area` | `false` | `true` | drop the rounded inset gutter |
+
+### Appearance & color
+
+| Pref | trimfox | FF default | Effect |
+|------|---------|------------|--------|
+| `widget.macos.native-context-menus` | `false` | `true` | right-click menus → themeable XUL |
+| `widget.macos.native-anchored-menus` | `false` | `true` | urlbar dropdown + click-and-hold history menu → themeable XUL |
+| `browser.theme.toolbar-theme` | `2` | `2` (auto) | chrome scheme follows the OS (asserted so light/dark auto-switches) |
+| `browser.theme.content-theme` | `2` | `2` (auto) | in-content scheme follows the OS |
+| `extensions.activeThemeID` | `default-theme@mozilla.org` | (same) | "System theme — auto"; a hardcoded Dark/Light theme would pin the scheme |
+| `ui.highlight` | `#919093` | OS-derived | native selection/highlight stays grayscale (one mode-agnostic gray) |
+| `browser.tabs.inTitlebar` | `1` | `-1` (auto) | tabs/chrome integrate with the titlebar |
+| `browser.uidensity` | `1` | `0` | compact density |
+| `browser.compactmode.show` | `true` | `false` | re-expose the Compact option in Settings |
+| `layout.css.prefers-color-scheme.content-override` | *(commented out)* | `2` (auto) | optional — force web content dark regardless of the OS |
+
+### Behavior
+
+| Pref | trimfox | FF default | Effect |
+|------|---------|------------|--------|
+| `sidebar.visibility` | `expand-on-hover` | `always-show` | collapse to a strip, expand on hover |
+| `sidebar.expandOnHover` | `true` | `true` | assert hover-expand |
+| `sidebar.position_start` | `true` | `true` | sidebar on the left |
+| `sidebar.animation.enabled` | `false` | `true` | no slide animation |
+| `sidebar.animation.expand-on-hover.delay-duration-ms` | `0` | `200` | hover-expand fires instantly |
+| `sidebar.animation.expand-on-hover.duration-ms` | `0` | `400` | no expand slide |
+| `sidebar.main.tools` | `""` | `""` | empty launcher list (hidden in CSS anyway) |
+| `browser.tabs.hoverPreview.enabled` | `false` | `true` | kill the tab hover-preview card |
+| `browser.tabs.hoverPreview.showThumbnails` | `false` | `true` | no thumbnails in that card |
+| `browser.toolbars.bookmarks.visibility` | `never` | `newtab` | no bookmarks toolbar |
+| `browser.tabs.closeWindowWithLastTab` | `false` | `true` | closing the last tab keeps the window |
+| `font.size.variable.x-western` | `12` | `16` | default web-page proportional font (chrome is 7pt via CSS) |
+| `font.size.monospace.x-western` | `14` | `13` | default web-page monospace font |
+| `devtools.chrome.enabled` | `true` | `false` | Browser Toolbox for live `userChrome` editing (maintainer convenience) |
+| `devtools.debugger.remote-enabled` | `true` | `false` | required by the Browser Toolbox |
+
+### Optional — personal (safe to delete; not part of the look)
+
+A minimal URL bar and a stripped new-tab page.
+
+| Pref | trimfox | FF default | Effect |
+|------|---------|------------|--------|
+| `browser.urlbar.suggest.engines` | `false` | `true` | no search-engine suggestions |
+| `browser.urlbar.suggest.quickactions` | `false` | `true` | no quick-action suggestions |
+| `browser.urlbar.suggest.quicksuggest.nonsponsored` | `false` | `false` | assert Firefox Suggest off |
+| `browser.urlbar.suggest.quicksuggest.sponsored` | `false` | `false` | assert sponsored suggest off |
+| `browser.urlbar.suggest.recentsearches` | `false` | `true` | no recent-searches suggestions |
+| `browser.urlbar.suggest.topsites` | `false` | `true` | no top-sites on empty focus |
+| `browser.urlbar.showSearchSuggestionsFirst` | `false` | `true` | history ranked before search suggestions |
+| `browser.urlbar.openViewOnFocus` | `false` | `false` | assert: no dropdown on focus |
+| `browser.urlbar.groupLabels.enabled` | `false` | `true` | no "Firefox Suggest" group headers |
+| `browser.startup.page` | `3` | `1` | restore the previous session |
+| `browser.newtabpage.enabled` | `false` | `true` | blank new-tab page |
+| `browser.newtabpage.activity-stream.feeds.topsites` | `false` | `true` | no top-sites tiles |
+| `browser.newtabpage.activity-stream.showSearch` | `false` | `true` | no new-tab search box |
+| `browser.newtabpage.activity-stream.showWeather` | `false` | `true` | no new-tab weather |
+| `ui.tooltipDelay` | `300` | `500` | faster tooltips |
+
+### AutoConfig — only if you run `chrome/autoconfig/install-neterror-accent.sh`
+
+Opt-in; writes into the Firefox.app bundle to theme error pages (see that script + the
+README "skin the error pages too" section).
+
+| Pref | value | FF default | Effect |
+|------|-------|------------|--------|
+| `general.config.filename` | `firefox.cfg` | *(unset)* | enables AutoConfig |
+| `general.config.obscure_value` | `0` | `13` | read the `.cfg` as plaintext |
+| `general.config.sandbox_enabled` | `false` | `true` | run the `.cfg` with full chrome privileges (sandbox off) |
 
 ---
 
@@ -87,15 +145,13 @@ installing (right-click the toolbar → **Customize Toolbar**):
 
 ---
 
-## Known limitation
+## Note — the history menu is now themeable
 
-The **back/forward button history menu** (click-and-hold Back/Forward) renders as
-a **native macOS menu** and *cannot* be styled by userChrome.css — so at this
-setup's 7pt chrome it looks oversized next to everything else. This is not a
-trimfox bug: there's no pref to make it XUL (unlike right-click context menus,
-which `widget.macos.native-context-menus=false` keeps styleable). See
-`BUGREPORT.md`. Right-click context menus, the URL bar, and all other chrome
-*are* styled normally.
+The **back/forward history menu** (click-and-hold Back/Forward) used to be an
+unstyleable native macOS menu. That's now fixed: `widget.macos.native-anchored-menus=false`
+turns it (and the urlbar dropdown) into themeable XUL, and trimfox reskins it as a
+tab strip. Right-click context menus, the URL bar, and all other chrome are styled
+normally.
 
 ## 4. Extensions
 

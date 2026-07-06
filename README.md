@@ -46,6 +46,12 @@ anything it replaces (`<name>.bak-<timestamp>`). Then **fully quit Firefox**
 (Cmd+Q / close all windows) and relaunch — `userChrome.css` and `user.js` only
 load at startup.
 
+**Already have a `user.js`?** trimfox's **replaces** it (your old one is backed up to
+`user.js.bak-*`). Keep your own prefs in **`user-overrides.js`** (gitignored) — the
+installer seeds it from `user-overrides.example.js`, appends it *after* trimfox's prefs
+so yours win, and preserves it across updates. Every pref trimfox sets, with its Firefox
+default, is in **[SETTINGS.md](SETTINGS.md)**.
+
 To revert: restore the `.bak-*` files (or delete `chrome/` and `user.js`) and
 restart.
 

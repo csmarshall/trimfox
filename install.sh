@@ -100,6 +100,25 @@ install_item() {
 install_item "$SCRIPT_DIR/chrome"  "$PROFILE/chrome"
 install_item "$SCRIPT_DIR/user.js" "$PROFILE/user.js"
 
+# Personal PREF overrides: user-overrides.js (gitignored, per-user). trimfox's user.js
+# clobbers the profile's user.js (backed up above), so keep YOUR prefs here — install
+# appends them AFTER trimfox's (Firefox uses the LAST value seen for a pref) and this
+# file survives re-installs (seeded once, then never overwritten).
+overrides_js="$PROFILE/user-overrides.js"
+if [ "$DRYRUN" = 1 ]; then
+  echo "  prefs: seed-if-absent user-overrides.js, then append it to user.js"
+else
+  if [ ! -f "$overrides_js" ]; then
+    cp "$SCRIPT_DIR/user-overrides.example.js" "$overrides_js"
+    echo "  prefs: seeded user-overrides.js from the template"
+  fi
+  {
+    printf '\n// ---- appended by install.sh from user-overrides.js (your personal prefs) ----\n'
+    cat "$overrides_js"
+  } >> "$PROFILE/user.js"
+  echo "  prefs: appended user-overrides.js to user.js"
+fi
+
 # Personal overrides (chrome/user-overrides.css) are per-user + gitignored; the repo
 # never ships one. The theme @imports it, so preserve the user's existing file across
 # a re-install (it was moved into the chrome.bak-${TS} backup above), else seed it from
@@ -129,4 +148,7 @@ Done.
      this profile — open it once via View -> Sidebar (trimfox hides the toggle
      button); the tab strip appears and stays after you close the panel.
   4. For light/dark to follow the OS: about:addons -> Themes -> "System theme - auto".
+  5. Your previous user.js (if any) is backed up to user.js.bak-*. trimfox's prefs are
+     active now; put any personal prefs in user-overrides.js — they're appended after
+     trimfox's and survive updates. Full pref list + Firefox defaults: SETTINGS.md.
 EOF
