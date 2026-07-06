@@ -27,10 +27,29 @@
    that one @import. Everything below maps those tokens onto Firefox's own theme
    variables, so there is exactly one place to change a color.
    ============================================================================ */
+
+/* Accessibility beats the MOTION DIAL: reduced-motion always forces --tf-anim to 0s,
+   no matter what the knob below is set to. */
+@media (prefers-reduced-motion: reduce) {
+  :root { --tf-anim: 0s !important; }
+}
+
 :root {
   --tf-sep-inset: 1px;   /* tab-separator inline-start inset — STRUCTURAL (not a color,
                             so it stays here, not in the palette). Just clears the macOS
                             window frame so separators meet its inner edge (#2). */
+
+  /* ---- MOTION DIAL — global duration for trimfox's own CSS animations/transitions.
+          0s (default) = instant, matching the deliberately-instant sidebar and honoring
+          reduced-motion (see the guard below). Raise it (e.g. 100ms) to add motion.
+          Currently drives: the find bar show/hide (chrome/refined-findbar/findbar.css).
+          Does NOT reach two things by nature:
+            (1) sidebar expand/collapse — a Firefox PREF, not CSS. To add matching motion set
+                sidebar.animation.expand-on-hover.duration-ms (trimfox pins it 0) +
+                sidebar.animation.enabled=true.
+            (2) the loading wash — keeps its own --tf-load-speed (an ongoing status signal,
+                not a transition; zeroing it would remove feedback). ---- */
+  --tf-anim: 0s;
 
   /* ---- FONT DIALS (fork here) — every font declaration below routes through these,
           so the whole chrome's typeface/size is two lines. STRUCTURAL, not per-palette.
