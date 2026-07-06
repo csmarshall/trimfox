@@ -21,3 +21,8 @@
 // user_pref("browser.startup.page", 1);                     // blank start instead of restore-session
 // user_pref("ui.tooltipDelay", 500);                        // Firefox's default tooltip delay
 // user_pref("browser.uidensity", 0);                        // normal density instead of compact
+
+// Maintainer: live userChrome editing via the Browser Toolbox. Enables chrome devtools +
+// remote debugging — both off by default for SECURITY; only enable if you edit chrome:
+// user_pref("devtools.chrome.enabled", true);
+// user_pref("devtools.debugger.remote-enabled", true);

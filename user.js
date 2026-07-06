@@ -115,9 +115,9 @@ user_pref("browser.tabs.closeWindowWithLastTab", false);     // closing the last
 user_pref("font.size.variable.x-western", 12);
 user_pref("font.size.monospace.x-western", 14);
 
-// Live userChrome editing via the Browser Toolbox  (optional but handy)
-user_pref("devtools.chrome.enabled", true);
-user_pref("devtools.debugger.remote-enabled", true);
+// (Live userChrome editing via the Browser Toolbox is MAINTAINER-only — it enables chrome
+// devtools + remote debugging, both off by default for security. NOT shipped. To turn it
+// on, uncomment the two devtools prefs in user-overrides.js — see user-overrides.example.js.)
 
 // ============================================================================
 // 4. OPTIONAL — personal

@@ -108,6 +108,10 @@ pages honor — so it writes two files *into* the `Firefox.app` bundle and needs
 
 If Firefox isn't at `/Applications/Firefox.app`, pass `-a PATH`.
 
+> Note: the error-page gray is hardcoded in the script, so it won't follow a palette swap
+> (e.g. to `firefox.css`'s blue accent) — error pages stay gray. Edit the hex in the
+> script's `.cfg` block to match a different palette.
+
 ## What's in here
 
 ```

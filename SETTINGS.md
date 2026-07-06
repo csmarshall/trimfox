@@ -63,8 +63,10 @@ Every pref trimfox sets, with its Firefox default:
 | `browser.tabs.closeWindowWithLastTab` | `false` | `true` | closing the last tab keeps the window |
 | `font.size.variable.x-western` | `12` | `16` | default web-page proportional font (chrome is 7pt via CSS) |
 | `font.size.monospace.x-western` | `14` | `13` | default web-page monospace font |
-| `devtools.chrome.enabled` | `true` | `false` | Browser Toolbox for live `userChrome` editing (maintainer convenience) |
-| `devtools.debugger.remote-enabled` | `true` | `false` | required by the Browser Toolbox |
+
+> **Not shipped:** `devtools.chrome.enabled` / `devtools.debugger.remote-enabled` enable
+> chrome devtools + remote debugging (off by default for security), for live `userChrome`
+> editing via the Browser Toolbox. Maintainers can turn them on in `user-overrides.js`.
 
 ### Optional — personal (safe to delete; not part of the look)
 

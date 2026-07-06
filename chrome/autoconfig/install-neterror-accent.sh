@@ -6,6 +6,10 @@
 # about:blocked / about:httpsonlyerror) from Firefox's built-in teal accent to
 # trimfox's gray (#707070).
 #
+# LIMITATION: the gray is hardcoded in the .cfg below, so it does NOT follow a palette
+# swap — if you switch to a non-grayscale palette (e.g. firefox.css's blue accent),
+# error-page buttons stay gray. Edit the hex in the .cfg heredoc to match.
+#
 # THIS IS THE ONE OPT-IN STEP IN ALL OF TRIMFOX
 #   trimfox's userChrome.css + userContent.css already skin essentially every surface
 #   CSS can reach — chrome, toolbars, menus, the urlbar, and every in-content about:
