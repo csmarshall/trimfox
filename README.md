@@ -72,6 +72,36 @@ need to do this once per profile.
 `user.js` landed in the **running** profile — `about:support` → Profile Directory —
 and that you fully **Cmd+Q**'d before relaunching.)
 
+### Optional — skin the error pages too
+
+CSS already reaches essentially the whole browser — chrome, toolbars, menus, the urlbar,
+every in-content `about:` page. There's exactly one surface it can't: error pages
+(`about:neterror`, `about:certerror`, `about:blocked`, `about:httpsonlyerror`) load in a
+privileged context that never injects `userContent.css`. If you want the *entire*
+interface — error pages included — in the palette, that's what
+`chrome/autoconfig/install-neterror-accent.sh` is for. Everyone else can skip this;
+trimfox is already fully themed without it.
+
+```sh
+cd chrome/autoconfig
+./install-neterror-accent.sh            # install
+./install-neterror-accent.sh -u         # uninstall
+./install-neterror-accent.sh            # re-run after any Firefox update (see below)
+```
+
+It registers a global AutoConfig `USER_SHEET` — the only style origin privileged error
+pages honor — so it writes two files *into* the `Firefox.app` bundle and needs
+`general.config.sandbox_enabled=false`. Two trade-offs before opting in:
+
+- **Sandbox off.** AutoConfig can't run with the config sandbox enabled, so installing
+  flips `general.config.sandbox_enabled` to `false` for as long as it's installed. `-u`
+  removes both files and restores the default.
+- **Lives in the app bundle, so Firefox updates wipe it.** Both files sit under
+  `Firefox.app/Contents/Resources/`, overwritten on every update — re-running the script
+  (idempotent) reapplies it.
+
+If Firefox isn't at `/Applications/Firefox.app`, pass `-a PATH`.
+
 ## What's in here
 
 ```

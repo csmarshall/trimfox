@@ -4,7 +4,15 @@
 #
 # Restyle Firefox error-page primary buttons (about:neterror / about:certerror /
 # about:blocked / about:httpsonlyerror) from Firefox's built-in teal accent to
-# Charles's gray (#707070).
+# trimfox's gray (#707070).
+#
+# THIS IS THE ONE OPT-IN STEP IN ALL OF TRIMFOX
+#   trimfox's userChrome.css + userContent.css already skin essentially every surface
+#   CSS can reach — chrome, toolbars, menus, the urlbar, and every in-content about:
+#   page. That's ~100% of the browser, no script required. Error pages are the one
+#   surface CSS legally can't touch (see WHY below). Run this ONLY if you want the
+#   entire interface, error pages included, in the grayscale palette. Skip it and
+#   trimfox is still fully themed everywhere CSS reaches; this just closes the last gap.
 #
 # WHY THIS EXISTS
 #   Error pages load in a privileged context that does NOT inject userContent.css,
@@ -13,6 +21,13 @@
 #   nsIStyleSheetService. AutoConfig files MUST live inside the Firefox.app bundle:
 #     <App>/Contents/Resources/defaults/pref/autoconfig-neterror.js
 #     <App>/Contents/Resources/firefox.cfg
+#
+# TRADE-OFFS — know these before you opt in
+#   - Sandbox off: AutoConfig only runs with general.config.sandbox_enabled=false, so
+#     firefox.cfg executes with full chrome privileges for as long as this is installed.
+#     -u removes the pref and the .cfg and restores the default.
+#   - Lives inside the app bundle: both files sit under Firefox.app itself, which Firefox
+#     updates overwrite — see UPDATES.
 #
 # UPDATES: Firefox updates overwrite the app bundle and wipe these files. Just
 #   re-run this script after a Firefox update to reapply. (It's idempotent.)
