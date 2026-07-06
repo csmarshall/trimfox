@@ -568,8 +568,8 @@ and comment.
 
 **Porting or sending a PR?** See **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to gate
 per-OS changes with `@media (-moz-platform: …)`, the "don't change the macOS look" rule,
-and the **before/after screenshots every visual PR needs**. The maintainer runs macOS
-only, so a platform PR can't be reviewed without them.
+and the **before/after screenshots every visual PR needs**. Firefox is only run/tested
+on macOS here, so a platform PR can't be reviewed without them.
 
 ## Acknowledgements
 

@@ -28,7 +28,8 @@ traffic-light window controls, window-control spacing, and font metrics.
 
 ## Screenshots are required
 
-The maintainer only runs macOS and **cannot review a platform they can't see**. Any PR
+Firefox here is only run and tested on macOS, so the maintainer **can't visually verify a
+Linux/Windows change** without seeing it. Any PR
 that changes the look, and every platform report, needs **before/after screenshots**
 (dark and light if relevant). A PR without them can't be verified and will stall. The PR
 and issue templates ask for exactly this.

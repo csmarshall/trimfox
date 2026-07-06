@@ -14,8 +14,8 @@
 
 <!--
 REQUIRED for anything that changes the look. Before + after, dark and light if relevant.
-Platform PRs CANNOT be reviewed without them — the maintainer only runs macOS and can't
-verify Linux/Windows visually. Drag images straight into this box.
+Platform PRs CANNOT be reviewed without them — Firefox here is only run/tested on macOS,
+so Linux/Windows changes can't be verified visually without them. Drag images into this box.
 -->
 
 **Before:**
