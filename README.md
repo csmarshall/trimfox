@@ -429,6 +429,33 @@ exact lightness/contrast ramp and just tinting it:
 values. Example hues: **slate `260`**, **terracotta `40`**, **forest `150`**,
 **plum `330`** (chroma ~0.025–0.035).
 
+### Personal overrides — `user-overrides.css` (survives upgrades)
+
+**Don't edit the committed files to customize.** trimfox loads
+**`chrome/user-overrides.css`** *last* — a gitignored, per-user file where you set any
+`--tf-*` color or dial with a **plain declaration (no `!important`)** and it wins as if it
+were the shipped default. Because it's untracked, `git pull` (including the eventual
+Firefox **Nova** re-map) updates the theme underneath while your settings persist — no
+hand-merging.
+
+```sh
+cp chrome/user-overrides.example.css chrome/user-overrides.css   # install.sh does this for you
+```
+
+Then uncomment what you want:
+
+```css
+:root {
+  --tf-font-size: 9pt;      /* bigger chrome text     */
+  --tf-anim:      120ms;    /* add find-bar motion    */
+  --tf-accent:    #6a7fb0;  /* a different accent     */
+}
+```
+
+Every knob lives in **`chrome/dials.css`** (structural dials) and the palette
+(`palettes/*.css`, colors) — both loaded before your overrides. The `--tf-*` names are
+trimfox's stable API: Firefox's own var/selector names churn under it, yours don't.
+
 ### Light / dark (auto-follows macOS)
 
 Each palette carries a dark set plus an `@media (prefers-color-scheme: light)`

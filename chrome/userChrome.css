@@ -5,6 +5,16 @@
    (dark+light primitives live in the imported file). See palettes/ for variants. */
 @import url('./palettes/grayscale.css');
 
+/* Structural dial DEFAULTS (fonts, motion, density, history/pin sizing). Loaded BEFORE
+   user-overrides.css so a user can redefine any dial there with a plain declaration (no
+   !important) and win by source order — exactly as if it were the shipped default. */
+@import url('./dials.css');
+
+/* Personal overrides — gitignored, loaded LAST so it's the final word on any --tf-* dial
+   or color. Copy user-overrides.example.css to user-overrides.css to customise. A missing
+   file is harmless (install.sh creates it from the example). */
+@import url('./user-overrides.css');
+
 /* IMPORTANT: Selection styles MUST come BEFORE namespace declaration */
 ::-moz-selection {
   background-color: var(--tf-select) !important;
@@ -28,55 +38,10 @@
    variables, so there is exactly one place to change a color.
    ============================================================================ */
 
-/* Accessibility beats the MOTION DIAL: reduced-motion always forces --tf-anim to 0s,
-   no matter what the knob below is set to. */
-@media (prefers-reduced-motion: reduce) {
-  :root { --tf-anim: 0s !important; }
-}
-
 :root {
-  --tf-sep-inset: 1px;   /* tab-separator inline-start inset — STRUCTURAL (not a color,
-                            so it stays here, not in the palette). Just clears the macOS
-                            window frame so separators meet its inner edge (#2). */
-
-  /* ---- MOTION DIAL — global duration for trimfox's own CSS animations/transitions.
-          0s (default) = instant, matching the deliberately-instant sidebar and honoring
-          reduced-motion (see the guard below). Raise it (e.g. 100ms) to add motion.
-          Currently drives: the find bar show/hide (chrome/refined-findbar/findbar.css).
-          Does NOT reach two things by nature:
-            (1) sidebar expand/collapse — a Firefox PREF, not CSS. To add matching motion set
-                sidebar.animation.expand-on-hover.duration-ms (trimfox pins it 0) +
-                sidebar.animation.enabled=true.
-            (2) the loading wash — keeps its own --tf-load-speed (an ongoing status signal,
-                not a transition; zeroing it would remove feedback). ---- */
-  --tf-anim: 0s;
-
-  /* ---- FONT DIALS (fork here) — every font declaration below routes through these,
-          so the whole chrome's typeface/size is two lines. STRUCTURAL, not per-palette.
-          CONVENTION: never hardcode a size. Base text = var(--tf-font-size); anything meant
-          larger/smaller uses calc() off the base so it SCALES with the dial. Examples:
-              header  25% larger  ->  font-size: calc(var(--tf-font-size) * 1.25);
-              caption 10% smaller ->  font-size: calc(var(--tf-font-size) * 0.9);
-          Prefer calc over em: explicit, anchored to the base, and it does not compound. ---- */
-  --tf-font-family: -apple-system;   /* chrome-wide typeface */
-  --tf-font-size:   7pt;             /* chrome-wide font size (the 1.0x base) */
-
-  /* ---- FONT SCALE MODE + TIERS (fork here) — reproduce Firefox's own chrome font hierarchy,
-          scaled off --tf-font-size. Ratios sourced from docs/font-hierarchy.md.
-          --tf-fs-lift: 1 = FULL proportional (FF's whole hierarchy). 0 = middle path (the larger
-          cues still scale, the many smaller bits stay flat). Any fraction blends. Set every tier
-          to var(--tf-font-size) for fully flat. ---- */
-  --tf-fs-lift: 1;
-  /* larger tiers — apply in BOTH modes (these are the "middle path") */
-  --tf-fs-md:    calc(var(--tf-font-size) * 1.15);   /* minor headers / descriptions */
-  --tf-fs-field: calc(var(--tf-font-size) * 1.1);    /* URL bar field (FF uses 1.25; damped for density) */
-  --tf-fs-lg:    calc(var(--tf-font-size) * 1.25);   /* rich chiclet */
-  --tf-fs-h:   calc(var(--tf-font-size) * 1.3);    /* panel / customize / sidebar headers */
-  --tf-fs-xl:  calc(var(--tf-font-size) * 1.5);    /* large hero headers */
-  --tf-fs-xxl: calc(var(--tf-font-size) * 2);      /* biggest hero headers (Relay) */
-  /* smaller tiers — gated by --tf-fs-lift (flat at 0, full ratio at 1) */
-  --tf-fs-sm:  calc(var(--tf-font-size) * (1 - 0.15 * var(--tf-fs-lift)));   /* -> 0.85x */
-  --tf-fs-xs:  calc(var(--tf-font-size) * (1 - 0.25 * var(--tf-fs-lift)));   /* -> 0.75x */
+  /* Structural dial DEFAULTS (sep-inset, motion, fonts, font-scale tiers) now live in
+     dials.css — loaded before user-overrides.css so overrides win without !important.
+     This :root only maps trimfox's tokens onto Firefox's own theme vars. */
 
   /* ---- Map Firefox theme vars onto the tokens ---- */
   --toolbar-bgcolor:              var(--tf-surface) !important;
@@ -245,14 +210,7 @@ menupopup > menuseparator {
    Kept SEPARATE from the context/popup-menu padding (set on `menupopup` above)
    so the two menus can be adjusted independently.
    ============================================================================ */
-:root {
-  --tf-hist-row-pad-block:  2px;      /* vertical padding inside each row */
-  --tf-hist-row-pad-inline: 8px;      /* left/right padding inside each row */
-  --tf-hist-end-pad:        6px;      /* extra pad at the menu ends (first row top, last row bottom) */
-  --tf-hist-favicon:        16px;     /* favicon / icon-column size */
-  --tf-hist-accent-width:   3px;      /* active-row left accent bar thickness */
-  --tf-hist-accent-color:   var(--tf-glyph);  /* active-row left accent bar (flips light/dark) */
-}
+/* --tf-hist-* dials live in dials.css (tune the history strip there). */
 /* the history popup hugs its borders (full-width separators, accent bar to the edge); it is the
    only popup with .unified-nav-* rows, so this is scoped to it and never touches context menus.
    Top/bottom breathing comes from --tf-hist-end-pad on the first/last rows below. */
@@ -818,11 +776,7 @@ findbar:not(:focus-within) {
    LEFT→RIGHT when expanded. The fill sits on .tab-background, which paints under
    the favicon/label, so it never hides them.
    Dials: --tf-load-fill (color), --tf-load-opacity, --tf-load-speed. */
-:root {
-  --tf-load-fill:    var(--tf-accent);
-  --tf-load-opacity: 0.6;
-  --tf-load-speed:   1.4s;
-}
+/* --tf-load-* dials live in dials.css. */
 .tabbrowser-tab .tab-throbber { display: none !important; }   /* hide the native hourglass */
 .tabbrowser-tab[busy] .tab-background { position: relative !important; }
 .tabbrowser-tab[busy] .tab-background::after {
@@ -1111,22 +1065,8 @@ findbar:not(:focus-within) {
    (.tabbrowser-tab[pinned], .tab-label, .tab-content, .tab-background). The pinned-AREA
    container id is a best guess — run the #13 probe in NEXT-SESSION.md to confirm it and
    the real gap sources, then refine. */
-:root {
-  --tf-pin-size: 22px;       /* faviconized pin square (smaller) */
-  --tf-pin-favicon: 14px;    /* favicon inside it (smaller — leaves clear highlight margin) */
-  --tf-pin-pitch: 24px;      /* pin-to-pin step (size + 2px gap) — used for px placement */
-  --tf-pin-pitch-n: 24;      /* SAME value, UNITLESS, for the per-row division below */
-  /* Usable width of the expanded popout sidebar for pins, as a UNITLESS px number — the ONE
-     knob to match YOUR sidebar drag-width. columns-per-row is then COMPUTED, never hardcoded:
-        per-row = floor(usable-width / pitch)
-     (length÷length is illegal in CSS calc, which is exactly why these two are unitless.) */
-  --tf-pin-area-width: 230;
-  --tf-pins-per-row: max(1, round(down, var(--tf-pin-area-width) / var(--tf-pin-pitch-n)));
-  --tf-pin-row-inset: 4px;   /* left inset of pin #1. LOWER (even negative) = further LEFT.
-                                4px so the hover-highlight BOX (wider than the icon) floats
-                                off the sidebar's left padding instead of jamming the edge;
-                                the icon then sits ~4px right of the favicons below. */
-}
+/* --tf-pin-* sizing dials (incl. the computed --tf-pins-per-row) live in dials.css.
+   --tf-pin-count / --tf-pin-rows are computed dynamically below. */
 
 /* Register the grid's integer vars so the round()/mod()/division resolve to CONCRETE
    integers (not nested expression-strings) — robust and cheap. */

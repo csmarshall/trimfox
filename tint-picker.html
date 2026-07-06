@@ -170,7 +170,7 @@ A grey, or tint strength <code>0</code>, is grayscale.</p>
     <h2>Copy into tinted.css</h2>
     <pre class="code" id="code"></pre>
     <button class="copy" id="copy">Copy</button>
-    <div class="note">Point <code>userChrome.css</code>'s <code>@import</code> at <code>palettes/tinted.css</code>, then set these. Stock needs nothing — it's <code>grayscale.css</code>.</div>
+    <div class="note">Put these in <code>user-overrides.css</code> (gitignored, survives upgrades) with <code>@import 'palettes/tinted.css';</code> at its top. Stock needs nothing.</div>
   </div>
 </div>
 
@@ -289,7 +289,7 @@ A grey, or tint strength <code>0</code>, is grayscale.</p>
 
     codeEl.innerHTML = grayscale
       ? `<span class="k">/* Stock — that's grayscale.css. */</span>\n<span class="k">/* Nothing to set. */</span>`
-      : `<span class="k">/* palettes/tinted.css: */</span>\n<span class="k">--tf-hue:</span>    <span class="v">${h}</span>;\n<span class="k">--tf-chroma:</span> <span class="v">${c.toFixed(3)}</span>;`;
+      : `<span class="k">/* in user-overrides.css</span>\n<span class="k">   (with @import 'palettes/tinted.css'; at top): */</span>\n<span class="k">--tf-hue:</span>    <span class="v">${h}</span>;\n<span class="k">--tf-chroma:</span> <span class="v">${c.toFixed(3)}</span>;`;
     buildSwatches();
     syncPresets();
   }

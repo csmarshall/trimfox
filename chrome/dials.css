@@ -1,0 +1,72 @@
+/* ============================================================================
+   trimfox — DIAL DEFAULTS
+   ----------------------------------------------------------------------------
+   Every structural / behavioural knob trimfox exposes, gathered in one place.
+   These are DEFAULTS: userChrome.css imports this file BEFORE user-overrides.css,
+   so any dial you redefine in user-overrides.css wins by plain source order — no
+   !important needed. It behaves EXACTLY as if you'd changed the default here.
+
+   Colors are separate — they live in the palette (palettes/*.css), also imported
+   before user-overrides.css, so color overrides work the same way.
+
+   Computed / dynamic --tf-* (--tf-pin-count, --tf-pin-rows) stay in userChrome.css
+   because they're set by selectors, not user-facing defaults.
+   ============================================================================ */
+
+/* Accessibility beats the MOTION DIAL: reduced-motion always forces --tf-anim to 0s,
+   no matter what the knob is set to (this wins even over user-overrides.css). */
+@media (prefers-reduced-motion: reduce) {
+  :root { --tf-anim: 0s !important; }
+}
+
+:root {
+  /* ---- STRUCTURE ---- */
+  --tf-sep-inset: 1px;   /* tab-separator inline-start inset; clears the macOS window frame (#2) */
+
+  /* ---- MOTION ---- global duration for trimfox's own CSS animations/transitions.
+     0s (default) = instant, matching the deliberately-instant sidebar and honoring
+     reduced-motion (guard above). Raise it (e.g. 100ms) to add motion. Drives the find
+     bar show/hide. Does NOT reach the sidebar expand (a Firefox pref) or the loading wash
+     (which keeps its own --tf-load-speed). */
+  --tf-anim: 0s;
+
+  /* ---- FONT ---- the whole chrome's typeface/size in two lines. Never hardcode a size;
+     everything calc()s off --tf-font-size (see the tiers below). */
+  --tf-font-family: -apple-system;
+  --tf-font-size:   7pt;
+
+  /* FONT SCALE — reproduce Firefox's chrome font hierarchy scaled off --tf-font-size
+     (ratios from docs/font-hierarchy.md). --tf-fs-lift: 1 = full proportional, 0 = middle
+     path (fractions blend); the "smaller" tiers are lift-gated. */
+  --tf-fs-lift: 1;
+  --tf-fs-md:    calc(var(--tf-font-size) * 1.15);   /* minor headers / descriptions */
+  --tf-fs-field: calc(var(--tf-font-size) * 1.1);    /* URL bar field */
+  --tf-fs-lg:    calc(var(--tf-font-size) * 1.25);   /* rich chiclet */
+  --tf-fs-h:     calc(var(--tf-font-size) * 1.3);    /* panel / customize / sidebar headers */
+  --tf-fs-xl:    calc(var(--tf-font-size) * 1.5);    /* large hero headers */
+  --tf-fs-xxl:   calc(var(--tf-font-size) * 2);      /* biggest hero headers */
+  --tf-fs-sm:    calc(var(--tf-font-size) * (1 - 0.15 * var(--tf-fs-lift)));   /* -> 0.85x */
+  --tf-fs-xs:    calc(var(--tf-font-size) * (1 - 0.25 * var(--tf-fs-lift)));   /* -> 0.75x */
+
+  /* ---- HISTORY MENU (back/forward tab-strip popup) ---- */
+  --tf-hist-row-pad-block:  2px;      /* vertical padding inside each row */
+  --tf-hist-row-pad-inline: 8px;      /* left/right padding inside each row */
+  --tf-hist-end-pad:        6px;      /* extra pad at the menu ends */
+  --tf-hist-favicon:        16px;     /* favicon / icon-column size */
+  --tf-hist-accent-width:   3px;      /* active-row left accent bar thickness */
+  --tf-hist-accent-color:   var(--tf-glyph);   /* active-row accent (flips light/dark) */
+
+  /* ---- LOADING INDICATOR (indeterminate fill wash) ---- */
+  --tf-load-fill:    var(--tf-accent);
+  --tf-load-opacity: 0.6;
+  --tf-load-speed:   1.4s;
+
+  /* ---- PINNED TABS (faviconized grid) ---- columns-per-row is COMPUTED from these. */
+  --tf-pin-size: 22px;       /* faviconized pin square */
+  --tf-pin-favicon: 14px;    /* favicon inside it */
+  --tf-pin-pitch: 24px;      /* pin-to-pin step (size + gap) for px placement */
+  --tf-pin-pitch-n: 24;      /* SAME value, UNITLESS, for the per-row division below */
+  --tf-pin-area-width: 230;  /* usable sidebar width for pins (unitless px) — match YOUR drag-width */
+  --tf-pins-per-row: max(1, round(down, var(--tf-pin-area-width) / var(--tf-pin-pitch-n)));
+  --tf-pin-row-inset: 4px;   /* left inset of pin #1 (lower / negative = further left) */
+}

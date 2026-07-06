@@ -100,6 +100,25 @@ install_item() {
 install_item "$SCRIPT_DIR/chrome"  "$PROFILE/chrome"
 install_item "$SCRIPT_DIR/user.js" "$PROFILE/user.js"
 
+# Personal overrides (chrome/user-overrides.css) are per-user + gitignored; the repo
+# never ships one. The theme @imports it, so preserve the user's existing file across
+# a re-install (it was moved into the chrome.bak-${TS} backup above), else seed it from
+# the template so the @import resolves cleanly.
+if [ "$DRYRUN" = 1 ]; then
+  echo "  overrides: preserve-or-seed chrome/user-overrides.css"
+else
+  overrides="$PROFILE/chrome/user-overrides.css"
+  prior="$PROFILE/chrome.bak-${TS}/user-overrides.css"
+  rm -f "$overrides"
+  if [ -f "$prior" ]; then
+    cp -p "$prior" "$overrides"
+    echo "  overrides: restored your existing chrome/user-overrides.css"
+  else
+    cp "$PROFILE/chrome/user-overrides.example.css" "$overrides"
+    echo "  overrides: seeded chrome/user-overrides.css from the template"
+  fi
+fi
+
 cat <<EOF
 
 Done.

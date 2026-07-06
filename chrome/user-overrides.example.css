@@ -1,0 +1,53 @@
+/* ============================================================================
+   trimfox — user-overrides.example.css   →   copy to  user-overrides.css
+   ----------------------------------------------------------------------------
+   Your personal layer. Copy this file to `user-overrides.css` (gitignored, so
+   `git pull` — including the eventual Nova re-map — never touches your settings):
+
+       cp chrome/user-overrides.example.css chrome/user-overrides.css
+       (install.sh does this for you and preserves it across re-installs)
+
+   Then UNCOMMENT and edit any line below. NO `!important` needed — this file is
+   loaded LAST, so a plain declaration wins by source order, exactly as if it were
+   the shipped default. Everything is optional; keep only what you change.
+   ============================================================================ */
+
+/* To use the parametric tinted palette instead of stock grayscale, uncomment the
+   next line (it must be the FIRST rule in this file), then set --tf-hue/--tf-chroma
+   below. Design values live in tint-picker.html. */
+/* @import url('./palettes/tinted.css'); */
+
+:root {
+
+  /* ── COLOR ──────────────────────────────────────────────────────────────
+     Override individual palette tokens (see palettes/grayscale.css for the set): */
+  /* --tf-surface: #202430; */
+  /* --tf-accent:  #6a7fb0; */
+  /* …or, with the tinted palette imported above, just two knobs: */
+  /* --tf-hue:    260; */
+  /* --tf-chroma: 0.03; */
+
+  /* ── FONT ───────────────────────────────────────────────────────────────*/
+  /* --tf-font-family: -apple-system; */
+  /* --tf-font-size:   7pt;  */   /* chrome-wide base size */
+  /* --tf-fs-lift:     1;    */   /* 1 = full proportional hierarchy, 0 = flatter */
+
+  /* ── MOTION ─────────────────────────────────────────────────────────────
+     0s = instant (default). Raise for animation on the find bar, etc.
+     (reduced-motion always forces 0s regardless of this.) */
+  /* --tf-anim: 120ms; */
+
+  /* ── DENSITY / STRUCTURE ────────────────────────────────────────────────*/
+  /* --tf-sep-inset:      1px; */   /* tab-separator inset */
+  /* --tf-pin-size:       22px; */  /* faviconized pin square */
+  /* --tf-pin-area-width: 230;  */  /* match YOUR sidebar drag-width (unitless px) */
+
+  /* ── HISTORY MENU ───────────────────────────────────────────────────────*/
+  /* --tf-hist-row-pad-block: 2px; */
+  /* --tf-hist-accent-width:  3px; */
+
+  /* ── LOADING WASH ───────────────────────────────────────────────────────*/
+  /* --tf-load-speed:   1.4s; */
+  /* --tf-load-opacity: 0.6;  */
+
+}
