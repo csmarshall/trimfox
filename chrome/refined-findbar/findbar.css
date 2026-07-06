@@ -1,25 +1,89 @@
+/*
+ * Adapted from refined-findbar, © ravindUwU, MIT licensed.
+ * Source: https://github.com/ravindUwU/firefox-refined-findbar
+ * Pinned to upstream commit 4e5ef10 (2026-03-21).
+ *
+ * Compiled from src/refined-findbar.scss with @include args:
+ *     $float: false, $hide-close-button: true
+ * The $float:false branch is what produces the top-right docked bar (top:-1px;
+ * right:44px) with the bottom-only border — that is NOT a trimfox-local edit;
+ * verified byte-for-byte against a fresh compile of upstream @4e5ef10.
+ *
+ * trimfox-local edits on top of the stock compile:
+ *   - border colors mapped to the trimfox --tf-line-solid token (URL-bar cohesion)
+ *     instead of the native --chrome-content-separator-color / ThreeDShadow.
+ *   - show/hide animation duration routed through --tf-anim (default 0s = instant;
+ *     see the MOTION DIAL in userChrome.css).
+ *   - collapse-on-blur (findbar:not(:focus-within)) lives in userChrome.css.
+ *
+ * ---------------------------------------------------------------------
+ * MIT License
+ *
+ * Copyright (c) ravindUwU
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ---------------------------------------------------------------------
+ */
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace htmlNs url("http://www.w3.org/1999/xhtml");
 findbar [anonid=findbar-textbox-wrapper] toolbarbutton, findbar [anonid=findbar-textbox-wrapper] htmlNs|input, findbar checkbox {
-  border: 1px solid ThreeDShadow;
+  border: 1px solid var(--tf-line-solid);
 }
 
 findbar {
   position: absolute;
   contain: content;
-  border: 1px solid var(--chrome-content-separator-color);
+  border: 1px solid var(--tf-line-solid);
   border-bottom-left-radius: var(--toolbarbutton-border-radius);
   border-bottom-right-radius: var(--toolbarbutton-border-radius);
   border-top-width: 0 !important;
   top: -1px;
   right: 44px;
   transform-origin: top center;
-  animation: 0.1s keyframes-scale-in;
+  animation: var(--tf-anim, 0s) refined-findbar-scale-in;
   padding-right: 8px;
   padding-left: 8px;
+  padding-top: 1px !important;
+  padding-bottom: 6px !important;   /* match the urlbar-results bottom breathing room (#11, userChrome.css);
+                                       2px under the 8px sides — the trimfox popup-bottom convention. Top tucks
+                                       under the toolbar. */
+}
+
+/* ---- trimfox: compact the find bar to the sidebar's row density -------------------
+   FF ships the bar ~41px tall (a 28px .findbar-container + 6px x 2 padding-block + 1px
+   border). Shrink the row to the tab-row dial (--tab-min-height, 22px) with the same
+   min-height:0 + reduced-padding technique the menus use. Shared element, so quick-find
+   inherits it too. ------------------------------------------------------------------ */
+findbar .findbar-container {
+  height: var(--tab-min-height, 22px) !important;   /* FF default 28px; tracks the tab-row dial */
+  min-height: 0 !important;
+}
+findbar .findbar-textbox {
+  min-height: 0 !important;
+  padding-block: 1px !important;                    /* FF default 2px */
+}
+findbar .findbar-find-previous,
+findbar .findbar-find-next {
+  padding-block: 2px !important;                    /* FF default 4px */
 }
 findbar[hidden=true] {
-  animation: 0.1s keyframes-scale-out;
+  animation: var(--tf-anim, 0s) refined-findbar-scale-out;
 }
 
 findbar .close-icon {
@@ -28,7 +92,7 @@ findbar .close-icon {
 
 findbar checkbox {
   margin: 0 !important;
-  padding: 3px 6px;
+  padding: 1px 6px;   /* was 3px vertical — compact to match the row */
   border-radius: var(--toolbarbutton-border-radius);
   color: var(--button-color);
   background-color: var(--button-bgcolor);
@@ -48,14 +112,14 @@ findbar checkbox:hover {
 findbar checkbox:active {
   background-color: var(--button-active-bgcolor);
 }
-findbar checkbox[checked=true] {
+findbar checkbox[checked] {
   color: var(--button-primary-color);
   background-color: var(--button-primary-bgcolor);
 }
-findbar checkbox[checked=true]:hover {
+findbar checkbox[checked]:hover {
   background-color: var(--button-primary-hover-bgcolor);
 }
-findbar checkbox[checked=true]:active {
+findbar checkbox[checked]:active {
   background-color: var(--button-primary-active-bgcolor);
 }
 findbar checkbox:focus-visible {
@@ -66,6 +130,12 @@ findbar checkbox .checkbox-check {
   display: none;
 }
 findbar [anonid=findbar-textbox-wrapper] {
+  margin-inline-end: 0 !important;
+}
+/* Restore the gap before the checkbox group ONLY when it's visible (full bar).
+   In quick-find every following sibling is hidden (findbar.js showMinimalUI), so the
+   old unconditional trailing margin was dead over-padding on the right. */
+findbar [anonid=findbar-textbox-wrapper]:has(~ checkbox:not([hidden])) {
   margin-inline-end: 8px !important;
 }
 findbar [anonid=findbar-textbox-wrapper] htmlNs|input {
@@ -94,7 +164,7 @@ findbar description.findbar-label:empty {
   display: none;
 }
 
-@keyframes keyframes-scale-in {
+@keyframes refined-findbar-scale-in {
   0% {
     transform: scaleY(0);
   }
@@ -102,9 +172,13 @@ findbar description.findbar-label:empty {
     transform: scaleY(1);
   }
 }
-@keyframes keyframes-scale-out {
+@keyframes refined-findbar-scale-out {
   0% {
     transform: scaleY(1);
+    visibility: visible;
+  }
+  99% {
+    visibility: visible;
   }
   100% {
     transform: scaleY(0);
