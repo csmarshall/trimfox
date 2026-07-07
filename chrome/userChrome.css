@@ -490,7 +490,7 @@ menuitem.unified-nav-current {
 }
 #urlbar[breakout][breakout-extend] > .urlbar-input-container {
   height: var(--urlbar-height) !important;
-  padding: var(--urlbar-container-padding) !important;   /* compact 1px — on focus it jumps
+  padding: var(--urlbar-container-padding, 1px) !important;   /* compact 1px — on focus it jumps
                                                             to 6px/5px and shoves the icons +
                                                             text around. Pin to compact. */
   /* FF 152 "Nova" DOUBLES the field border-width on [breakout-extend] (padding:0 + 2×border),

@@ -94,7 +94,7 @@ findbar checkbox {
   margin: 0 !important;
   padding: 1px 6px;   /* was 3px vertical — compact to match the row */
   border-radius: var(--toolbarbutton-border-radius);
-  color: var(--button-color);
+  color: var(--button-color, var(--tf-text));
   background-color: var(--button-bgcolor);
 }
 findbar checkbox:not(:last-of-type) {
@@ -143,7 +143,7 @@ findbar [anonid=findbar-textbox-wrapper] htmlNs|input {
   border-bottom-right-radius: 0 !important;
 }
 findbar [anonid=findbar-textbox-wrapper] toolbarbutton {
-  color: var(--button-color);
+  color: var(--button-color, var(--tf-text));
   background-color: var(--button-bgcolor);
   border-width: 1px !important;
   margin-inline: 0 !important;
