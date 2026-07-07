@@ -518,7 +518,10 @@ panel#urlbar-results #urlbarView-row-0 .urlbarView-secondary {
    display:none !important;
 }
 
-/* Hides the first item in the urlbar dropdown if it is a "search with" or "visit" item. Does not hide "search in private window item", probably */
+/* Drop the first urlbar-dropdown row when it's the "search with X" / "visit <url>" heuristic
+   — a redundant echo of what you just typed — for a cleaner results list. Scoped to
+   [usertyping] and the :not([type]) / [type="search"] first row; the "search in private
+   window" row carries its own [type], so it's unaffected. */
 #urlbar[usertyping] .urlbarView-row:not([type]):first-child,
 #urlbar[usertyping] .urlbarView-row[type="search"]:first-child {
 display: none;
@@ -628,7 +631,9 @@ html|input.urlbar-input::selection,
   visibility: collapse !important;
 }
 
-/* Hide find bar */
+/* Collapse the find bar when it loses focus (deliberate minimalism): the bar floats at the
+   top-right, so tucking it to zero height when you click back into the page keeps it out of
+   the way. Trade-off: match count / Highlight-All state isn't visible once focus leaves. */
 findbar:not(:focus-within) {
   height: 0px !important;
   overflow: hidden !important;

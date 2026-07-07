@@ -26,3 +26,7 @@
 // remote debugging — both off by default for SECURITY; only enable if you edit chrome:
 // user_pref("devtools.chrome.enabled", true);
 // user_pref("devtools.debugger.remote-enabled", true);
+
+// Disable Quick Find (the "/" and "'" find-as-you-type bars). trimfox skins Quick Find to
+// match the full find bar, but if you'd rather it not trigger at all:
+// user_pref("accessibility.typeaheadfind.manual", false);
