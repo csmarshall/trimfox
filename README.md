@@ -1,6 +1,7 @@
 # trimfox
 
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-cs__marshall-yellow?logo=buy-me-a-coffee)](https://buymeacoffee.com/cs_marshall)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/cs_marshall)
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=github-sponsors)](https://github.com/sponsors/csmarshall)
 
 A minimal Firefox `userChrome` setup built around **native vertical tabs** — no
