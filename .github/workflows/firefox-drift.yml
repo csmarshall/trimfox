@@ -1,0 +1,104 @@
+name: firefox-drift
+
+# Weekly early-warning system. Downloads a fresh Firefox (release AND nightly),
+# runs the trimfox-drift tool against this theme, and opens an issue if NEW chrome
+# dependencies drift out — i.e. vars/selectors trimfox borrows that the latest
+# Firefox no longer provides, BEYOND the accepted-drift allowlist committed at
+# .github/accepted-drift.json. The download is unpacked in the runner and thrown
+# away; nothing is installed or launched persistently. `workflow_dispatch` runs it
+# on demand.
+#
+# Modeled on gluetun-monitor's base-drift.yml (a scheduled upstream-drift check),
+# but a CSS fix needs human judgment — so this ALERTS (opens an issue) instead of
+# auto-committing a fix. Triage an alert by either fixing the theme or, if the drift
+# is acceptable, adding the item to .github/accepted-drift.json.
+#
+# PREREQUISITE: needs the public github.com/csmarshall/trimfox-drift repo (the tool
+# is pip-installed from there). The nightly leg is the Nova/early-warning channel;
+# the release leg guards what users actually run.
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"   # Mondays 07:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [release, nightly]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install trimfox-drift
+        run: pip install "git+https://github.com/csmarshall/trimfox-drift.git"
+
+      - name: Download Firefox (${{ matrix.channel }})
+        run: |
+          set -euo pipefail
+          case "${{ matrix.channel }}" in
+            release) product=firefox-latest-ssl ;;
+            nightly) product=firefox-nightly-latest-ssl ;;
+            *) echo "unknown channel"; exit 1 ;;
+          esac
+          curl -fsSL -o ff.tar.xz "https://download.mozilla.org/?product=${product}&os=linux64&lang=en-US"
+          mkdir ff && tar -xf ff.tar.xz -C ff
+          echo "FF_DIR=$PWD/ff/firefox" >> "$GITHUB_ENV"
+
+      - name: Check for drift
+        id: drift
+        run: |
+          set +e
+          trimfox-drift check \
+            --theme "$GITHUB_WORKSPACE" \
+            --firefox "$FF_DIR" \
+            --known "$GITHUB_WORKSPACE/.github/accepted-drift.json" | tee drift-report.txt
+          echo "exit=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Open an issue on new drift
+        if: steps.drift.outputs.exit != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHANNEL: ${{ matrix.channel }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          title="⚠️ Firefox drift detected (${CHANNEL})"
+          wf="https://github.com/${REPO}/blob/main/.github/workflows/firefox-drift.yml"
+          {
+            echo "The scheduled \`firefox-drift\` monitor found chrome dependencies that the latest"
+            echo "**${CHANNEL}** Firefox no longer provides — beyond the accepted-drift allowlist."
+            echo
+            echo "**Triage:** fix the theme (add a \`var(--x, fallback)\` or update the selector), OR,"
+            echo "if the drift is acceptable, add the item to \`.github/accepted-drift.json\` to silence it."
+            echo "Regenerate the allowlist with:"
+            echo '```'
+            echo "trimfox-drift check --firefox <Firefox> --write-known .github/accepted-drift.json"
+            echo '```'
+            echo
+            echo "<details><summary>drift report</summary>"
+            echo
+            echo '```'
+            cat drift-report.txt
+            echo '```'
+            echo "</details>"
+            echo
+            echo "— automated by [firefox-drift.yml](${wf})"
+          } > body.md
+          gh label create drift --color BFD4F2 --description "Firefox chrome dependency drift" 2>/dev/null || true
+          existing="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file body.md
+          else
+            gh issue create --title "$title" --label drift --body-file body.md
+          fi

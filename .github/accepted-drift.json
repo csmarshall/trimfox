@@ -1,0 +1,27 @@
+{
+  "dead_vars_hard": [
+    "--button-active-bgcolor",
+    "--button-bgcolor",
+    "--button-hover-bgcolor",
+    "--button-primary-active-bgcolor",
+    "--button-primary-bgcolor",
+    "--button-primary-color",
+    "--button-primary-hover-bgcolor",
+    "--urlbar-height",
+    "--urlbar-width"
+  ],
+  "dead_vars_soft": [],
+  "dead_ids": [
+    "context-navigation",
+    "main-window",
+    "urlbar-results",
+    "urlbarView-row-0"
+  ],
+  "dead_anonids": [
+    "findbar-textbox-wrapper"
+  ],
+  "dead_classes": [
+    "tab-icon-stack",
+    "tab-secondary-label"
+  ]
+}
