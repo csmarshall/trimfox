@@ -11,3 +11,4 @@ session-state.md
 # personal, per-user overrides — never committed (each user owns their own)
 chrome/user-overrides.css
 user-overrides.js
+dist/
