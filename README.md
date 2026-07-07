@@ -1,7 +1,9 @@
-# trimfox
+<h1 align="center">
+  <img src="wordmark.png" alt="trimfox" width="260">
+</h1>
 
 <p align="center">
-  <img src="logo.png" alt="trimfox — a running low-poly fox" width="420">
+  <img src="logo.png" alt="running low-poly fox mark" width="420">
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
