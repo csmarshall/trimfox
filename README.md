@@ -594,6 +594,11 @@ trimfox builds on other people's work:
 - **The [r/FirefoxCSS](https://www.reddit.com/r/FirefoxCSS/) community** — for the userChrome
   techniques this builds on, including hiding the macOS traffic-light window controls.
 
+**How this was built.** trimfox began as years of hand-tuned Firefox `about:config` tweaks
+and userChrome hacks — a personal setup refined by hand over a long time. More recently, AI
+(Anthropic's Claude) helped clean it up, document it, extend it, and package it for release.
+The foundation is human, built over years of fine-tuning; the AI accelerated the polish.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
