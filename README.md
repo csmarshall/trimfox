@@ -30,6 +30,17 @@ It's called *trimfox* because that's the point — trim everything that isn't a 
   zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview all
   schemes in `palette.html`.
 
+## Firefox compatibility — including "Nova"
+
+Built and tuned on **Firefox 152**, and **already compatible with Firefox's 2026
+["Nova" redesign](https://blog.mozilla.org/en/firefox/new-firefox-design/)** — on purpose.
+A companion tool, **[trimfox-drift](https://github.com/csmarshall/trimfox-drift)**, diffed
+trimfox's Firefox dependencies against a Nova Nightly (154) build, flagged the three chrome
+vars Nova removes that trimfox relied on, and those were fixed pre-emptively with `var()`
+fallbacks ([#33](https://github.com/csmarshall/trimfox/issues/33),
+[`f555f9b`](https://github.com/csmarshall/trimfox/commit/f555f9b)) — so nothing changes on
+152, and nothing breaks when Nova lands.
+
 ## Install
 
 ```sh
