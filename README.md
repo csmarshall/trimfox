@@ -39,7 +39,8 @@ trimfox's Firefox dependencies against a Nova Nightly (154) build, flagged the t
 vars Nova removes that trimfox relied on, and those were fixed pre-emptively with `var()`
 fallbacks ([#33](https://github.com/csmarshall/trimfox/issues/33),
 [`f555f9b`](https://github.com/csmarshall/trimfox/commit/f555f9b)) — so nothing changes on
-152, and nothing breaks when Nova lands.
+152, and — hopefully — much less breaks when Nova lands. Nova is still in Nightly and will
+keep changing, so this is a cautiously-optimistic head start, not a guarantee.
 
 ## Install
 
