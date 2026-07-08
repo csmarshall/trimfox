@@ -83,7 +83,10 @@ system menus. Dark and light in each pair.
 
 ## Requirements
 
-- **Firefox 136+** (native vertical tabs); developed and verified on **152**.
+- **Firefox 138+** — trimfox's collapse-and-**expand-on-hover** tab strip needs the sidebar's
+  expand-on-hover, which shipped in 138 (native vertical tabs themselves landed in 136). The
+  **instant** hover-expand trimfox sets needs the zero-delay pref from **145+**; 138–144 work
+  but use Firefox's default hover delay. Developed and verified on **152**.
 - **macOS.** Built and tuned on macOS only — see [Platform support](#platform-support).
 - A swappable palette (see [Palette](#palette)): default is neutral grayscale,
   zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview the
