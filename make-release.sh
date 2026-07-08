@@ -39,10 +39,14 @@ INCLUDE=(
   install.sh
   README.md
   SETTINGS.md
+  CONTRIBUTING.md
   LICENSE
   logo.png
   wordmark.png
-  docs/screenshots
+  palette.html
+  tint-picker.html
+  docs
+  reference
 )
 
 echo "trimfox release: v${VERSION}"

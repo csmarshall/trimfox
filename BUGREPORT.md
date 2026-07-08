@@ -1,48 +1,40 @@
 # Draft Bugzilla report
 
 Not yet filed — ready to paste into <https://bugzilla.mozilla.org/>.
-Suggested product/component: **Core → Widget: Cocoa**.
+Suggested product/component: **Core → Widget: Cocoa** (documentation / support request).
+
+> **History:** an earlier version of this draft reported the back/forward history menu as
+> *unreachable* by userChrome.css. It turns out it isn't — `widget.macos.native-anchored-menus=false`
+> makes it themeable. So this is no longer a "can't be done" bug; it's a request to
+> **document and support that pref**, which is currently undiscoverable.
 
 ---
 
-**Summary:** Back/forward button history menu renders as a native macOS menu
-(ignores userChrome.css) even with `widget.macos.native-context-menus=false`
+**Summary:** `widget.macos.native-anchored-menus` — the pref that makes button-anchored
+popups (the back/forward history menu, the URL-bar dropdown) themeable via userChrome.css on
+macOS — is undocumented and carries no apparent support guarantee.
 
-**Platform:** macOS, Firefox 152.0.3
+**Platform:** macOS, Firefox 152.0.x
 
-**Steps to reproduce:**
-1. `toolkit.legacyUserProfileCustomizations.stylesheets = true`
-2. `widget.macos.native-context-menus = false`
-3. In `chrome/userChrome.css`:
-   `menupopup, menupopup * { font-size: 7pt !important; background: red !important; }`
-4. Restart Firefox.
-5. Right-click a page → the context menu honors the CSS (small red items). ✓
-6. Click-and-hold the **Back** (or Forward) button → the history dropdown.
+**Background:** On macOS, button-anchored popup menus render as *native* macOS menus by
+default, so `userChrome.css` can't reach them — unlike right-click context menus, which
+`widget.macos.native-context-menus=false` already makes themeable. The most visible case is
+the **back/forward history menu** (click-and-hold Back/Forward).
 
-**Actual result:** the history dropdown ignores the CSS entirely — default
-(system) font size, no red background. Verified in the Browser Toolbox
-(parent-process console):
-- Its `menuitem[uri]` / `menuitem[historyindex]` items report
-  `getBoundingClientRect().height === 0` while the menu is visibly open
-  (context-menu items report real heights).
-- A live-injected stylesheet setting `background: red`, `color: lime`,
-  `font-size: 7pt`, and `appearance: none !important` on those items has **no
-  visual effect** — the same injection reddens the right-click context menu.
+**What works:** setting **`widget.macos.native-anchored-menus=false`** renders these
+button-anchored menus as XUL, and userChrome.css then styles them normally (verified: the
+history menu and the URL-bar dropdown both take custom `font-size`/`background`/etc., exactly
+like a right-click context menu with `native-context-menus=false`). This is precisely the
+toggle that appeared to be missing.
 
-i.e. the menu is being drawn as a native macOS menu; CSS cannot reach it.
-
-**Expected result:** with `widget.macos.native-context-menus = false`, the
-back/forward history menu should render as a XUL menu and honor userChrome.css,
-consistent with right-click context menus — **or** there should be a pref to
-control it, as there is for context menus (`widget.macos.native-context-menus`)
-and `<select>` popups (`widget.non-native-theme.enabled`). Button-anchored popup
-menus currently have no equivalent toggle.
+**Request:** please **document and/or officially bless** `widget.macos.native-anchored-menus`,
+parallel to `widget.macos.native-context-menus`. Today it's undiscoverable, and being
+undocumented it could change or be removed without notice — themes that rely on it to keep
+these menus visually consistent with the rest of the chrome have no stability guarantee.
 
 **Notes / related:**
-- Bug 1712734 — native context menus don't honor userChrome.css (about context
-  menus with the pref *on*; this report is a *button* menu that's native with
-  the pref *off*).
+- Bug 1712734 — native context menus don't honor userChrome.css.
 - Bug 1698997 — initial native context-menu support.
-- The `appearance: none` workaround that disables native macOS window-control
-  buttons (revealing XUL `.titlebar-button`s) does **not** work here — there's no
-  XUL menupopup twin to reveal.
+- `widget.macos.native-context-menus` (right-click menus) and `widget.non-native-theme.enabled`
+  (`<select>` popups) are the analogous, better-known toggles; `native-anchored-menus` is the
+  button-anchored-popup equivalent and deserves the same visibility.
