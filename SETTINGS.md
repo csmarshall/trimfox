@@ -106,7 +106,7 @@ README "skin the error pages too" section).
 ## 2. Visual features (`chrome/userChrome.css`)
 
 Non-obvious things the stylesheet does — all driven by the `--tf-*` palette tokens
-(defined in `chrome/palettes/*.css`; preview them in `palette.html`):
+(defined in `chrome/palettes/*.css`; preview them on the [palette explorer](https://csmarshall.github.io/trimfox/palette.html)):
 
 - **7pt chrome font** — set on `:root` (`--tf-font-size`) and inherited, with explicit
   `menupopup`/`panel` rules so popups pick it up too (not a blunt `* { font-size }`).
@@ -156,7 +156,7 @@ installing (right-click the toolbar → **Customize Toolbar**):
 ## 4. Extensions
 
 **None are required for the look** — it's pure `userChrome.css` on native vertical
-tabs (this setup was migrated *off* Tree Style Tab; see `reference/`). The custom
+tabs (this setup was migrated *off* Tree Style Tab; see [`reference/`](https://github.com/csmarshall/trimfox/tree/main/reference)). The custom
 theme colors used to live in the **Firefox Color** extension, but they're now baked
 into `userChrome.css` as the `--tf-*` palette, so that extension isn't needed
 either.

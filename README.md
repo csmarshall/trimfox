@@ -1,9 +1,9 @@
 <h1 align="center">
-  <img src="wordmark.png" alt="trimfox" width="260">
+  <img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/wordmark.png" alt="trimfox" width="260">
 </h1>
 
 <p align="center">
-  <img src="logo.png" alt="running low-poly fox mark" width="420">
+  <img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/logo.png" alt="running low-poly fox mark" width="420">
 </p>
 
 <p align="center">
@@ -92,7 +92,7 @@ system menus. Dark and light in each pair.
 - **macOS.** Built and tuned on macOS only — see [Platform support](#platform-support).
 - A swappable palette (see [Palette](#palette)): default is neutral grayscale,
   zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview the
-  default light/dark in `palette.html`.
+  default light/dark on the [palette explorer](https://csmarshall.github.io/trimfox/palette.html).
 
 ## Install
 
@@ -257,7 +257,7 @@ never hardcodes a color. Each palette carries a dark set **and** a
   `--toolbar-background-color`, `--button-background-color-hover/-active`), and the
   urlbar-popup / autocomplete / chrome-selection highlight vars — all pointed at the
   tokens with `!important`. (These panel/field mappings close the "leak" class of
-  bug — see [`docs/color-audit.md`](docs/color-audit.md).)
+  bug — see [`docs/color-audit.md`](https://github.com/csmarshall/trimfox/blob/main/docs/color-audit.md).)
 - Most lines/dividers gain a `:root:-moz-window-inactive` variant so they dim when
   the window loses focus. **Semantic colors are deliberately left unmapped** —
   security red, warning yellow, and container colors stay bold.
@@ -287,7 +287,7 @@ never hardcodes a color. Each palette carries a dark set **and** a
   blunt `*`; popups get explicit `menupopup`/`panel` rules). Non-base sizes reproduce
   **Firefox's own proportional hierarchy** via `--tf-fs-*` tiers, toggled by
   **`--tf-fs-lift`** (`1` = full proportional, `0` = flat-ish middle path). Ratios &
-  the regeneration recipe live in [`docs/font-hierarchy.md`](docs/font-hierarchy.md).
+  the regeneration recipe live in [`docs/font-hierarchy.md`](https://github.com/csmarshall/trimfox/blob/main/docs/font-hierarchy.md).
 - Theme the (now-XUL) context/popup menus: `--tf-surface` bg, `--tf-select` hover,
   themed text/separators, trimmed padding, `min-height: 0`, 7pt (requires
   `widget.macos.native-context-menus = false`). The tight padding is scoped to the
@@ -486,7 +486,7 @@ in `chrome/userChrome.css`:
 | `--tf-font-family` | `-apple-system` | chrome-wide typeface |
 | `--tf-font-size` | `7pt` | chrome-wide base size (the 1.0× anchor; everything scales from it) |
 | `--tf-fs-lift` | `1` | `1` = full proportional (FF's hierarchy), `0` = middle path, fractions blend |
-| `--tf-fs-field` / `-md` / `-h` / … | `1.1×` … | per-tier `calc()` ratios (see [`docs/font-hierarchy.md`](docs/font-hierarchy.md)) |
+| `--tf-fs-field` / `-md` / `-h` / … | `1.1×` … | per-tier `calc()` ratios (see [`docs/font-hierarchy.md`](https://github.com/csmarshall/trimfox/blob/main/docs/font-hierarchy.md)) |
 | **Tab strip** | | |
 | `--tab-min-height` | `22px` | row height |
 | `--tab-collapsed-background-width` | `14px` | collapsed strip width |
@@ -637,15 +637,15 @@ controls *which* light/dark palette engages — not the look otherwise.)
 Reverse-engineering method and hard-won gotchas from building trimfox — read
 these before a tricky chrome change:
 
-- **[`docs/theming-playbook.md`](docs/theming-playbook.md)** — how to reverse-
+- **[`docs/theming-playbook.md`](https://github.com/csmarshall/trimfox/blob/main/docs/theming-playbook.md)** — how to reverse-
   engineer Firefox chrome: reading FF's source out of `omni.ja`, live Browser-
   Toolbox probes, piercing UA shadow DOM, SVG-icon theming, live-reactive
   `:has()` selectors, condensed case studies (pinned grid, URL bar, menus, nav
   button, drag-reorder), and a gotchas quick-reference.
-- **[`docs/color-audit.md`](docs/color-audit.md)** — when a chrome surface is the
+- **[`docs/color-audit.md`](https://github.com/csmarshall/trimfox/blob/main/docs/color-audit.md)** — when a chrome surface is the
   wrong shade: the 5-minute procedure to find the unmapped Firefox variable and
   bind it to a `--tf-*` token.
-- **[`docs/adr/`](docs/adr/)** — **Architecture Decision Records**: the *why* behind
+- **[`docs/adr/`](https://github.com/csmarshall/trimfox/tree/main/docs/adr)** — **Architecture Decision Records**: the *why* behind
   trimfox's load-bearing choices (the slim philosophy, the collapsed tab strip, XUL menus,
   native tabs, the `--tf-*` token system, the override layer, drift monitoring), numbered
   by decision date.
@@ -720,7 +720,7 @@ trimfox builds on other people's work:
   *universal* dark theme from the Firefox-57 userChrome era (now dormant, pre-Proton). It's
   where trimfox literally began: the earliest ancestor of this setup was a hand-modified
   ShadowFox, from before Firefox had native light/dark. No code survives the years of rewriting
-  since (see [ADR-0001](docs/adr/0001-design-philosophy.md)), but it charted this ground first.
+  since (see [ADR-0001](https://github.com/csmarshall/trimfox/blob/main/docs/adr/0001-design-philosophy.md)), but it charted this ground first.
 - **The [r/FirefoxCSS](https://www.reddit.com/r/FirefoxCSS/) community** — for the userChrome
   techniques this builds on, including hiding the macOS traffic-light window controls.
 - **Logo** — the running-fox mark started as a generation from **[Google Gemini](https://gemini.google.com)**,

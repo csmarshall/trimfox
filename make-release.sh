@@ -41,12 +41,6 @@ INCLUDE=(
   SETTINGS.md
   CONTRIBUTING.md
   LICENSE
-  logo.png
-  wordmark.png
-  palette.html
-  tint-picker.html
-  docs
-  reference
 )
 
 echo "trimfox release: v${VERSION}"
@@ -86,10 +80,9 @@ no extension. Requires toolkit.legacyUserProfileCustomizations.stylesheets,
 which user.js enables for you.
 EOF
 
-# Screenshots are referenced from GitHub (absolute URLs in the README), not bundled — this
-# keeps the zip small (~a couple hundred KB instead of ~3 MB). The capture script and notes
-# stay; only the PNGs are dropped.
-rm -f "$PKG"/docs/screenshots/*.png
+# The zip is just the install essentials — theme, prefs, installer, and the two core docs.
+# Everything else (screenshots, the HTML pickers, maintainer docs, reference/, logo art) is
+# referenced from GitHub by absolute URL in the README, so the download stays tiny.
 
 ( cd "$STAGE" && zip -r -q "$OUT" trimfox )
 rm -rf "$STAGE"
