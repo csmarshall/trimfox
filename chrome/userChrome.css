@@ -11,7 +11,7 @@
 @import url('./dials.css');
 
 /* Personal overrides — gitignored, loaded LAST so it's the final word on any --tf-* dial
-   or color. Copy user-overrides.example.css to user-overrides.css to customise. A missing
+   or color. Copy user-overrides.example.css to user-overrides.css to customize. A missing
    file is harmless (install.sh creates it from the example). */
 @import url('./user-overrides.css');
 
@@ -291,7 +291,7 @@ menuitem.unified-nav-current {
      - both ways          -> arrowhead-down  (⌄ — nudges "there's a menu / more here")
      - newest (no forward) -> arrowhead-left  (‹  back-only)
      - oldest (no back)    -> swap to the real Forward button -> arrowhead-right (›)
-     - fresh tab (neither) -> back button, greyed arrowhead-down
+     - fresh tab (neither) -> back button, grayed arrowhead-down
    Left-click navigates; right-click = themed history menu. */
 #forward-button { display: none !important; }                /* hidden by default; shown at stack-start */
 #back-button, #forward-button {
@@ -647,16 +647,15 @@ findbar:not(:focus-within) {
 /* each tab, compact 22px rows. Collapsed => a stack of separator lines that  */
 /* just shows how many tabs are open; hover/expand => readable labels.        */
 /* Spec from TST userStyleRules + Photon theme (tab_background_separator).     */
-/* FIRST PASS — tune the separator opacity / collapsed width after eyeballing.*/
 /* ========================================================================== */
 
 /* Compact row height + skinny collapsed strip — using the REAL native vars
    (per Firefox vertical-tabs CSS docs), not blunt overrides:
      --tab-min-height               = row height   (TST: .tab { height: 22px })
-     --tab-collapsed-background-width = collapsed strip width (~your old 20-25px) */
+     --tab-collapsed-background-width = collapsed strip width (~20–25px) */
 :root {
   --tab-min-height: 22px !important;
-  --tab-collapsed-background-width: 14px !important;   /* ~your original ~15px */
+  --tab-collapsed-background-width: 14px !important;   /* ~15px */
 }
 
 /* Slim the collapsed tab so the strip width is driven by the var, not by tab
@@ -719,9 +718,9 @@ findbar:not(:focus-within) {
 /* Favicons: present and visible normally (and when expanded on hover), but
    hidden ONLY in the collapsed state, so the collapsed strip is just separator
    lines = a tab count. This is the correct state-based way — `[expanded]` marks
-   the hover-expanded state on #tabbrowser-tabs[orient="vertical"]. (Earlier I
-   wrongly blanket-hid the favicons; this matches how you had it in TST: favicons
-   pushed out of the narrow collapsed strip, back when expanded.) */
+   the hover-expanded state on #tabbrowser-tabs[orient="vertical"]. (Matches the old
+   TST behavior: favicons pushed out of the narrow collapsed strip, restored on
+   expand — not blanket-hidden.) */
 #tabbrowser-tabs[orient="vertical"]:not([expanded]) .tab-icon-image,
 #tabbrowser-tabs[orient="vertical"]:not([expanded]) .tab-icon-overlay {
   /* display:none (not visibility:hidden) so the favicon reclaims its width and
@@ -851,7 +850,7 @@ findbar:not(:focus-within) {
   padding-block: 0 !important;
 }
 
-/* Hide the tab-list scrollbar — like your TST `margin-left:-18px` trick. This
+/* Hide the tab-list scrollbar — same effect as the old TST `margin-left:-18px`. This
    removes the ~10-18px the scrollbar was adding to the collapsed strip AND clears
    the right edge so the divider lands where it should. */
 #vertical-tabs,
@@ -863,8 +862,7 @@ findbar:not(:focus-within) {
 
 /* EXPANDED right divider: when expanded, #sidebar-main IS ~235px and visible, so
    its right border sits exactly at the expanded edge. (Invisible when collapsed —
-   the #vertical-tabs border above covers that state.) This is what was working
-   for the expanded view before; the collapsed handoff is the new part. */
+   the #vertical-tabs border above covers that state.) */
 #sidebar-main {
   border-inline-end: 1px solid var(--tf-line) !important;
 }
@@ -1066,10 +1064,9 @@ findbar:not(:focus-within) {
    from-scratch rebuild against Firefox's NATIVE vertical-tab DOM — concept only, not
    copied code). Pinned tabs become favicon-only squares in a wrapping grid, with the
    reskin's row separators / borders neutralized on them.
-   FIRST PASS (built while away): the per-pin rules below use selector-CERTAIN classes
-   (.tabbrowser-tab[pinned], .tab-label, .tab-content, .tab-background). The pinned-AREA
-   container id is a best guess — run the #13 probe in NEXT-SESSION.md to confirm it and
-   the real gap sources, then refine. */
+   The per-pin rules below use selector-certain classes (.tabbrowser-tab[pinned],
+   .tab-label, .tab-content, .tab-background); the pinned-area container id is
+   #pinned-tabs-container (probe-confirmed — see the pinned-AREA block below). */
 /* --tf-pin-* sizing dials (incl. the computed --tf-pins-per-row) live in dials.css.
    --tf-pin-count / --tf-pin-rows are computed dynamically below. */
 
@@ -1150,8 +1147,8 @@ findbar:not(:focus-within) {
   clip-path: none !important;
 }
 
-/* pinned AREA — flat, no stray borders/gaps (real native id #pinned-tabs-container,
-   probe-confirmed; #vertical-pinned-tabs-container kept as a fallback). */
+/* pinned AREA — flat, no stray borders/gaps (native id #pinned-tabs-container,
+   probe-confirmed). */
 /* pinned AREA = horizontal WRAPPING grid (TST's faviconized model: flex row + wrap),
    UNCONDITIONAL — the mode-scoped selector wasn't matching expand-on-hover's DOM, so
    the grid never applied. Packed tight (justify/align start), bounded to ~3 rows then
@@ -1326,10 +1323,7 @@ findbar:not(:focus-within) {
    markers are already pointer-events:none, so they shouldn't interfere.
    UPSTREAM CAVEAT: FF's sidebar.revamp vertical-tab drag has a KNOWN bug where tabs
    can blank out mid-drag (Mozilla connect/support threads). If reorder is broken even
-   with this, that's the Firefox bug — not our CSS.
-   TEST when back: drag a tab up/down in BOTH expand-on-hover and always-show; watch
-   whether (a) it reorders, (b) the drop line shows, (c) tabs blank mid-drag (= the FF
-   bug). Report which, and I'll target the fix. */
+   with this, that's the Firefox bug — not our CSS. */
 /* drop indicator: FF's native .tab-drop-indicator paints tab-drag-indicator.svg and is
    notoriously faint/translucent (Mozilla support #1276825). Make it a BOLD, OPAQUE
    accent bar so the drop point is obvious. If NOTHING shows while dragging, FF isn't
