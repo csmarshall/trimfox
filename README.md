@@ -57,6 +57,28 @@ The collapse/expand-on-hover strip — dark on top, light beneath.
   </table>
 </div>
 
+### The URL bar
+
+Focused, with the results dropdown restyled to match the chrome — dark on top, light below.
+
+<div align="center">
+  <table align="center">
+    <tr><td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/urlbar-dark.png" width="720" alt="URL bar with results dropdown, dark"></td></tr>
+    <tr><td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/urlbar-light.png" width="720" alt="URL bar with results dropdown, light"></td></tr>
+  </table>
+</div>
+
+### The find bar
+
+The compact refined find bar (`Cmd+F`) — dark on top, light below.
+
+<div align="center">
+  <table align="center">
+    <tr><td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/findbar-dark.png" width="720" alt="Find bar, dark"></td></tr>
+    <tr><td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/findbar-light.png" width="720" alt="Find bar, light"></td></tr>
+  </table>
+</div>
+
 ### Themed menus
 
 Even the right-click menus are skinned — trimfox forces XUL menus precisely because native
