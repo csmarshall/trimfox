@@ -5,6 +5,12 @@
 
 ## Context
 
+trimfox's lineage runs deep. It began **years ago — before Firefox even shipped a native
+light/dark mode** — as a hand-modified **[ShadowFox](https://github.com/overdodactyl/ShadowFox)**,
+the universal dark theme of that era. From there it grew into a personal, endlessly-tweaked
+`userChrome.css` + `about:config` setup, carried across many Firefox versions. None of
+ShadowFox's code survives the rewriting since, but that's where this started.
+
 Firefox's default chrome is, correctly, a **general-purpose** UI. Its padding, spacing,
 affordances, and discoverability are tuned to serve the entire spectrum of users — from
 someone opening a browser for the first time to a daily power user. Generous hit targets,
@@ -14,12 +20,10 @@ For a user who has been writing **`userChrome.css` since its early days**, that 
 generality is friction: wasted horizontal and vertical space, redundant affordances, and
 visual weight an experienced user doesn't need and would rather reclaim.
 
-People like this have typically accumulated **years of hand-tuned `about:config` and
-userChrome tweaks** — but that work tends to stay **scattered and personal**: never unified,
-never centralized, never versioned or documented, and painful to carry across Firefox updates.
-Not for lack of effort, but for lack of a **harness** — there was no structured token system,
-no clean override layer, no way to track Firefox's churning private-chrome internals, and no
-packaging to make it shareable.
+Yet that work tends to stay **scattered and personal** — never unified, never centralized,
+never versioned or documented, and painful to carry across Firefox updates. Not for lack of
+effort, but for lack of a **harness**: no structured token system, no clean override layer, no
+way to track Firefox's churning private-chrome internals, and no packaging to make it shareable.
 
 ## Decision
 
