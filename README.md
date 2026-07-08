@@ -115,7 +115,7 @@ system menus. Dark and light in each pair.
   tabs + userChrome) is cross-platform, so it should largely work on Linux/Windows; the
   macOS-specific bits (traffic-light hiding, the native-menu prefs, `-moz-platform`-gated rules)
   just won't apply and are untested there — [testers welcome](#platform-support).
-- A swappable palette (see [Palette](#palette)): default is neutral grayscale,
+- A swappable palette (see [Palette](#customizing)): default is neutral grayscale,
   zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview the
   default light/dark on the [palette explorer](https://csmarshall.github.io/trimfox/palette.html).
 
@@ -147,7 +147,7 @@ backed up to `user.js.bak-*`). Keep your own prefs in **`user-overrides.js`** (g
 installer seeds it from `user-overrides.example.js`, appends it *after* trimfox's prefs
 so yours win, and preserves it across updates. Every pref trimfox sets, with its Firefox
 default, is in **[SETTINGS.md](SETTINGS.md)**. (That's the *prefs* layer; colors and dials
-have a separate override file — `chrome/user-overrides.css`, covered under [Palette](#palette).)
+have a separate override file — `chrome/user-overrides.css`, covered under [Palette](#customizing).)
 
 To revert: restore the `.bak-*` files (or delete `chrome/`, `user.js`, and your
 `user-overrides.*`) and restart. If you installed the error-page accent, run
@@ -156,7 +156,7 @@ To revert: restore the `.bak-*` files (or delete `chrome/`, `user.js`, and your
 ### After install — two one-time steps
 
 1. **Set the theme to "System theme — auto"** — `about:addons` → Themes, so light/dark
-   follows the OS. If it doesn't take, see [Light / dark](#light--dark-auto-follows-macos)
+   follows the OS. If it doesn't take, see [Light / dark](https://github.com/csmarshall/trimfox/blob/main/docs/customizing.md#light--dark-auto-follows-macos)
    for the one-time toggle-and-back fix.
 2. **Sidebar width** — drag the expanded sidebar edge to your taste (~240px) once;
    Firefox persists it.
@@ -251,105 +251,25 @@ tabs, findbar, in-content, prefs), with the selectors / `--tf-*` tokens and the 
 catalogued separately to keep this README scannable:
 **[docs/tweak-catalog.md](https://github.com/csmarshall/trimfox/blob/main/docs/tweak-catalog.md)**.
 
-## Tuning knobs
+## Customizing
 
-Colors come from the [palette](#palette); everything else is driven by `--tf-*` dials — font &
-scale, tab strip, the pinned grid, history-menu skin, loading wash, container markers — each
-with its default and what it controls, tabulated in
-**[docs/tuning-knobs.md](https://github.com/csmarshall/trimfox/blob/main/docs/tuning-knobs.md)**.
-
-## Palette
-
-Two ways to change colors, depending on who you are:
-
-- **Users** — set yours in
-  [`user-overrides.css`](#personal-overrides--user-overridescss-survives-upgrades): it loads
-  *after* the palette (no `!important`) and survives `git pull`. `@import` a different shipped
-  palette there, or override individual tokens (example below).
-- **Maintainers / forks** — change trimfox's *shipped default* via the palette `@import` in
-  `userChrome.css` (further below).
+Everything trimfox draws is a `--tf-*` token or dial, so you recolor or retune it **without
+editing the theme or forking**. Your values go in a gitignored `chrome/user-overrides.css` —
+loaded last (no `!important`), and it survives `git pull` (including the eventual Nova re-map):
 
 ```css
-/* chrome/user-overrides.css — the user layer, loaded last */
-@import url('./palettes/tinted.css');   /* switch palette here, not in userChrome.css */
+/* chrome/user-overrides.css */
+@import url('./palettes/tinted.css');   /* switch to another shipped palette… */
 :root {
-  --tf-hue: 260;  --tf-chroma: 0.03;    /* tune the tinted palette…         */
-  /* --tf-accent: #6a7fb0; */           /* …or just override a token or two */
+  --tf-hue: 260; --tf-chroma: 0.03;     /* …and tune it, or */
+  --tf-accent: #6a7fb0;                 /* override any single token or dial */
 }
 ```
 
-All colors are `--tf-*` tokens, and `userChrome.css` never hardcodes a color — it
-maps Firefox's own theme variables onto the tokens, so a whole theme is just one
-token set. The **primitive tokens live in a swappable palette file**, imported at
-the top of `chrome/userChrome.css`:
-
-```css
-@import url('./palettes/grayscale.css');   /* ← swap this one line */
-```
-
-Each file in **`chrome/palettes/`** defines the token set for **both dark and
-light**, so the scheme follows the OS automatically (see below):
-
-| file | look |
-|------|------|
-| `grayscale.css` *(default — stock)* | neutral grayscale, zero-blue — dark + inverted light. The exact reference look. |
-| `firefox.css` | trimfox layout with Firefox's own default chrome colors + blue accent |
-| `tinted.css` *(adjustable)* | parametric one-hue tint — derives the whole ramp from `--tf-hue` + `--tf-chroma` (see below) |
-
-The accent (`--tf-accent`) replaces Firefox's default teal on buttons, focus rings and
-checkboxes — in the chrome, on `about:` pages, and on error pages. The full `--tf-*` token
-vocabulary is catalogued in
-[docs/tweak-catalog.md](https://github.com/csmarshall/trimfox/blob/main/docs/tweak-catalog.md).
-
-**Interactive tools** — self-contained HTML; open locally, or try them live on
-GitHub Pages:
-
-- **[Tint picker](https://csmarshall.github.io/trimfox/tint-picker.html)** (`tint-picker.html`) —
-  pick a base color, or dial hue + tint strength, and compare your palette against
-  *stock* grayscale side by side; copy the two `tinted.css` values.
-- **[Palette explorer](https://csmarshall.github.io/trimfox/palette.html)** (`palette.html`) —
-  a 4-way preview (trimfox dark/light, Firefox-default dark/light) that re-colors a
-  live browser-chrome mockup and a full swatch table.
-
-**Tinted palette — adjustable.** `palettes/tinted.css` derives the whole ramp from two knobs
-(`--tf-hue` 0–360, `--tf-chroma` 0–~0.05; `0` = grayscale), keeping trimfox's exact
-lightness/contrast. Dial it visually with the tint picker above, or set the values by hand —
-example hues: slate `260`, terracotta `40`, forest `150`, plum `330` (chroma ~0.025–0.035).
-
-### Personal overrides — `user-overrides.css` (survives upgrades)
-
-**Don't edit the committed files to customize.** trimfox loads
-**`chrome/user-overrides.css`** *last* — a gitignored, per-user file where you set any
-`--tf-*` color or dial with a **plain declaration (no `!important`)** and it wins as if it
-were the shipped default. Because it's untracked, `git pull` (including the eventual
-Firefox **Nova** re-map) updates the theme underneath while your settings persist — no
-hand-merging.
-
-```sh
-cp chrome/user-overrides.example.css chrome/user-overrides.css   # install.sh does this for you
-```
-
-Then uncomment what you want:
-
-```css
-:root {
-  --tf-font-size: 9pt;      /* bigger chrome text     */
-  --tf-anim:      120ms;    /* add find-bar motion    */
-  --tf-accent:    #6a7fb0;  /* a different accent     */
-}
-```
-
-Every knob lives in **`chrome/dials.css`** (structural dials) and the palette
-(`palettes/*.css`, colors) — both loaded before your overrides. The `--tf-*` names are
-trimfox's stable API: Firefox's own var/selector names churn under it, yours don't.
-
-### Light / dark (auto-follows macOS)
-
-Each palette ships a dark set and an `@media (prefers-color-scheme: light)` set, so the chrome
-follows your **macOS Appearance** — no restart. The one catch: Firefox's chrome scheme is driven
-by its active *theme*, so set it to **"System theme — auto"** (`about:addons` → Themes). The
-setup quirk (the toggle-and-back fix) and the custom-palette glyph note are in
-**[docs/light-dark.md](https://github.com/csmarshall/trimfox/blob/main/docs/light-dark.md)**.
+Three palettes ship — grayscale (default), `firefox`, and the parametric `tinted`; tint the
+last one live in the **[tint picker](https://csmarshall.github.io/trimfox/tint-picker.html)**.
+The full guide — every palette, every `--tf-*` dial, and the light/dark setup — is in
+**[docs/customizing.md](https://github.com/csmarshall/trimfox/blob/main/docs/customizing.md)**.
 
 ## docs/ (maintainer notes)
 

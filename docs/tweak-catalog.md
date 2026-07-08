@@ -12,7 +12,7 @@ The single source of truth. The **primitive tokens live in a swappable palette
 file** (`chrome/palettes/grayscale.css` by default) imported at the top of
 `chrome/userChrome.css`; userChrome maps those onto Firefox's own theme vars and
 never hardcodes a color. Each palette carries a dark set **and** a
-`@media (prefers-color-scheme: light)` set — see [Palette](../README.md#palette).
+`@media (prefers-color-scheme: light)` set — see [Palette](customizing.md#palettes--colors).
 
 - **Surfaces** — `--tf-field` (inset URL/search boxes), `--tf-content` (page bg),
   `--tf-surface` (toolbar/sidebar/tab strip), `--tf-raised` (hover/selected),
@@ -79,7 +79,7 @@ never hardcodes a color. Each palette carries a dark set **and** a
   page = active-tab highlight + a `--tf-glyph` left accent bar; back/forward =
   inactive-tab rows; full-width separators (none under the last row); a favicon
   column; hover swaps the favicon for a themed arrowhead. Tune with the
-  `--tf-hist-*` dials (see [Tuning knobs](../README.md#tuning-knobs)).
+  `--tf-hist-*` dials (see [Tuning knobs](customizing.md#tuning-knobs)).
 - Re-hide the searchmode-switcher placeholder glyph that the universal 7pt rule
   leaks (`.urlbar-visually-hidden`).
 
@@ -239,7 +239,7 @@ never hardcodes a color. Each palette carries a dark set **and** a
 - **Color scheme follows the OS**: `browser.theme.toolbar-theme=2` /
   `content-theme=2` + `extensions.activeThemeID=default-theme@mozilla.org` (System
   — auto), so trimfox's light/dark palette tracks macOS Appearance — see
-  [Light / dark](../README.md#light--dark-auto-follows-macos).
+  [Light / dark](customizing.md#light--dark-auto-follows-macos).
 - **Behavior**: `sidebar.visibility="expand-on-hover"`, `sidebar.expandOnHover`,
   `sidebar.position_start` (left), animations off, and **instant** hover-expand
   (`...expand-on-hover.delay-duration-ms=0` / `duration-ms=0`). Empty
