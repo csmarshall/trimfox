@@ -1,0 +1,31 @@
+name: build-zip
+
+# Manual, on-demand build of the release zip (make-release.sh) as a downloadable artifact —
+# for testing the packaging without cutting a release. Actual releases are automated by
+# release-please.yml: land conventional commits, merge the Release PR it opens, and it tags,
+# publishes, and attaches the zip.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version label for the zip (e.g. 1.0.2-test)"
+        required: false
+        default: "dev"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build the zip
+        run: ./make-release.sh "${{ inputs.version }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trimfox-zip
+          path: dist/trimfox-*.zip

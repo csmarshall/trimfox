@@ -1,0 +1,40 @@
+name: release-please
+
+# Automated releases. On every push to main, release-please reads the conventional-commit
+# history (feat: -> minor, fix:/docs:/etc -> patch, feat!:/BREAKING -> major) and maintains a
+# "Release PR" that bumps the version in .release-please-manifest.json and updates CHANGELOG.md.
+# Merge that PR and release-please tags it (vX.Y.Z) + cuts the GitHub Release — then, in this
+# same run, we build the curated zip (make-release.sh) and attach it. No manual tagging, no PAT.
+#
+# One-time repo setting: Settings → Actions → General → Workflow permissions →
+# enable "Allow GitHub Actions to create and approve pull requests" (so it can open the Release PR).
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Only when a release was actually cut this run: build + attach the zip to it.
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          fetch-depth: 0
+      - name: Build and attach the release zip
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./make-release.sh "${{ steps.release.outputs.tag_name }}"
+          gh release upload "${{ steps.release.outputs.tag_name }}" dist/trimfox-*.zip --clobber
