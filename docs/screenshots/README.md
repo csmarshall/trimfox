@@ -28,5 +28,9 @@ using `<state>-<mode>.png`:
 trimfox supports light and dark (it follows the OS via "System theme — auto").
 Showing both in the README proves that at a glance.
 
-Once the PNGs are here, they get laid into the top of the main README as a gallery
-(collapsed-vs-expanded pair first — that's the money shot).
+Captures come **pre-sized** — the helper locks the window to a fixed size
+(`xulstore.json`), so every shot shares dimensions and light/dark pairs line up.
+
+Once the PNGs are here, they get laid into the top of the main README as a gallery —
+**dark first, then light** (trimfox's default is dark) — with the collapsed-vs-expanded
+tab-strip pair leading (that's the money shot).

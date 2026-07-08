@@ -40,6 +40,22 @@ user_pref("browser.bookmarks.showMobileBookmarks", false);
 user_pref("browser.toolbars.bookmarks.visibility", "never");
 PREFS
 
+# Lock the window to a fixed size so EVERY capture comes out identical. Firefox reads
+# these bounds from xulstore.json on first launch — deterministic, no accessibility
+# permissions needed. (A Retina display captures at 2x these logical pixels.)
+WIN_W=1280; WIN_H=800
+cat > "$PROFILE/xulstore.json" <<XUL
+{
+  "chrome://browser/content/browser.xhtml": {
+    "main-window": {
+      "screenX": "80", "screenY": "60",
+      "width": "${WIN_W}", "height": "${WIN_H}",
+      "sizemode": "normal"
+    }
+  }
+}
+XUL
+
 # Neutral demo tabs — Mozilla Foundation front page first, then generic content.
 "$FF" --no-remote --profile "$PROFILE" \
   "https://foundation.mozilla.org/" \
@@ -51,7 +67,8 @@ PREFS
 cat <<EOF
 
 ── capture checklist (macOS) ─────────────────────────────────────────────
-Grab just the window:  Cmd+Shift+4 → Space → click the Firefox window.
+The window opens pre-sized to ${WIN_W}×${WIN_H} — so every window-capture matches.
+Grab just the window:  Shift+Cmd+4 → Space → click the Firefox window.
 Save into:  $REPO/docs/screenshots/
 Name:       <state>-<mode>.png     e.g.  tabstrip-collapsed-dark.png
 
