@@ -111,7 +111,10 @@ system menus. Dark and light in each pair.
   expand-on-hover, which shipped in 138 (native vertical tabs themselves landed in 136). The
   **instant** hover-expand trimfox sets needs the zero-delay pref from **145+**; 138–144 work
   but use Firefox's default hover delay. Developed and verified on **152**.
-- **macOS.** Built and tuned on macOS only — see [Platform support](#platform-support).
+- **macOS** — what trimfox is *themed for*, not a hard requirement. The core (native vertical
+  tabs + userChrome) is cross-platform, so it should largely work on Linux/Windows; the
+  macOS-specific bits (traffic-light hiding, the native-menu prefs, `-moz-platform`-gated rules)
+  just won't apply and are untested there — [testers welcome](#platform-support).
 - A swappable palette (see [Palette](#palette)): default is neutral grayscale,
   zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview the
   default light/dark on the [palette explorer](https://csmarshall.github.io/trimfox/palette.html).
