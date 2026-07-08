@@ -51,4 +51,4 @@ quieter, gets-out-of-the-way, power-user-first* wins.
   plainly so no one installs it expecting Firefox-default ergonomics.
 - **Ongoing cost:** a slim theme that reaches deep into Firefox's *private* chrome must be
   **maintained** as Firefox changes — which is why the harness (drift monitoring) is part of
-  this decision, not an afterthought. See [ADR-0008](0008-trimfox-drift-monitor.md).
+  this decision, not an afterthought. See [ADR-0007](0007-trimfox-drift-monitor.md).
