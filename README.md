@@ -42,7 +42,7 @@ Collapsed, it's a skinny column of separator lines — just a live tab count; ho
 expands to labels. **Left:** collapsed · **right:** expanded · **top row:** dark · **bottom row:** light.
 
 <div align="center">
-  <table>
+  <table align="center">
     <tr>
       <td><img src="docs/screenshots/tabstrip-collapsed-dark.png" width="400" alt="Collapsed tab strip, dark"></td>
       <td><img src="docs/screenshots/tabstrip-expanded-dark.png" width="400" alt="Expanded tab strip, dark"></td>
@@ -61,13 +61,13 @@ menus can't be CSS-themed — so the tab context menu and the back/forward histo
 the chrome instead of popping up as stock system menus. Dark and light:
 
 <div align="center">
-  <table>
+  <table align="center">
     <tr>
       <td><img src="docs/screenshots/menu-tab-dark.png" height="360" alt="Themed tab context menu, dark"></td>
       <td><img src="docs/screenshots/menu-tab-light.png" height="360" alt="Themed tab context menu, light"></td>
     </tr>
   </table>
-  <table>
+  <table align="center">
     <tr>
       <td><img src="docs/screenshots/menu-history-dark.png" width="380" alt="Themed history menu, dark"></td>
       <td><img src="docs/screenshots/menu-history-light.png" width="380" alt="Themed history menu, light"></td>
