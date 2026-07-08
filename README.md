@@ -493,7 +493,24 @@ dim when the window loses focus, matching the rest of the themed chrome.
 
 ## Palette
 
-All colors are `--tf-*` tokens, and `userChrome.css` never hardcodes a color — it
+**Prefer your own colors? Don't edit these files — set them in
+[`user-overrides.css`](#personal-overrides--user-overridescss-survives-upgrades).** It loads
+*after* the palette, so it's the standard, non-destructive way to pick or retune a palette
+without touching committed CSS — and it survives `git pull`. Point it at a different shipped
+palette with one `@import` (no need to change the `@import` below), or just override
+individual tokens:
+
+```css
+/* chrome/user-overrides.css — loaded last, so plain declarations win (no !important) */
+@import url('./palettes/tinted.css');   /* switch palette here, not in userChrome.css */
+:root {
+  --tf-hue: 260;  --tf-chroma: 0.03;    /* tune the tinted palette…            */
+  /* --tf-accent: #6a7fb0; */           /* …or just override a token or two    */
+}
+```
+
+The rest of this section describes trimfox's *shipped* palettes and how to change the
+**default**. All colors are `--tf-*` tokens, and `userChrome.css` never hardcodes a color — it
 maps Firefox's own theme variables onto the tokens, so a whole theme is just one
 token set. The **primitive tokens live in a swappable palette file**, imported at
 the top of `chrome/userChrome.css`:
