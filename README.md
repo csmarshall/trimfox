@@ -36,6 +36,9 @@ It's called *trimfox* because that's the point — trim everything that isn't a 
 
 trimfox follows the OS light/dark theme — everything below is shown in both.
 
+> These images are served from the repo on GitHub; the downloadable **zip omits them to stay
+> small** (a couple hundred KB instead of ~3 MB). View them here or in the repo.
+
 ### The tab strip
 
 The collapse/expand-on-hover strip — dark on top, light beneath.
@@ -44,12 +47,12 @@ The collapse/expand-on-hover strip — dark on top, light beneath.
 <div align="center">
   <table align="center">
     <tr>
-      <td><img src="docs/screenshots/tabstrip-expanded-dark.png" width="400" alt="Expanded tab strip, dark"></td>
-      <td><img src="docs/screenshots/tabstrip-collapsed-dark.png" width="400" alt="Collapsed tab strip, dark"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/tabstrip-expanded-dark.png" width="400" alt="Expanded tab strip, dark"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/tabstrip-collapsed-dark.png" width="400" alt="Collapsed tab strip, dark"></td>
     </tr>
     <tr>
-      <td><img src="docs/screenshots/tabstrip-expanded-light.png" width="400" alt="Expanded tab strip, light"></td>
-      <td><img src="docs/screenshots/tabstrip-collapsed-light.png" width="400" alt="Collapsed tab strip, light"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/tabstrip-expanded-light.png" width="400" alt="Expanded tab strip, light"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/tabstrip-collapsed-light.png" width="400" alt="Collapsed tab strip, light"></td>
     </tr>
   </table>
 </div>
@@ -64,8 +67,8 @@ system menus. Dark and light in each pair.
 <div align="center">
   <table align="center">
     <tr>
-      <td><img src="docs/screenshots/menu-tab-dark.png" height="360" alt="Themed tab context menu, dark"></td>
-      <td><img src="docs/screenshots/menu-tab-light.png" height="360" alt="Themed tab context menu, light"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/menu-tab-dark.png" height="360" alt="Themed tab context menu, dark"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/menu-tab-light.png" height="360" alt="Themed tab context menu, light"></td>
     </tr>
   </table>
 </div>
@@ -74,8 +77,8 @@ system menus. Dark and light in each pair.
 <div align="center">
   <table align="center">
     <tr>
-      <td><img src="docs/screenshots/menu-history-dark.png" width="380" alt="Themed history menu, dark"></td>
-      <td><img src="docs/screenshots/menu-history-light.png" width="380" alt="Themed history menu, light"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/menu-history-dark.png" width="380" alt="Themed history menu, dark"></td>
+      <td><img src="https://raw.githubusercontent.com/csmarshall/trimfox/main/docs/screenshots/menu-history-light.png" width="380" alt="Themed history menu, light"></td>
     </tr>
   </table>
 </div>

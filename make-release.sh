@@ -86,6 +86,11 @@ no extension. Requires toolkit.legacyUserProfileCustomizations.stylesheets,
 which user.js enables for you.
 EOF
 
+# Screenshots are referenced from GitHub (absolute URLs in the README), not bundled — this
+# keeps the zip small (~a couple hundred KB instead of ~3 MB). The capture script and notes
+# stay; only the PNGs are dropped.
+rm -f "$PKG"/docs/screenshots/*.png
+
 ( cd "$STAGE" && zip -r -q "$OUT" trimfox )
 rm -rf "$STAGE"
 
