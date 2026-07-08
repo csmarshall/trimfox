@@ -115,7 +115,7 @@ system menus. Dark and light in each pair.
   tabs + userChrome) is cross-platform, so it should largely work on Linux/Windows; the
   macOS-specific bits (traffic-light hiding, the native-menu prefs, `-moz-platform`-gated rules)
   just won't apply and are untested there — [testers welcome](#platform-support).
-- A swappable palette (see [Palette](#customizing)): default is neutral grayscale,
+- A swappable palette (see [Customizing](#customizing)): default is neutral grayscale,
   zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview the
   default light/dark on the [palette explorer](https://csmarshall.github.io/trimfox/palette.html).
 
@@ -147,7 +147,7 @@ backed up to `user.js.bak-*`). Keep your own prefs in **`user-overrides.js`** (g
 installer seeds it from `user-overrides.example.js`, appends it *after* trimfox's prefs
 so yours win, and preserves it across updates. Every pref trimfox sets, with its Firefox
 default, is in **[SETTINGS.md](https://github.com/csmarshall/trimfox/blob/main/SETTINGS.md)**. (That's the *prefs* layer; colors and dials
-have a separate override file — `chrome/user-overrides.css`, covered under [Palette](#customizing).)
+have a separate override file — `chrome/user-overrides.css`, covered under [Customizing](#customizing).)
 
 To revert: restore the `.bak-*` files (or delete `chrome/`, `user.js`, and your
 `user-overrides.*`) and restart. If you installed the error-page accent, run
