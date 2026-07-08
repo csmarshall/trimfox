@@ -9,9 +9,9 @@ history stays intact.
 | # | Decision | Status |
 |---|---|---|
 | [0001](0001-design-philosophy.md) | Design philosophy: slim, get-out-of-the-way chrome for the experienced userChrome user (from a hand-modified ShadowFox) | Accepted |
-| [0002](0002-native-vertical-tabs.md) | Native vertical tabs; retire Tree Style Tab | Accepted |
+| [0002](0002-collapse-expand-on-hover.md) | Collapse / expand-on-hover tab strip (cribbed from Tree Style Tab's collapsed theme) | Accepted |
 | [0003](0003-themeable-xul-menus.md) | Force XUL menus so native macOS menus can be themed | Accepted |
-| [0004](0004-expand-on-hover-default.md) | Collapse / expand-on-hover as the default tab-strip interaction | Accepted |
+| [0004](0004-native-vertical-tabs.md) | Native vertical tabs; retire Tree Style Tab | Accepted |
 | [0005](0005-tf-token-palette-architecture.md) | `--tf-*` token vocabulary + swappable palettes | Accepted |
 | [0006](0006-user-overrides-layer.md) | `user-overrides` layer: customize without forking | Accepted |
 | [0007](0007-trimfox-drift-monitor.md) | trimfox-drift: catch Firefox private-chrome drift before it breaks | Accepted |

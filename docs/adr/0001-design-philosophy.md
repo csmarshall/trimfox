@@ -1,7 +1,7 @@
 # ADR-0001 — Design philosophy: slim, get-out-of-the-way chrome for the experienced userChrome user
 
 - **Status:** Accepted
-- **Date:** 2026-07-08
+- **Date:** founding (≈2018, before Firefox's native light/dark — exact date lost; recorded 2026-07)
 
 ## Context
 
