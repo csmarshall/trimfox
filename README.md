@@ -38,8 +38,7 @@ trimfox follows the OS light/dark theme — everything below is shown in both.
 
 ### The tab strip
 
-The headline: collapsed, it's a skinny column of separator lines — just a live tab count;
-hover and it expands to full labels. Dark on top, light beneath.
+The collapse/expand-on-hover strip — dark on top, light beneath.
 
 <p align="center"><b>Expanded</b> (on hover) &nbsp;·&nbsp; <b>Collapsed</b></p>
 <div align="center">
@@ -92,18 +91,6 @@ system menus. Dark and light in each pair.
   zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview the
   default light/dark in `palette.html`.
 
-## Firefox compatibility — including "Nova"
-
-Built and tuned on **Firefox 152**, and **already compatible with Firefox's 2026
-["Nova" redesign](https://blog.mozilla.org/en/firefox/new-firefox-design/)** — on purpose.
-A companion tool, **[trimfox-drift](https://github.com/csmarshall/trimfox-drift)**, diffed
-trimfox's Firefox dependencies against a Nova Nightly (154) build and flagged the three
-chrome vars Nova removes that trimfox relied on. Those were fixed pre-emptively with `var()`
-fallbacks ([#33](https://github.com/csmarshall/trimfox/issues/33),
-[`f555f9b`](https://github.com/csmarshall/trimfox/commit/f555f9b)) — so nothing changes on
-152, and — hopefully — far less should break when Nova lands. Nova is still in Nightly and
-will keep changing, so this is a cautiously-optimistic head start, not a guarantee.
-
 ## Install
 
 **Prefer a single download?** Grab the
@@ -140,12 +127,17 @@ To revert: restore the `.bak-*` files (or delete `chrome/`, `user.js`, and your
 
 ### After install — two one-time steps
 
-1. **Theme → "System theme — auto"** (`about:addons` → Themes) so light/dark
-   follows the OS. The Add-ons Manager owns the active theme, so you may need to
-   switch it once even though `user.js` sets the pref (toggle to another theme and
-   back if it doesn't take).
+1. **Set the theme to "System theme — auto"** — `about:addons` → Themes, so light/dark
+   follows the OS. If it doesn't take, see [Light / dark](#light--dark-auto-follows-macos)
+   for the one-time toggle-and-back fix.
 2. **Sidebar width** — drag the expanded sidebar edge to your taste (~240px) once;
    Firefox persists it.
+
+> **Prefer the strip always open, or wider?** You can. Set `sidebar.visibility="always-show"`
+> in `user-overrides.js` (or use Firefox's own **Settings → General → Browser Layout**) to keep
+> it expanded, and drag the sidebar edge any time to resize — Firefox remembers the width.
+> trimfox defaults to **collapse-and-expand-on-hover** on purpose: an always-open strip eats
+> horizontal space, which cuts against the trim-the-chrome, slim-and-fast point of the theme.
 
 ### Troubleshooting: chrome is themed but the tab strip is missing
 
@@ -194,6 +186,18 @@ If Firefox isn't at `/Applications/Firefox.app`, pass `-a PATH`.
 > Note: the error-page gray is hardcoded in the script, so it won't follow a palette swap
 > (e.g. to `firefox.css`'s blue accent) — error pages stay gray. Edit the hex in the
 > script's `.cfg` block to match a different palette.
+
+## Firefox compatibility — including "Nova"
+
+Built and tuned on **Firefox 152**, and **already compatible with Firefox's 2026
+["Nova" redesign](https://blog.mozilla.org/en/firefox/new-firefox-design/)** — on purpose.
+A companion tool, **[trimfox-drift](https://github.com/csmarshall/trimfox-drift)**, diffed
+trimfox's Firefox dependencies against a Nova Nightly (154) build and flagged the three
+chrome vars Nova removes that trimfox relied on. Those were fixed pre-emptively with `var()`
+fallbacks ([#33](https://github.com/csmarshall/trimfox/issues/33),
+[`f555f9b`](https://github.com/csmarshall/trimfox/commit/f555f9b)) — so nothing changes on
+152, and — hopefully — far less should break when Nova lands. Nova is still in Nightly and
+will keep changing, so this is a cautiously-optimistic head start, not a guarantee.
 
 ## What's in here
 
@@ -505,24 +509,25 @@ dim when the window loses focus, matching the rest of the themed chrome.
 
 ## Palette
 
-**Prefer your own colors? Don't edit these files — set them in
-[`user-overrides.css`](#personal-overrides--user-overridescss-survives-upgrades).** It loads
-*after* the palette, so it's the standard, non-destructive way to pick or retune a palette
-without touching committed CSS — and it survives `git pull`. Point it at a different shipped
-palette with one `@import` (no need to change the `@import` below), or just override
-individual tokens:
+Two ways to change colors, depending on who you are:
+
+- **Users** — set yours in
+  [`user-overrides.css`](#personal-overrides--user-overridescss-survives-upgrades): it loads
+  *after* the palette (no `!important`) and survives `git pull`. `@import` a different shipped
+  palette there, or override individual tokens (example below).
+- **Maintainers / forks** — change trimfox's *shipped default* via the palette `@import` in
+  `userChrome.css` (further below).
 
 ```css
-/* chrome/user-overrides.css — loaded last, so plain declarations win (no !important) */
+/* chrome/user-overrides.css — the user layer, loaded last */
 @import url('./palettes/tinted.css');   /* switch palette here, not in userChrome.css */
 :root {
-  --tf-hue: 260;  --tf-chroma: 0.03;    /* tune the tinted palette…            */
-  /* --tf-accent: #6a7fb0; */           /* …or just override a token or two    */
+  --tf-hue: 260;  --tf-chroma: 0.03;    /* tune the tinted palette…         */
+  /* --tf-accent: #6a7fb0; */           /* …or just override a token or two */
 }
 ```
 
-The rest of this section describes trimfox's *shipped* palettes and how to change the
-**default**. All colors are `--tf-*` tokens, and `userChrome.css` never hardcodes a color — it
+All colors are `--tf-*` tokens, and `userChrome.css` never hardcodes a color — it
 maps Firefox's own theme variables onto the tokens, so a whole theme is just one
 token set. The **primitive tokens live in a swappable palette file**, imported at
 the top of `chrome/userChrome.css`:
@@ -611,7 +616,7 @@ trimfox's `user.js` sets `browser.theme.toolbar-theme` / `content-theme` to `2`
 **Add-ons Manager owns the active theme and often wins over the pref**. If light
 mode doesn't engage:
 
-> **☰ → Add-ons and themes → Themes**, and switch to **"System theme — auto".**
+> Open **`about:addons` → Themes** and switch to **"System theme — auto".**
 > If it's already selected but stuck, toggle to any other theme and back — that
 > forces the Add-ons Manager to re-apply *auto* (the pref alone may not take).
 
