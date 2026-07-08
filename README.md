@@ -719,10 +719,12 @@ trimfox builds on other people's work:
   then took a fair bit of hand-work to ship: chroma-keyed off a red background, indexed to trimfox's own
   grayscale palette, and given a keyline outline so it holds up on both light and dark backgrounds.
 
-**How this was built.** trimfox began as years of hand-tuned Firefox `about:config` tweaks
-and userChrome hacks — a personal setup refined by hand over a long time. More recently, AI
-(Anthropic's Claude) helped clean it up, document it, extend it, and package it for release.
-The foundation is human, built over years of fine-tuning; the AI accelerated the polish.
+**How this was built.** trimfox is hand-built and AI-*assisted* — not AI-generated. It began
+as years of hand-tuned Firefox `about:config` tweaks and userChrome hacks, a personal setup
+refined by hand, decision by decision, over a long time. More recently, AI (Anthropic's
+Claude) helped document, refactor, extend, and package it — but every change was reviewed,
+understood, and directed by a human. The design decisions and the craft are human; the AI
+was a power tool that sped up the polish, not the author of the theme.
 
 ## License
 
