@@ -691,12 +691,24 @@ on macOS here, so a platform PR can't be reviewed without them.
 
 trimfox builds on other people's work:
 
+- **Mozilla and the Firefox team** — for native vertical tabs, the revamped sidebar, and for
+  keeping **`userChrome.css`** alive at all. trimfox restyles Firefox's *own* chrome; it's a
+  theme, not a replacement.
 - **[refined-findbar](https://github.com/ravindUwU/firefox-refined-findbar)** by ravindUwU
   (MIT) — the compact find bar in `chrome/refined-findbar/findbar.css` is adapted from it;
   the MIT notice is retained in that file.
+- **[firefox-csshacks](https://github.com/MrOtherGuy/firefox-csshacks)** by MrOtherGuy — the
+  community's reference collection of userChrome/userContent techniques; trimfox leans on the
+  vocabulary and tricks documented there.
 - **[Tree Style Tab](https://github.com/piroor/treestyletab)** by Piro — trimfox reproduces
   its vertical-tab look using Firefox's own native vertical tabs (this profile was migrated
   *off* TST; see `reference/`). Inspiration, not code.
+- **[Cascade](https://github.com/andreasgrafen/cascade)** by andreasgrafen — a kindred
+  one-line, minimalist userChrome theme; not code, but the same strip-everything-non-essential
+  ethos. Inspiration.
+- **[SimpleFox](https://github.com/migueravila/SimpleFox)** by Miguel Ávila — an earlier
+  minimalist, keyboard-centered Firefox theme (now dormant, last updated 2021) that Cascade
+  itself credits; a root of this minimalist lineage. Inspiration.
 - **The [r/FirefoxCSS](https://www.reddit.com/r/FirefoxCSS/) community** — for the userChrome
   techniques this builds on, including hiding the macOS traffic-light window controls.
 - **[ShadowFox](https://github.com/overdodactyl/ShadowFox)** by overdodactyl — a pioneering
