@@ -34,43 +34,46 @@ It's called *trimfox* because that's the point — trim everything that isn't a 
 
 ## Screenshots
 
-The headline is the tab strip: collapsed, it's a skinny column of separator lines that
-just tells you how many tabs are open; hover and it expands to labels. Everything
-follows the OS light/dark — dark first:
+trimfox follows the OS light/dark theme — everything below is shown in both.
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/tabstrip-collapsed-dark.png" alt="Collapsed tab strip, dark"></td>
-    <td width="50%"><img src="docs/screenshots/tabstrip-expanded-dark.png" alt="Expanded tab strip, dark"></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/tabstrip-collapsed-light.png" alt="Collapsed tab strip, light"></td>
-    <td width="50%"><img src="docs/screenshots/tabstrip-expanded-light.png" alt="Expanded tab strip, light"></td>
-  </tr>
-  <tr>
-    <td align="center"><sub><b>Collapsed</b> — a skinny column, just a tab count</sub></td>
-    <td align="center"><sub><b>Expanded</b> — hover reveals labels</sub></td>
-  </tr>
-</table>
+### The tab strip
 
-**Even the right-click menus are skinned.** trimfox forces XUL menus on purpose — native
-macOS menus can't be CSS-themed — so context and history menus match the rest of the
-chrome instead of popping up as stock system menus:
+Collapsed, it's a skinny column of separator lines — just a live tab count; hover and it
+expands to labels. **Left:** collapsed · **right:** expanded · **top row:** dark · **bottom row:** light.
 
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/menu-tab-dark.png" height="360" alt="Themed tab context menu, dark"></td>
-    <td align="center"><img src="docs/screenshots/menu-tab-light.png" height="360" alt="Themed tab context menu, light"></td>
-  </tr>
-  <tr><td colspan="2" align="center"><sub>Right-click a tab — dark and light</sub></td></tr>
-</table>
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="docs/screenshots/tabstrip-collapsed-dark.png" width="400" alt="Collapsed tab strip, dark"></td>
+      <td><img src="docs/screenshots/tabstrip-expanded-dark.png" width="400" alt="Expanded tab strip, dark"></td>
+    </tr>
+    <tr>
+      <td><img src="docs/screenshots/tabstrip-collapsed-light.png" width="400" alt="Collapsed tab strip, light"></td>
+      <td><img src="docs/screenshots/tabstrip-expanded-light.png" width="400" alt="Expanded tab strip, light"></td>
+    </tr>
+  </table>
+</div>
 
-<p align="center">
-  <img src="docs/screenshots/menu-history-dark.png" width="360" alt="Themed history menu, dark">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/menu-history-light.png" width="360" alt="Themed history menu, light"><br>
-  <sub>The unified nav button's back/forward history menu</sub>
-</p>
+### Themed menus
+
+Even the right-click menus are skinned. trimfox forces XUL menus on purpose — native macOS
+menus can't be CSS-themed — so the tab context menu and the back/forward history menu match
+the chrome instead of popping up as stock system menus. Dark and light:
+
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="docs/screenshots/menu-tab-dark.png" height="360" alt="Themed tab context menu, dark"></td>
+      <td><img src="docs/screenshots/menu-tab-light.png" height="360" alt="Themed tab context menu, light"></td>
+    </tr>
+  </table>
+  <table>
+    <tr>
+      <td><img src="docs/screenshots/menu-history-dark.png" width="380" alt="Themed history menu, dark"></td>
+      <td><img src="docs/screenshots/menu-history-light.png" width="380" alt="Themed history menu, light"></td>
+    </tr>
+  </table>
+</div>
 
 ## Requirements
 
