@@ -642,6 +642,10 @@ these before a tricky chrome change:
 - **[`docs/color-audit.md`](docs/color-audit.md)** — when a chrome surface is the
   wrong shade: the 5-minute procedure to find the unmapped Firefox variable and
   bind it to a `--tf-*` token.
+- **[`docs/adr/`](docs/adr/)** — **Architecture Decision Records**: the *why* behind
+  trimfox's load-bearing choices (the slim philosophy, the collapsed tab strip, XUL menus,
+  native tabs, the `--tf-*` token system, the override layer, drift monitoring), numbered
+  by decision date.
 
 ## reference/
 
