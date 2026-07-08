@@ -72,13 +72,16 @@ Grab just the window:  Shift+Cmd+4 → Space → click the Firefox window.
 Save into:  $REPO/docs/screenshots/
 Name:       <state>-<mode>.png     e.g.  tabstrip-collapsed-dark.png
 
-  1. tabstrip-collapsed   — the skinny ~14px tab column
-  2. tabstrip-expanded    — hover the strip so labels appear, then capture
-  3. window-overview      — whole chrome, Mozilla Foundation tab active
-  4. findbar              — press Cmd+F on a page, then capture
-  5. urlbar-nav           — close-up of the toolbar / unified nav button
+  1. tabstrip-collapsed   — the skinny ~14px tab column (window capture)
+  2. tabstrip-expanded    — hover the strip so labels appear, then window-capture
+  3. menu-tab             — right-click a tab (menus need the timer grab, below)
+  4. menu-history         — click-and-hold Back, then the timer grab (below)
 
-Do all 5 in DARK, then flip System Settings → Appearance to Light and repeat.
+Menus vanish when you enter Shift+Cmd+4, so grab them on a delay — open the menu,
+leave it open, let a timed full-screen shot fire, then crop to the menu:
+  screencapture -T 5 "$REPO/docs/screenshots/menu.png"   # open menu, wait 5s
+
+Do all 4 in DARK, then flip System Settings → Appearance to Light and repeat.
 If the tab strip is missing, open it once: View → Sidebar (menu bar).
 
 When finished, delete the throwaway profile:

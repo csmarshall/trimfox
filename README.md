@@ -16,7 +16,7 @@ A minimal Firefox `userChrome` setup built around **native vertical tabs** — n
 Tree Style Tab, no sidebar extension, just the browser's own chrome restyled to
 get out of the way.
 
-The headline is the tab strip: collapsed, it's a skinny ~14px column of separator
+The headline is the tab strip (Firefox's own native sidebar, restyled): collapsed, it's a skinny ~14px column of separator
 lines that just tells you how many tabs are open; hover it and it expands to
 readable labels. No favicons when collapsed, no pills, no close buttons, no
 new-tab button, no hover-preview cards, no launcher clutter.
@@ -86,20 +86,20 @@ system menus. Dark and light in each pair.
 - **Firefox 136+** (native vertical tabs); developed and verified on **152**.
 - **macOS.** Built and tuned on macOS only — see [Platform support](#platform-support).
 - A swappable palette (see [Palette](#palette)): default is neutral grayscale,
-  zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview all
-  schemes in `palette.html`.
+  zero-blue, with **dark + light** that auto-follows macOS Appearance. Preview the
+  default light/dark in `palette.html`.
 
 ## Firefox compatibility — including "Nova"
 
 Built and tuned on **Firefox 152**, and **already compatible with Firefox's 2026
 ["Nova" redesign](https://blog.mozilla.org/en/firefox/new-firefox-design/)** — on purpose.
 A companion tool, **[trimfox-drift](https://github.com/csmarshall/trimfox-drift)**, diffed
-trimfox's Firefox dependencies against a Nova Nightly (154) build, flagged the three chrome
-vars Nova removes that trimfox relied on, and those were fixed pre-emptively with `var()`
+trimfox's Firefox dependencies against a Nova Nightly (154) build and flagged the three
+chrome vars Nova removes that trimfox relied on. Those were fixed pre-emptively with `var()`
 fallbacks ([#33](https://github.com/csmarshall/trimfox/issues/33),
 [`f555f9b`](https://github.com/csmarshall/trimfox/commit/f555f9b)) — so nothing changes on
-152, and — hopefully — much less breaks when Nova lands. Nova is still in Nightly and will
-keep changing, so this is a cautiously-optimistic head start, not a guarantee.
+152, and — hopefully — far less should break when Nova lands. Nova is still in Nightly and
+will keep changing, so this is a cautiously-optimistic head start, not a guarantee.
 
 ## Install
 
@@ -124,14 +124,16 @@ anything it replaces (`<name>.bak-<timestamp>`). Then **fully quit Firefox**
 (Cmd+Q / close all windows) and relaunch — `userChrome.css` and `user.js` only
 load at startup.
 
-**Already have a `user.js`?** trimfox's **replaces** it (your old one is backed up to
-`user.js.bak-*`). Keep your own prefs in **`user-overrides.js`** (gitignored) — the
+**Already have a `user.js`?** trimfox ships its own and **replaces** yours (your old one is
+backed up to `user.js.bak-*`). Keep your own prefs in **`user-overrides.js`** (gitignored) — the
 installer seeds it from `user-overrides.example.js`, appends it *after* trimfox's prefs
 so yours win, and preserves it across updates. Every pref trimfox sets, with its Firefox
-default, is in **[SETTINGS.md](SETTINGS.md)**.
+default, is in **[SETTINGS.md](SETTINGS.md)**. (That's the *prefs* layer; colors and dials
+have a separate override file — `chrome/user-overrides.css`, covered under [Palette](#palette).)
 
-To revert: restore the `.bak-*` files (or delete `chrome/` and `user.js`) and
-restart.
+To revert: restore the `.bak-*` files (or delete `chrome/`, `user.js`, and your
+`user-overrides.*`) and restart. If you installed the error-page accent, run
+`chrome/autoconfig/install-neterror-accent.sh -u` first.
 
 ### After install — two one-time steps
 
@@ -446,11 +448,12 @@ never hardcodes a color. Each palette carries a dark set **and** a
 - **Color scheme follows the OS**: `browser.theme.toolbar-theme=2` /
   `content-theme=2` + `extensions.activeThemeID=default-theme@mozilla.org` (System
   — auto), so trimfox's light/dark palette tracks macOS Appearance — see
-  [Light / dark](#light--dark-auto-follows-macos). Also `browser.tabs.inTitlebar=1`.
+  [Light / dark](#light--dark-auto-follows-macos).
 - **Behavior**: `sidebar.visibility="expand-on-hover"`, `sidebar.expandOnHover`,
   `sidebar.position_start` (left), animations off, and **instant** hover-expand
   (`...expand-on-hover.delay-duration-ms=0` / `duration-ms=0`). Empty
-  `sidebar.main.tools` (launcher is CSS-hidden).
+  `sidebar.main.tools` (launcher is CSS-hidden). `browser.tabs.inTitlebar=1` keeps the
+  chrome in the title bar.
 - **No hover-preview card**: `browser.tabs.hoverPreview.enabled` /
   `showThumbnails` off.
 - **Compact layout**: `browser.uidensity=1`, `compactmode.show`, bookmarks toolbar

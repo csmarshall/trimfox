@@ -106,13 +106,14 @@ README "skin the error pages too" section).
 ## 2. Visual features (`chrome/userChrome.css`)
 
 Non-obvious things the stylesheet does — all driven by the `--tf-*` palette tokens
-(see `palette.html`):
+(defined in `chrome/palettes/*.css`; preview them in `palette.html`):
 
-- **7pt chrome font** everywhere (`* { font-size: 7pt }`).
+- **7pt chrome font** — set on `:root` (`--tf-font-size`) and inherited, with explicit
+  `menupopup`/`panel` rules so popups pick it up too (not a blunt `* { font-size }`).
 - **Vertical tabs reskin:** ~14px collapsed strip (`--tab-collapsed-background-width`),
   22px rows (`--tab-min-height`), favicons hidden when collapsed, flat tabs (no
   pills), separators between tabs.
-- **Tab bar framed** with `line`-colored dividers on its **top and right**, in both
+- **Tab strip framed** with `line`-colored dividers on its **top and right**, in both
   collapsed and expanded states; dividers/separators dim on window blur
   (`:-moz-window-inactive`).
 - **Auto-hide the sidebar when only one tab is open** (`:has()`), reappears at 2+.
@@ -125,6 +126,11 @@ Non-obvious things the stylesheet does — all driven by the `--tf-*` palette to
 - **Neutral-gray accent** replacing Firefox's teal on buttons/focus, in chrome and
   in-content (`userContent.css`); error pages handled by the optional
   `chrome/autoconfig/` AutoConfig.
+
+> **The back/forward history menu is themeable.** Click-and-hold Back/Forward used to be an
+> unstyleable native macOS menu; `widget.macos.native-anchored-menus=false` turns it (and the
+> urlbar dropdown) into themeable XUL, and trimfox reskins it as a mini tab strip. Right-click
+> context menus, the URL bar, and all other chrome are styled normally.
 
 ---
 
@@ -146,14 +152,6 @@ installing (right-click the toolbar → **Customize Toolbar**):
 > tabs, not a misconfiguration.
 
 ---
-
-## Note — the history menu is now themeable
-
-The **back/forward history menu** (click-and-hold Back/Forward) used to be an
-unstyleable native macOS menu. That's now fixed: `widget.macos.native-anchored-menus=false`
-turns it (and the urlbar dropdown) into themeable XUL, and trimfox reskins it as a
-tab strip. Right-click context menus, the URL bar, and all other chrome are styled
-normally.
 
 ## 4. Extensions
 

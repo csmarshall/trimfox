@@ -21,8 +21,7 @@ labels: user-testing
 <!--
 REQUIRED — even a phone photo of the screen helps. Firefox here is only run/tested on
 macOS, so your screenshots are the only way to see your platform. Please show the tab
-strip, URL bar, and a menu,
-in both dark and light if you can.
+strip, URL bar, and a menu — in both dark and light if you can.
 -->
 
 ## What's off (if anything)

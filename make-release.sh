@@ -74,7 +74,8 @@ trimfox — quick start (macOS)
 3. Relaunch Firefox. userChrome.css and user.js only load at startup.
 
 Prefer to do it by hand, or on Linux? See README.md ("Install").
-Settings and every knob are documented in SETTINGS.md.
+Prefs are documented in SETTINGS.md; the --tf-* tuning knobs are in README.md
+and chrome/dials.css.
 
 trimfox is a userChrome theme — it restyles Firefox's own chrome. No add-on,
 no extension. Requires toolkit.legacyUserProfileCustomizations.stylesheets,
