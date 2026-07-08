@@ -42,13 +42,15 @@ INCLUDE=(
   LICENSE
   logo.png
   wordmark.png
+  docs/screenshots
 )
 
 echo "trimfox release: v${VERSION}"
 mkdir -p "$PKG" "$SCRIPT_DIR/dist"
 for item in "${INCLUDE[@]}"; do
   if [[ -e "$item" ]]; then
-    cp -R "$item" "$PKG/"
+    mkdir -p "$PKG/$(dirname "$item")"   # preserve nested paths (e.g. docs/screenshots)
+    cp -R "$item" "$PKG/$item"
   else
     echo "  WARNING: missing '$item' — skipping" >&2
   fi
