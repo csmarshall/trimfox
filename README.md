@@ -38,28 +38,30 @@ trimfox follows the OS light/dark theme — everything below is shown in both.
 
 ### The tab strip
 
-Collapsed, it's a skinny column of separator lines — just a live tab count; hover and it
-expands to labels. **Left:** collapsed · **right:** expanded · **top row:** dark · **bottom row:** light.
+The headline: collapsed, it's a skinny column of separator lines — just a live tab count;
+hover and it expands to full labels. Dark on top, light beneath.
 
+<p align="center"><b>Expanded</b> (on hover) &nbsp;·&nbsp; <b>Collapsed</b></p>
 <div align="center">
   <table align="center">
     <tr>
-      <td><img src="docs/screenshots/tabstrip-collapsed-dark.png" width="400" alt="Collapsed tab strip, dark"></td>
       <td><img src="docs/screenshots/tabstrip-expanded-dark.png" width="400" alt="Expanded tab strip, dark"></td>
+      <td><img src="docs/screenshots/tabstrip-collapsed-dark.png" width="400" alt="Collapsed tab strip, dark"></td>
     </tr>
     <tr>
-      <td><img src="docs/screenshots/tabstrip-collapsed-light.png" width="400" alt="Collapsed tab strip, light"></td>
       <td><img src="docs/screenshots/tabstrip-expanded-light.png" width="400" alt="Expanded tab strip, light"></td>
+      <td><img src="docs/screenshots/tabstrip-collapsed-light.png" width="400" alt="Collapsed tab strip, light"></td>
     </tr>
   </table>
 </div>
 
 ### Themed menus
 
-Even the right-click menus are skinned. trimfox forces XUL menus on purpose — native macOS
-menus can't be CSS-themed — so the tab context menu and the back/forward history menu match
-the chrome instead of popping up as stock system menus. Dark and light:
+Even the right-click menus are skinned — trimfox forces XUL menus precisely because native
+macOS menus can't be CSS-themed, so they match the chrome instead of popping up as stock
+system menus. Dark and light in each pair.
 
+<p align="center"><b>Tab right-click menu</b></p>
 <div align="center">
   <table align="center">
     <tr>
@@ -67,6 +69,10 @@ the chrome instead of popping up as stock system menus. Dark and light:
       <td><img src="docs/screenshots/menu-tab-light.png" height="360" alt="Themed tab context menu, light"></td>
     </tr>
   </table>
+</div>
+
+<p align="center"><b>Back/forward history menu</b> (off the unified nav button)</p>
+<div align="center">
   <table align="center">
     <tr>
       <td><img src="docs/screenshots/menu-history-dark.png" width="380" alt="Themed history menu, dark"></td>
