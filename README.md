@@ -296,11 +296,10 @@ light**, so the scheme follows the OS automatically (see below):
 | `firefox.css` | trimfox layout with Firefox's own default chrome colors + blue accent |
 | `tinted.css` *(adjustable)* | parametric one-hue tint — derives the whole ramp from `--tf-hue` + `--tf-chroma` (see below) |
 
-Token vocabulary: `field`, `content`, `surface`, `raised`, `select`, `accent`
-(+ `-hover`/`-active`), `text`, `text-dim`, `line` (+ `-solid`/`-inactive`),
-`highlight`, `glyph`. The accent (`--tf-accent`) replaces Firefox's default teal
-on buttons, focus rings and checkboxes — in the chrome, on `about:` pages
-(`userContent.css`), and on privileged error pages (`chrome/autoconfig/`).
+The accent (`--tf-accent`) replaces Firefox's default teal on buttons, focus rings and
+checkboxes — in the chrome, on `about:` pages, and on error pages. The full `--tf-*` token
+vocabulary is catalogued in
+[docs/tweak-catalog.md](https://github.com/csmarshall/trimfox/blob/main/docs/tweak-catalog.md).
 
 **Interactive tools** — self-contained HTML; open locally, or try them live on
 GitHub Pages:
@@ -312,19 +311,10 @@ GitHub Pages:
   a 4-way preview (trimfox dark/light, Firefox-default dark/light) that re-colors a
   live browser-chrome mockup and a full swatch table.
 
-**Tinted palette (`palettes/tinted.css`) — adjustable.** An opt-in alternative to
-the stock grayscale. Two knobs at the top drive the whole theme, keeping trimfox's
-exact lightness/contrast ramp and just tinting it:
-
-| knob | range | meaning |
-|------|-------|---------|
-| `--tf-hue` | 0–360 | which color the tint leans toward |
-| `--tf-chroma` | 0–~0.05 | how much color (`0` = neutral) |
-
-`--tf-chroma: 0` reproduces grayscale — for the *exact* stock look, use
-`grayscale.css` itself. Swap the `@import` to `palettes/tinted.css` and set the two
-values. Example hues: **slate `260`**, **terracotta `40`**, **forest `150`**,
-**plum `330`** (chroma ~0.025–0.035).
+**Tinted palette — adjustable.** `palettes/tinted.css` derives the whole ramp from two knobs
+(`--tf-hue` 0–360, `--tf-chroma` 0–~0.05; `0` = grayscale), keeping trimfox's exact
+lightness/contrast. Dial it visually with the tint picker above, or set the values by hand —
+example hues: slate `260`, terracotta `40`, forest `150`, plum `330` (chroma ~0.025–0.035).
 
 ### Personal overrides — `user-overrides.css` (survives upgrades)
 
@@ -355,30 +345,11 @@ trimfox's stable API: Firefox's own var/selector names churn under it, yours don
 
 ### Light / dark (auto-follows macOS)
 
-Each palette carries a dark set plus an `@media (prefers-color-scheme: light)`
-set, so trimfox switches with your **macOS Appearance** (System Settings →
-Appearance). No restart once it's wired — flip the OS and the chrome follows.
-
-**One-time setup — Firefox's chrome scheme is driven by its active *theme*, not by
-macOS directly.** A built-in **Dark** or **Light** theme hardcodes the scheme and
-*pins* the palette; you need **System theme — auto** so the chrome tracks the OS.
-trimfox's `user.js` sets `browser.theme.toolbar-theme` / `content-theme` to `2`
-(auto) and `extensions.activeThemeID` to `default-theme@mozilla.org`, but the
-**Add-ons Manager owns the active theme and often wins over the pref**. If light
-mode doesn't engage:
-
-> Open **`about:addons` → Themes** and switch to **"System theme — auto".**
-> If it's already selected but stuck, toggle to any other theme and back — that
-> forces the Add-ons Manager to re-apply *auto* (the pref alone may not take).
-
-(trimfox overrides every chrome color regardless, so the theme choice only
-controls *which* light/dark palette engages — not the look otherwise.)
-
-> **Note:** `--tf-glyph` can't reach into `data:` SVG icons (CSS `var()` doesn't
-> resolve inside a data URI), so the no-history nav-button dash bakes its color
-> in. It ships a light-gray dash plus a dark-gray copy swapped in under
-> `@media (prefers-color-scheme: light)` — so a *custom* palette that flips
-> light/dark differently would need the same one-line media override.
+Each palette ships a dark set and an `@media (prefers-color-scheme: light)` set, so the chrome
+follows your **macOS Appearance** — no restart. The one catch: Firefox's chrome scheme is driven
+by its active *theme*, so set it to **"System theme — auto"** (`about:addons` → Themes). The
+setup quirk (the toggle-and-back fix) and the custom-palette glyph note are in
+**[docs/light-dark.md](https://github.com/csmarshall/trimfox/blob/main/docs/light-dark.md)**.
 
 ## docs/ (maintainer notes)
 
