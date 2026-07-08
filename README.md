@@ -709,12 +709,12 @@ trimfox builds on other people's work:
 - **[SimpleFox](https://github.com/migueravila/SimpleFox)** by Miguel Ávila — an earlier
   minimalist, keyboard-centered Firefox theme (now dormant, last updated 2021) that Cascade
   itself credits; a root of this minimalist lineage. Inspiration.
-- **The [r/FirefoxCSS](https://www.reddit.com/r/FirefoxCSS/) community** — for the userChrome
-  techniques this builds on, including hiding the macOS traffic-light window controls.
 - **[ShadowFox](https://github.com/overdodactyl/ShadowFox)** by overdodactyl — a pioneering
   *universal* dark theme (chrome, `about:` pages, add-ons) from the Firefox-57 userChrome era.
   Now dormant (last updated 2019, pre-Proton), but it charted a lot of this territory and showed
   how far Firefox's chrome could be pushed. Inspiration, not code.
+- **The [r/FirefoxCSS](https://www.reddit.com/r/FirefoxCSS/) community** — for the userChrome
+  techniques this builds on, including hiding the macOS traffic-light window controls.
 - **Logo** — the running-fox mark started as a generation from **[Google Gemini](https://gemini.google.com)**,
   then took a fair bit of hand-work to ship: chroma-keyed off a red background, indexed to trimfox's own
   grayscale palette, and given a keyline outline so it holds up on both light and dark backgrounds.
