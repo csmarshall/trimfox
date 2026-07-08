@@ -156,7 +156,7 @@ installing (right-click the toolbar → **Customize Toolbar**):
 ## 4. Extensions
 
 **None are required for the look** — it's pure `userChrome.css` on native vertical
-tabs (this setup was migrated *off* Tree Style Tab; see [`reference/`](https://github.com/csmarshall/trimfox/tree/main/reference)). The custom
+tabs (this setup was migrated *off* Tree Style Tab; see [TST migration notes](https://github.com/csmarshall/trimfox/blob/main/docs/tst-migration.md)). The custom
 theme colors used to live in the **Firefox Color** extension, but they're now baked
 into `userChrome.css` as the `--tf-*` palette, so that extension isn't needed
 either.

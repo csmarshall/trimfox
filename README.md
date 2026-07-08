@@ -146,7 +146,7 @@ load at startup.
 backed up to `user.js.bak-*`). Keep your own prefs in **`user-overrides.js`** (gitignored) — the
 installer seeds it from `user-overrides.example.js`, appends it *after* trimfox's prefs
 so yours win, and preserves it across updates. Every pref trimfox sets, with its Firefox
-default, is in **[SETTINGS.md](SETTINGS.md)**. (That's the *prefs* layer; colors and dials
+default, is in **[SETTINGS.md](https://github.com/csmarshall/trimfox/blob/main/SETTINGS.md)**. (That's the *prefs* layer; colors and dials
 have a separate override file — `chrome/user-overrides.css`, covered under [Palette](#customizing).)
 
 To revert: restore the `.bak-*` files (or delete `chrome/`, `user.js`, and your
@@ -237,7 +237,6 @@ chrome/
   autoconfig/           optional: AutoConfig installer for error-page accent color
 user.js                 prefs that enable/shape native vertical tabs (see below)
 install.sh              copy-with-backup installer
-reference/              how this was migrated off Tree Style Tab (not installed)
 ```
 
 `user.js` is the behavioral half — it enables `sidebar.verticalTabs`, sets
@@ -288,12 +287,9 @@ these before a tricky chrome change:
   trimfox's load-bearing choices (the slim philosophy, the collapsed tab strip, XUL menus,
   native tabs, the `--tf-*` token system, the override layer, drift monitoring), numbered
   by decision date.
-
-## reference/
-
-`reference/` documents the migration *off* Tree Style Tab — the exported TST
-user stylesheet and config that the native setup was modeled on. It's a record,
-not something you install.
+- **[`docs/tst-migration.md`](https://github.com/csmarshall/trimfox/blob/main/docs/tst-migration.md)**
+  — how the vertical-tab look was migrated off Tree Style Tab: where the old TST config now lives
+  (git history + TST's own repo) and a TST→trimfox feature map.
 
 ## Platform support
 
@@ -328,7 +324,7 @@ screenshot or even a plain "works / doesn't" is genuinely useful). Grab a
 [`user-testing` issue](https://github.com/csmarshall/trimfox/labels/user-testing)
 and comment.
 
-**Porting or sending a PR?** See **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to gate
+**Porting or sending a PR?** See **[CONTRIBUTING.md](https://github.com/csmarshall/trimfox/blob/main/CONTRIBUTING.md)** — how to gate
 per-OS changes with `@media (-moz-platform: …)`, the "don't change the macOS look" rule,
 and the **before/after screenshots every visual PR needs**. Firefox is only run/tested
 on macOS here, so a platform PR can't be reviewed without them.
@@ -348,7 +344,7 @@ trimfox builds on other people's work:
   vocabulary and tricks documented there.
 - **[Tree Style Tab](https://github.com/piroor/treestyletab)** by Piro — trimfox reproduces
   its vertical-tab look using Firefox's own native vertical tabs (this profile was migrated
-  *off* TST; see `reference/`). Inspiration, not code.
+  *off* TST). Inspiration, not code.
 - **[Cascade](https://github.com/andreasgrafen/cascade)** by andreasgrafen — a kindred
   one-line, minimalist userChrome theme; not code, but the same strip-everything-non-essential
   ethos. Inspiration.
@@ -375,4 +371,4 @@ was a power tool that sped up the polish, not the author of the theme.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/csmarshall/trimfox/blob/main/LICENSE).
