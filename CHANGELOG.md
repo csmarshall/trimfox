@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/csmarshall/trimfox/compare/v1.1.0...v1.1.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* drop dead .urlbarView-secondary selectors (refactored to .urlbarView-action) ([2b6864d](https://github.com/csmarshall/trimfox/commit/2b6864d25dbe94014edd2a216c4dd93d48e4bdf7)), closes [#37](https://github.com/csmarshall/trimfox/issues/37)
+
 ## [1.1.0](https://github.com/csmarshall/trimfox/compare/trimfox-v1.0.1...trimfox-v1.1.0) (2026-07-08)
 
 
