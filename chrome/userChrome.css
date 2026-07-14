@@ -397,7 +397,6 @@ menuitem.unified-nav-current {
  }
 
 /* URL dropdown - force gray color on URLs (override teal accent) */
-.urlbarView-secondary,
 .urlbarView-url,
 .urlbarView-action,
 .urlbarView-row .urlbarView-url,
@@ -430,7 +429,6 @@ menuitem.unified-nav-current {
 .urlbarView-row[selected] *,
 .urlbarView-row[selected] .urlbarView-title,
 .urlbarView-row[selected] .urlbarView-url,
-.urlbarView-row[selected] .urlbarView-secondary,
 .urlbarView-row[selected] .urlbarView-action {
   color: var(--tf-text) !important;
 }
@@ -512,9 +510,8 @@ menuitem.unified-nav-current {
 /* Hide the URL bar placeholder text */
 #urlbar *|input::placeholder { opacity: 0 !important; }
 
-/* Drop the title-separator + secondary text on the first results row */
-panel#urlbar-results #urlbarView-row-0 .urlbarView-title-separator::before,
-panel#urlbar-results #urlbarView-row-0 .urlbarView-secondary {
+/* Drop the title-separator on the first results row */
+panel#urlbar-results #urlbarView-row-0 .urlbarView-title-separator::before {
    display:none !important;
 }
 
