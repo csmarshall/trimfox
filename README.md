@@ -124,7 +124,8 @@ system menus. Dark and light in each pair.
 **Prefer a single download?** Grab the
 **[latest release zip](https://github.com/csmarshall/trimfox/releases/latest)**, unzip it,
 and follow the `QUICKSTART.txt` inside (it's just `./install.sh`). No git, no command-line
-know-how required beyond running one script.
+know-how required beyond running one script. See the
+**[changelog](https://github.com/csmarshall/trimfox/blob/main/CHANGELOG.md)** for what's new.
 
 Or clone it:
 
