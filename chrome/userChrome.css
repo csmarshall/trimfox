@@ -857,14 +857,23 @@ findbar:not(:focus-within) {
   scrollbar-width: none !important;
 }
 
-/* EXPANDED right divider: when expanded, #sidebar-main IS ~235px and visible, so
-   its right border sits exactly at the expanded edge. (Invisible when collapsed —
-   the #vertical-tabs border above covers that state.) */
-#sidebar-main {
+/* Sidebar → content divider. FF153 dropped the id from the launcher custom element:
+   it is now the bare <sidebar-main> TAG, wrapped in a new <box id="sidebar-container">,
+   and the [sidebar-launcher-expanded] state attribute moved to that wrapper. So the old
+   #sidebar-main id selector matches nothing on 153 (FF's own replacement border is 0.01px
+   = invisible), which is why the divider vanished. Select the element by TAG — it is the
+   SAME element as before, identical geometry, and the tag matches on 152 AND 153.
+   Collapsed strip edge is still drawn by the #vertical-tabs rule above; the expand-on-hover
+   EXPANDED overlay edge is drawn on #sidebar-container below (it becomes the positioned
+   235px overlay), so we zero the tag's border there to avoid a doubled line. */
+sidebar-main {
   border-inline-end: 1px solid var(--tf-line) !important;
 }
-:root:-moz-window-inactive #sidebar-main {
+:root:-moz-window-inactive sidebar-main {
   border-inline-end-color: var(--tf-line-inactive) !important;
+}
+#sidebar-container[sidebar-launcher-expanded] sidebar-main {
+  border-inline-end: 0 !important;   /* the container edge owns the divider when expanded */
 }
 
 /* expand-on-hover ONLY: the expanded overlay sits 1px below the toolbar's
@@ -879,13 +888,18 @@ findbar:not(:focus-within) {
    Firefox's current ~235px so there's no visible jump; bump it for a wider overlay (= more
    pin columns). always-show is never matched by this selector, so it stays drag-resizable. */
 :root { --tf-sidebar-width: 235px; }
-#main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] {
+/* FF153: the [sidebar-launcher-expanded] attribute + the position:absolute overlay
+   now live on #sidebar-container (the new wrapper), not on the launcher element — so
+   this targets #sidebar-container. The right-edge divider is drawn HERE for the expanded
+   overlay (FF's own is 0.01px = invisible); the tag rule above is zeroed while expanded. */
+#main-window[sidebar-expand-on-hover] #sidebar-container[sidebar-launcher-expanded] {
   width:     var(--tf-sidebar-width) !important;
   min-width: var(--tf-sidebar-width) !important;
   max-width: var(--tf-sidebar-width) !important;
   margin-block-start: 0 !important;                                 /* aligns the expand-on-hover
                                                                        overlay block with always-show
                                                                        (dialed in by eye to the px) */
+  border-inline-end: 1px solid var(--tf-line) !important;           /* the expanded divider */
   box-shadow: 0 -1px 0 0 var(--tf-line-solid) !important;           /* the line — drawn 1px
                                                                        ABOVE the overlay as a
                                                                        shadow, so it takes no
@@ -895,7 +909,8 @@ findbar:not(:focus-within) {
                                                                        tab backgrounds; shows
                                                                        for every tab. */
 }
-:root:-moz-window-inactive #main-window[sidebar-expand-on-hover] #sidebar-main[sidebar-launcher-expanded] {
+:root:-moz-window-inactive #main-window[sidebar-expand-on-hover] #sidebar-container[sidebar-launcher-expanded] {
+  border-inline-end-color: var(--tf-line-inactive) !important;
   box-shadow: 0 -1px 0 0 var(--tf-line-solid-inactive) !important;
 }
 
@@ -915,9 +930,10 @@ findbar:not(:focus-within) {
 /* Auto-hide the whole sidebar when there's only ONE tab — a single-item strip is
    pointless. It reappears the instant a 2nd tab exists. `.tabbrowser-tab ~
    .tabbrowser-tab` only matches when 2+ tabs share the row; :has() is live, so
-   this tracks open/close with no restart. #sidebar-main is position:absolute, so
-   hiding it just stops painting the overlay strip — content is unaffected. */
-#sidebar-main:not(:has(.tabbrowser-tab ~ .tabbrowser-tab)) {
+   this tracks open/close with no restart. Hiding the <sidebar-main> tag (FF153: the
+   launcher element, formerly #sidebar-main) just stops painting the strip — content is
+   unaffected. Tag selector so it matches on 152 and 153. */
+sidebar-main:not(:has(.tabbrowser-tab ~ .tabbrowser-tab)) {
   display: none !important;
 }
 
