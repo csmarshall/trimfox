@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/csmarshall/trimfox/compare/v1.1.0...v1.1.1) (2026-07-30)
+
+
+### Bug Fixes
+
+* drop dead .urlbarView-secondary selectors (refactored to .urlbarView-action) ([2b6864d](https://github.com/csmarshall/trimfox/commit/2b6864d25dbe94014edd2a216c4dd93d48e4bdf7)), closes [#37](https://github.com/csmarshall/trimfox/issues/37)
+* **sidebar:** restore sidebar→content divider on Firefox 153 ([43d30a6](https://github.com/csmarshall/trimfox/commit/43d30a6baa93698e3822d86a0e3a29cd3a5b1fad))
+
 ## [1.1.0](https://github.com/csmarshall/trimfox/compare/trimfox-v1.0.1...trimfox-v1.1.0) (2026-07-08)
 
 
