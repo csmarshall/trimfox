@@ -55,14 +55,42 @@ findbar {
   border-top-width: 0 !important;
   top: -1px;
   right: 44px;
+  /* FF155: .browserContainer (findbar's containing block) is now a CSS grid with
+     a native named area "findbar" reserved for it (confirmed via computed style:
+     grid-row resolves to the named line "findbar", not a number). That row track
+     is 0px tall because our position:absolute pulls findbar out of normal flow
+     sizing, so its containing block lands right after the real content row —
+     top:-1px then renders the bar off the bottom of the window (trimfox#39).
+     Firefox's own grid-area assignment is author-origin CSS, which beats a plain
+     (non-!important) user stylesheet rule in the cascade, so overriding it
+     requires !important. Only the ROW needs correcting — span the full grid
+     vertically so the containing block's top is always the container's top
+     regardless of how many named row tracks Firefox defines. Leave grid-column
+     alone: the native column assignment already matches the content column
+     (confirmed via the pre-fix x-position), and forcing it to span every column
+     triggers grid's default justify-self:stretch on this abspos item, blowing
+     the bar out to full window width. */
+  grid-row: 1 / -1 !important;
+  /* FF155's own findbar skin still sets a ~41px min-height on the outer <findbar>
+     (28px default .findbar-container + 6px x2 padding-block + 1px border — see the
+     compacting note below). trimfox already shrinks the INNER .findbar-container to
+     the tab-row dial (22px) but never told the OUTER box to stop reserving Firefox's
+     un-compacted default, so a ~10-12px dead gap opened up below the content once
+     grid layout started enforcing that min-height more strictly than the old box
+     layout did. Same min-height:0 technique already used on .findbar-container /
+     .findbar-textbox below, just applied to the element that was missing it. */
+  min-height: 0 !important;
   transform-origin: top center;
   animation: var(--tf-anim, 0s) refined-findbar-scale-in;
   padding-right: 8px;
   padding-left: 8px;
-  padding-top: 1px !important;
-  padding-bottom: 6px !important;   /* match the urlbar-results bottom breathing room (#11, userChrome.css);
-                                       2px under the 8px sides — the trimfox popup-bottom convention. Top tucks
-                                       under the toolbar. */
+  /* TUNED CONSTANT — was 1px, which let the focused textbox's focus halo clip past the top
+     edge into the url bar above (top:-1px stays flush/tucked-under by design — don't move
+     that, it's what makes the bar read as emerging from the url bar). Matched to
+     padding-bottom so the row sits vertically centered; nudge both together if the halo
+     ever needs more room. Restart to see a change. */
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;   /* the trimfox popup-bottom convention (#11, userChrome.css). */
 }
 
 /* ---- trimfox: compact the find bar to the sidebar's row density -------------------
