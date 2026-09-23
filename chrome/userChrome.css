@@ -351,11 +351,23 @@ menuitem.unified-nav-current {
   padding-inline-start: 8px !important;   /* match back's padding — no shift on swap */
 }
 
-/* Remove the bookmark star (☆) from the URL bar — unwanted clutter. Cmd+D still
-   bookmarks. (GitHub #10) */
+/* Bookmark star, back in the URL bar (trimfox#41, reverses #10's full removal) — but shrunk to
+   trimfox's compact icon dial and kept on --tf-text instead of FF's native attention-color, so
+   the bookmarked/not-bookmarked state reads via icon shape (hollow vs filled, FF's own
+   bookmark-hollow.svg / bookmark.svg swap via [starred]) rather than a loud color pop. FF's
+   .urlbar-icon base already drives the icon via currentColor + -moz-context-properties, so no
+   custom mask is needed — just override size/color and stop hiding it. */
 #star-button-box,
 #star-button {
-  display: none !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+#star-button {
+  color: var(--tf-text) !important;
+}
+#star-button[starred] {
+  fill: var(--tf-text) !important;
+  fill-opacity: 1 !important;
 }
 
 /* Remove the macOS native window-control dots (close/min/max) and reclaim their
