@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/csmarshall/trimfox/compare/v1.1.1...v1.2.0) (2026-09-23)
+
+
+### Features
+
+* **urlbar:** restore bookmark star, small + monochrome ([#41](https://github.com/csmarshall/trimfox/issues/41)) ([2270a2e](https://github.com/csmarshall/trimfox/commit/2270a2e11646eef02e2d4cc2b35a93b80235e04f))
+
+
+### Bug Fixes
+
+* **findbar:** restore visibility on FF155's grid-based browserContainer ([#39](https://github.com/csmarshall/trimfox/issues/39)) ([eb51eee](https://github.com/csmarshall/trimfox/commit/eb51eeeecec59f5c67f90a2f0eee96d2683cef70))
+
 ## [1.1.1](https://github.com/csmarshall/trimfox/compare/v1.1.0...v1.1.1) (2026-07-30)
 
 
