@@ -55,8 +55,9 @@
 /* ── LIGHT (#15) — the grayscale ramp INVERTED ─────────────────────────────── */
 @media (prefers-color-scheme: light) {
   :root {
-    --tf-field:    #ffffff;
     --tf-content:  #f7f7f7;
+    --tf-field:    var(--tf-content);   /* was #ffffff: a pure-white field + dropdown read as glare
+                                           (#46); one step down the ramp, still above the toolbar */
     --tf-surface:  #ececec;
     --tf-raised:   #dcdcdc;
     --tf-select:   #b8b8b8;
