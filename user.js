@@ -119,6 +119,11 @@ user_pref("browser.tabs.closeWindowWithLastTab", false);     // closing the last
 // "Override Keyboard Shortcuts". Put it in user-overrides.js to opt in. (#45)
 // user_pref("permissions.default.shortcuts", 2);
 
+// OPTIONAL: Firefox's STANDARD bookmark star instead of trimfox's Chicago star (#48). trimfox's own
+// pref (not a Firefox one); read live by userChrome.css via -moz-pref(), so flipping it in
+// about:config applies immediately. Put it in user-overrides.js to opt in.
+// user_pref("trimfox.star.standard", true);
+
 // Content fonts  (the *chrome* is forced to 7pt by userChrome.css; these are
 // the default web-page fonts)
 user_pref("font.size.variable.x-western", 12);

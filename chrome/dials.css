@@ -16,7 +16,7 @@
 /* Accessibility beats the MOTION DIAL: reduced-motion always forces --tf-anim to 0s,
    no matter what the knob is set to (this wins even over user-overrides.css). */
 @media (prefers-reduced-motion: reduce) {
-  :root { --tf-anim: 0s !important; }
+  :root { --tf-anim: 0s !important; --tf-star-flash-fade: 0s !important; }
 }
 
 :root {
@@ -54,6 +54,16 @@
   --tf-fs-xxl:   calc(var(--tf-font-size) * 2);      /* biggest hero headers */
   --tf-fs-sm:    calc(var(--tf-font-size) * (1 - 0.15 * var(--tf-fs-lift)));   /* -> 0.85x */
   --tf-fs-xs:    calc(var(--tf-font-size) * (1 - 0.25 * var(--tf-fs-lift)));   /* -> 0.75x */
+
+  /* ---- BOOKMARK STAR (the Chicago star, #48) ---- */
+  --tf-star-size: 22px;   /* 1.x/#41 was 14px. Tried 20 (small), 21, 22 by eye — settled on 22. CEILING: 22px = #page-action-buttons' height MEASURED on FF157 (the max before
+                             the URL bar grows; not derivable from a FF var) and ≈ FF's star ink area. Sharp 30° points read as
+                             Chicago's star, not a Star of David (tuned by eye, #48). */
+  /* Easter egg: bookmark something and the star flashes Chicago red, then settles to gray. */
+  --tf-star-flash-color: #E4002B;   /* City of Chicago "Star Red" (design.chicago.gov) — a brand
+                                       color, deliberately NOT a palette token and not derivable */
+  --tf-star-flash-hold:  1.5s;      /* how long it stays red after the bookmark panel closes */
+  --tf-star-flash-fade:  1s;        /* red → gray fade (0s under reduced-motion) */
 
   /* ---- WINDOW FOCUS ---- colors used when the window is NOT focused. Default = identical to the
      focused colors, so dividers, tab separators and the active-tab fill never change with focus

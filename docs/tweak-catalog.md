@@ -54,8 +54,12 @@ never hardcodes a color. Each palette carries a dark set **and** a
 
 - Re-icon Back/Forward with the devtools `play.svg`, flipping Back via
   `scaleX(-1)` (`#back-button` / `#forward-button`).
-- Hide the bookmark star in the URL bar; Cmd+D still bookmarks (`#star-button-box`,
-  #10).
+- The URL-bar bookmark star is the **Chicago star**: six points with 30° tips, geometry derived
+  from design.chicago.gov's spec, outlined when not bookmarked and filled when bookmarked, in
+  `--tf-text`. Size is the `--tf-star-size` dial. Easter egg: bookmarking flashes it Chicago Star
+  Red, then it fades to gray (`--tf-star-flash-*` dials). Prefer Firefox's standard star? Set the
+  bool pref `trimfox.star.standard` = true (live, no restart). History: hidden in #10, restored in
+  #41, Chicago in #48.
 - Hide the un-removable flexible space between Back/Forward and the URL bar
   (`#nav-bar #vertical-spacer`) — added flexible space to the right still works.
 - Hide the sidebar toggle button (`#sidebar-button`) — expand-on-hover makes it
