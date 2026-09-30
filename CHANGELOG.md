@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.0.0](https://github.com/csmarshall/trimfox/compare/v1.1.1...v2.0.0) (2026-09-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* trimfox 2.x targets Firefox 157+ with Nova enabled. 1.x (v1.1.1) is the pre-Nova line; use it on older Firefox.
+
+### Features
+
+* **palette:** soften light URL field + dropdown to --tf-content ([#46](https://github.com/csmarshall/trimfox/issues/46)) ([06fad2e](https://github.com/csmarshall/trimfox/commit/06fad2ef90096a0f92f629a672a2e38f3b6bae23))
+* **prefs:** opt-in native browser shortcuts over site overrides ([#45](https://github.com/csmarshall/trimfox/issues/45)) ([e32002d](https://github.com/csmarshall/trimfox/commit/e32002ddbfe5d34b2f32e1e642c14425d5f686bc))
+* trimfox 2.0 — remap onto Firefox 157's Nova redesign ([#42](https://github.com/csmarshall/trimfox/issues/42)) ([16ce1fa](https://github.com/csmarshall/trimfox/commit/16ce1fa56667d49693dd87b570b81ca1d4fb2072))
+* **urlbar:** Chicago star bookmark icon + Star Red easter egg ([#48](https://github.com/csmarshall/trimfox/issues/48)) ([6ad2089](https://github.com/csmarshall/trimfox/commit/6ad20894c5e1de9b3ce12eb140cdfba36c03399c))
+* **urlbar:** restore bookmark star, small + monochrome ([#41](https://github.com/csmarshall/trimfox/issues/41)) ([2270a2e](https://github.com/csmarshall/trimfox/commit/2270a2e11646eef02e2d4cc2b35a93b80235e04f))
+
+
+### Bug Fixes
+
+* **findbar:** restore visibility on FF155's grid-based browserContainer ([#39](https://github.com/csmarshall/trimfox/issues/39)) ([eb51eee](https://github.com/csmarshall/trimfox/commit/eb51eeeecec59f5c67f90a2f0eee96d2683cef70))
+
 ## [1.1.1](https://github.com/csmarshall/trimfox/compare/v1.1.0...v1.1.1) (2026-07-30)
 
 
