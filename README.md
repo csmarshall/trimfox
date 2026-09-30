@@ -107,10 +107,11 @@ system menus. Dark and light in each pair.
 
 ## Requirements
 
-- **Firefox 138+** — trimfox's collapse-and-**expand-on-hover** tab strip needs the sidebar's
-  expand-on-hover, which shipped in 138 (native vertical tabs themselves landed in 136). The
-  **instant** hover-expand trimfox sets needs the zero-delay pref from **145+**; 138–144 work
-  but use Firefox's default hover delay. Developed and verified on **152**.
+- **Firefox 157+ for trimfox 2.x** — 2.x is built for Firefox's **"Nova"** redesign, which
+  ships on by default in 157 (see [Firefox compatibility](#firefox-compatibility--nova)). On
+  older Firefox, use **[v1.1.1](https://github.com/csmarshall/trimfox/releases/tag/v1.1.1)**,
+  the last pre-Nova release (it needs 138+ for the expand-on-hover strip, 145+ for the instant
+  expand). 2.x is developed and verified on **157.0**.
 - **macOS** — what trimfox is *themed for*, not a hard requirement. The core (native vertical
   tabs + userChrome) is cross-platform, so it should largely work on Linux/Windows; the
   macOS-specific bits (traffic-light hiding, the native-menu prefs, `-moz-platform`-gated rules)
@@ -216,17 +217,28 @@ If Firefox isn't at `/Applications/Firefox.app`, pass `-a PATH`.
 > (e.g. to `firefox.css`'s blue accent) — error pages stay gray. Edit the hex in the
 > script's `.cfg` block to match a different palette.
 
-## Firefox compatibility — including "Nova"
+## Firefox compatibility — "Nova"
 
-Built and tuned on **Firefox 152**, and **already compatible with Firefox's 2026
-["Nova" redesign](https://blog.mozilla.org/en/firefox/new-firefox-design/)** — on purpose.
-A companion tool, **[trimfox-drift](https://github.com/csmarshall/trimfox-drift)**, diffed
-trimfox's Firefox dependencies against a Nova Nightly (154) build and flagged the three
-chrome vars Nova removes that trimfox relied on. Those were fixed pre-emptively with `var()`
-fallbacks ([#33](https://github.com/csmarshall/trimfox/issues/33),
-[`f555f9b`](https://github.com/csmarshall/trimfox/commit/f555f9b)) — so nothing changes on
-152, and — hopefully — far less should break when Nova lands. Nova is still in Nightly and
-will keep changing, so this is a cautiously-optimistic head start, not a guarantee.
+**trimfox 2.x targets Firefox 157+**, where Firefox's
+["Nova" redesign](https://blog.mozilla.org/en/firefox/new-firefox-design/) is on by default.
+**1.x ([v1.1.1](https://github.com/csmarshall/trimfox/releases/tag/v1.1.1)) is the pre-Nova
+line** — use it on older Firefox; 2.x isn't tested there.
+
+The 1.x-era head start — three `var()` fallbacks that
+**[trimfox-drift](https://github.com/csmarshall/trimfox-drift)** found against a Nova Nightly
+([#33](https://github.com/csmarshall/trimfox/issues/33)) — turned out to be far too small: shipped
+Nova reworked the chrome's color, shape and layout tokens much more broadly, and 1.x rendered
+with violet accents and highlights on 157. 2.0
+([#42](https://github.com/csmarshall/trimfox/issues/42)) remaps trimfox's palette onto Nova's
+tokens and pulls Nova's design language forward **one notch down**: softer corners that follow
+Firefox's own small radius (`--tf-radius` in `chrome/dials.css`), and inset "floating" selection
+rows in the URL bar and menus. It keeps trimfox's reductions: grayscale with no violet accent,
+no toolbar gradient, no pill shapes, compact rows, flat tab strip.
+
+Verified by screenshot on macOS, Firefox 157.0, in dark and light. Nova is new and will keep
+changing, so expect follow-ups; trimfox-drift is being extended to also flag vars trimfox *sets*
+that Firefox stopped reading — the blind spot Nova slipped through
+([trimfox-drift#5](https://github.com/csmarshall/trimfox-drift/issues/5)).
 
 ## What's in here
 
@@ -255,7 +267,7 @@ catalogued separately to keep this README scannable:
 
 Everything trimfox draws is a `--tf-*` token or dial, so you recolor or retune it **without
 editing the theme or forking**. Your values go in a gitignored `chrome/user-overrides.css` —
-loaded last (no `!important`), and it survives `git pull` (including the eventual Nova re-map):
+loaded last (no `!important`), and it survives `git pull` (including the 2.0 Nova re-map):
 
 ```css
 /* chrome/user-overrides.css */
@@ -294,7 +306,7 @@ these before a tricky chrome change:
 
 ## Platform support
 
-Built and tuned on **macOS only** (Firefox 152). It likely works on Windows and
+Built and tuned on **macOS only** (Firefox 157 for 2.x). It likely works on Windows and
 Linux with tweaks, but a couple of things are macOS-specific and untested
 elsewhere:
 

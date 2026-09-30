@@ -23,6 +23,13 @@
   /* ---- STRUCTURE ---- */
   --tf-sep-inset: 1px;   /* tab-separator inline-start inset; clears the macOS window frame (#2) */
 
+  /* CORNER RADIUS for every trimfox-styled control (urlbar field + dropdown rows + chip, menus,
+     find bar). 2.x pulls Nova's rounder geometry forward "one notch down": it tracks Firefox's
+     own small radius (8px under Nova, 4px pre-Nova), so it follows Firefox instead of drifting.
+     Nova's pills (24px) are deliberately NOT used — on trimfox's 22px rows they read as lozenges.
+     Set a length here (e.g. 4px for the 1.x look) to override. */
+  --tf-radius: var(--border-radius-small, 8px);
+
   /* ---- MOTION ---- global duration for trimfox's own CSS animations/transitions.
      0s (default) = instant, matching the deliberately-instant sidebar and honoring
      reduced-motion (guard above). Raise it (e.g. 100ms) to add motion. Drives the find
@@ -47,6 +54,22 @@
   --tf-fs-xxl:   calc(var(--tf-font-size) * 2);      /* biggest hero headers */
   --tf-fs-sm:    calc(var(--tf-font-size) * (1 - 0.15 * var(--tf-fs-lift)));   /* -> 0.85x */
   --tf-fs-xs:    calc(var(--tf-font-size) * (1 - 0.25 * var(--tf-fs-lift)));   /* -> 0.75x */
+
+  /* ---- WINDOW FOCUS ---- colors used when the window is NOT focused. Default = identical to the
+     focused colors, so dividers, tab separators and the active-tab fill never change with focus
+     (and never mismatch Firefox's own chrome, which doesn't dim). To bring back 1.x's dimming,
+     point these at each palette's tuned dimmed values:
+       --tf-line-unfocused:       var(--tf-line-inactive);
+       --tf-line-solid-unfocused: var(--tf-line-solid-inactive);
+       --tf-highlight-unfocused:  var(--tf-highlight-inactive); */
+  --tf-line-unfocused:       var(--tf-line);
+  --tf-line-solid-unfocused: var(--tf-line-solid);
+  --tf-highlight-unfocused:  var(--tf-highlight);
+
+  /* ---- MENU DENSITY ---- vertical padding of a menu row, shared by right-click/popup menus AND
+     the ☰ app menu / arrowpanel rows (Nova ships those at 8px — twice as loose), so every trimfox
+     menu reads at one density. */
+  --tf-menu-row-pad-block: 2px;
 
   /* ---- HISTORY MENU (back/forward tab-strip popup) ---- */
   --tf-hist-row-pad-block:  2px;      /* vertical padding inside each row */

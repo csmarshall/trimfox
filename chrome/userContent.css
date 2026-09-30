@@ -6,8 +6,7 @@
 /* Override highlight/selection and accent colors on Firefox internal pages */
 @-moz-document url-prefix(about:), url-prefix(chrome:) {
   /* Text selection - darker for readability */
-  *::selection,
-  *::-moz-selection {
+  *::selection {
     background-color: #555555 !important;
     color: #ffffff !important;
   }

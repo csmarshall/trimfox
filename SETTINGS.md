@@ -40,7 +40,8 @@ Every pref trimfox sets, with its Firefox default:
 | `browser.theme.toolbar-theme` | `2` | `2` (auto) | chrome scheme follows the OS (asserted so light/dark auto-switches) |
 | `browser.theme.content-theme` | `2` | `2` (auto) | in-content scheme follows the OS |
 | `extensions.activeThemeID` | `default-theme@mozilla.org` | (same) | "System theme — auto"; a hardcoded Dark/Light theme would pin the scheme |
-| `ui.highlight` | `#919093` | OS-derived | native selection/highlight stays grayscale (one mode-agnostic gray) |
+| `ui.highlight` | `#555555` | OS-derived | selection inside URL bar / find bar text boxes (CSS can't reach it); = dark-mode `--tf-select` |
+| `ui.highlighttext` | `#ffffff` | OS-derived | text on that selection (~7.5:1 contrast in both modes) |
 | `browser.tabs.inTitlebar` | `1` | `-1` (auto) | tabs/chrome integrate with the titlebar |
 | `browser.uidensity` | `1` | `0` | compact density |
 | `browser.compactmode.show` | `true` | `false` | re-expose the Compact option in Settings |
@@ -114,8 +115,8 @@ Non-obvious things the stylesheet does — all driven by the `--tf-*` palette to
   22px rows (`--tab-min-height`), favicons hidden when collapsed, flat tabs (no
   pills), separators between tabs.
 - **Tab strip framed** with `line`-colored dividers on its **top and right**, in both
-  collapsed and expanded states; dividers/separators dim on window blur
-  (`:-moz-window-inactive`).
+  collapsed and expanded states. By default they keep the same color when the window
+  loses focus; the `--tf-*-unfocused` dials in `chrome/dials.css` bring back dimming.
 - **Auto-hide the sidebar when only one tab is open** (`:has()`), reappears at 2+.
 - **Hidden chrome:** the launcher tool strip, new-tab `+` button, per-tab close
   buttons, the toolbar sidebar-toggle button, and the un-removable nav-bar

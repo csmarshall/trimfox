@@ -125,8 +125,11 @@ in `chrome/userChrome.css`:
 | **Container markers** (`#12`) | | |
 | `--tf-container-collapsed-flag` | `block` | `none` = hide the pill in the collapsed strip |
 
-The dividers, separators, and container markers use `:-moz-window-inactive` so they
-dim when the window loses focus, matching the rest of the themed chrome.
+When the window loses focus, dividers, tab separators and the active-tab fill use the
+`--tf-line-unfocused` / `--tf-line-solid-unfocused` / `--tf-highlight-unfocused` dials
+(`chrome/dials.css`). They default to the focused colors, so nothing changes on blur. Point
+them at the palette's `--tf-*-inactive` values to dim instead (as 1.x did). Container
+markers still fade on blur.
 
 
 ## Light / dark (auto-follows macOS)

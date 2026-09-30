@@ -161,7 +161,7 @@ never hardcodes a color. Each palette carries a dark set **and** a
 ## Tab states
 
 - Active tab: flat `--tf-highlight` fill (Photon makes selected == sidebar bg,
-  i.e. invisible) — `--tf-highlight-inactive` when unfocused.
+  i.e. invisible) — `--tf-highlight-unfocused` when unfocused (same fill by default).
 - Muted tabs dimmed to `opacity: 0.5` (TST parity).
 - **Loading indicator**: the native throbber (spinner/"hourglass") is hidden and
   replaced with an animated fill wash while a tab is `[busy]` — **vertical**

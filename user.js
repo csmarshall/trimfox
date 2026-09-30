@@ -51,13 +51,14 @@ user_pref("browser.theme.toolbar-theme", 2);   // 0=dark 1=light 2=auto(OS)
 user_pref("browser.theme.content-theme", 2);
 user_pref("extensions.activeThemeID", "default-theme@mozilla.org");
 
-// Override the OS Highlight system color so native widgets / selection stay
-// grayscale. This is a PREF (static, cross-platform), so it can't reference the
-// --tf-* palette or switch with light/dark — it needs one MODE-AGNOSTIC mid-gray
-// that reads in both. #919093 fits that; #808080 (= --tf-accent-hover) is the
-// nearest palette-token value if you prefer a conceptual link.
-// Companion: set ui.highlighttext to force the text-on-highlight color (default here).
-user_pref("ui.highlight", "#919093");
+// Override the OS Highlight system color. This is the ONLY lever for text selected
+// inside browser text boxes (URL bar, find bar): CSS ::selection does not reach them
+// (verified FF157 — a valid ::selection rule left them at this pref's color).
+// A PREF can't read the --tf-* palette or follow light/dark, so this DUPLICATES the
+// dark-mode --tf-select (#555555) deliberately — keep the two in step by hand. White
+// text on it is ~7.5:1 in both modes (the old mode-agnostic #919093 was ~3.2:1).
+user_pref("ui.highlight", "#555555");
+user_pref("ui.highlighttext", "#ffffff");
 
 // Compact UI / layout  (part of the trimmed look)
 user_pref("browser.tabs.inTitlebar", 1);                     // tabs/chrome integrate with the titlebar

@@ -15,19 +15,17 @@
    file is harmless (install.sh creates it from the example). */
 @import url('./user-overrides.css');
 
-/* IMPORTANT: Selection styles MUST come BEFORE namespace declaration */
-::-moz-selection {
-  background-color: var(--tf-select) !important;
-  color: var(--tf-text) !important;
-}
-
+/* Chrome text selection outside text boxes. (Selection INSIDE the URL bar / find bar text boxes
+   can't be styled by CSS — see ui.highlight in user.js.) */
 ::selection {
   background-color: var(--tf-select) !important;
   color: var(--tf-text) !important;
 }
 
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /* set default namespace to XUL */
-@namespace html url("http://www.w3.org/1999/xhtml"); /* HTML namespace for input elements */
+/* NO @namespace in this file, deliberately: selectors here match XUL and HTML elements alike
+   (e.g. the HTML .urlbar-background div). The @namespace lines that used to sit here came after
+   a style rule, which makes them invalid, so they were always ignored. refined-findbar/findbar.css
+   DOES declare XUL as default — there, HTML elements need an explicit htmlNs| prefix. */
 
 /* ============================================================================
    trimfox — Firefox-var mappings.
@@ -44,9 +42,7 @@
      This :root only maps trimfox's tokens onto Firefox's own theme vars. */
 
   /* ---- Map Firefox theme vars onto the tokens ---- */
-  --toolbar-bgcolor:              var(--tf-surface) !important;
   --lwt-accent-color:             var(--tf-surface) !important;
-  --lwt-toolbarbutton-background: var(--tf-raised)  !important;
   --sidebar-background-color:     var(--tf-surface) !important;
   --sidebar-border-color:         var(--tf-surface) !important;
 
@@ -58,7 +54,7 @@
   --toolbar-field-background-color:        var(--tf-field)      !important;   /* resting field */
   --toolbar-field-background-color-focus:  var(--tf-field)      !important;   /* FOCUSED field + popup pill */
   --toolbar-field-border-color:            var(--tf-line-solid) !important;
-  --urlbar-box-bgcolor:                    var(--tf-field)      !important;   /* legacy name (harmless) */
+  --toolbar-field-border-color-focus:      var(--tf-accent)     !important;   /* Nova: violet via the accent */
   --urlbar-box-background-color:           var(--tf-field)      !important;   /* inner box (search mode) */
   --urlbar-box-background-color-focus:     var(--tf-field)      !important;
   --urlbar-box-background-color-hover:     var(--tf-raised)     !important;
@@ -72,20 +68,44 @@
   --panel-background-color:          var(--tf-surface)    !important;
   --panel-border-color:              var(--tf-line-solid) !important;
   --toolbar-background-color:        var(--tf-surface)    !important;   /* #navigator-toolbox + #sidebar-main (Nova) */
+  /* Nova paints a violet→rust gradient (#3e315f → #701c07 dark) as the toolbox background image,
+     OVER the solid color above. image(transparent) is Firefox's own "no gradient" value
+     (tokens-platform.css) — turns it off without touching lwtheme header images. */
+  --toolbox-background-gradient:     image(transparent)   !important;
+  --chrome-content-separator-color:  var(--tf-line-solid) !important;   /* Nova: violet-gray line */
   --button-background-color-hover:   var(--tf-raised)     !important;   /* in-panel ghost buttons — kills the violet hover */
   --button-background-color-active:  var(--tf-select)     !important;
+  /* Nova (FF157+) splits button states further: ghost buttons (☰ subview rows) and menu buttons
+     get their own hover/active tokens, and toolbar buttons get a dedicated pair that Nova
+     HARDCODES to violet (tokens-platform.css) — the same pair also backs the findbar ↑/↓ and the
+     urlbar dropdown's hover/selected rows, so this is the single highest-leverage Nova pin. */
+  --button-background-color-ghost-hover:   var(--tf-raised) !important;
+  --button-background-color-ghost-active:  var(--tf-select) !important;
+  --button-background-color-menu-hover:    var(--tf-raised) !important;
+  --button-background-color-menu-active:   var(--tf-select) !important;
+  --toolbarbutton-background-color-hover:  var(--tf-raised) !important;
+  --toolbarbutton-background-color-active: var(--tf-select) !important;
 
-  --toolbar-color:             var(--tf-text) !important;
-  --lwt-text-color:            var(--tf-text) !important;
-  --sidebar-text-color:        var(--tf-text) !important;
-  --toolbar-field-color:       var(--tf-text) !important;
-  --toolbar-field-focus-color: var(--tf-text) !important;
+  /* Text + icon color. Nova puts these on a violet-desaturated palette. --toolbar-text-color /
+     --toolbar-field-text-color / --panel-text-color are Nova's renames of the old --toolbar-color /
+     --toolbar-field-color / --panel-color (which FF157 no longer reads). */
+  --text-color:                     var(--tf-text) !important;
+  --button-text-color:              var(--tf-text) !important;
+  --toolbar-text-color:             var(--tf-text) !important;
+  --toolbarbutton-icon-fill:        var(--tf-text) !important;
+  --lwt-text-color:                 var(--tf-text) !important;
+  --sidebar-text-color:             var(--tf-text) !important;
+  --panel-text-color:               var(--tf-text) !important;
+  --toolbar-field-text-color:       var(--tf-text) !important;
+  --toolbar-field-text-color-focus: var(--tf-text) !important;
+  --toolbar-field-focus-color:      var(--tf-text) !important;   /* still read by smartbar.css */
 
   /* Accent — dialogs, checkboxes, buttons, focus rings (no more teal) */
   --focus-outline-color:         var(--tf-accent)        !important;
   --color-accent-primary:        var(--tf-accent)        !important;
   --color-accent-primary-hover:  var(--tf-accent-hover)  !important;
   --color-accent-primary-active: var(--tf-accent-active) !important;
+  --color-accent-primary-selected: var(--tf-accent-active) !important;
   accent-color:                  var(--tf-accent)        !important;
 
   /* Attention / notification — DECORATIVE accent that Firefox paints blue/green/teal:
@@ -94,24 +114,95 @@
      (SAFETY colors — security red, warning yellow, cert errors — are deliberately NOT
      mapped here: they carry meaning and should stay bold.) */
   --toolbarbutton-icon-fill-attention:     var(--tf-attention) !important;
-  --lwt-toolbarbutton-icon-fill-attention: var(--tf-attention) !important;
   --button-attention-dot-color:            var(--tf-attention) !important;
   --tab-attention-dot-color:               var(--tf-attention) !important;
   --color-accent-attention:                var(--tf-attention) !important;
+  /* INFORMATION (e.g. the ⓘ on "This page is slowing down Firefox" bars) is decorative too:
+     blue pre-Nova, violet under Nova. Warning / critical / success are NOT mapped — they carry
+     meaning (same rule as the safety colors below). */
+  --icon-color-information:                var(--tf-glyph)     !important;
+  --background-color-information:          var(--tf-raised)    !important;
 
-  /* Selection / highlight (urlbar dropdown, field highlight, chrome selection) */
-  --urlbar-popup-action-color:               var(--tf-text-dim) !important;
-  --urlbar-popup-url-color:                  var(--tf-text-dim) !important;
-  --autocomplete-popup-highlight-background: var(--tf-select)   !important;
-  --autocomplete-popup-highlight-color:      var(--tf-text)     !important;
-  --urlbar-popup-selected-bgcolor:           var(--tf-select)   !important;
-  --urlbar-popup-selected-color:             var(--tf-text)     !important;
-  --lwt-toolbar-field-highlight:             var(--tf-select)   !important;
-  --lwt-toolbar-field-highlight-text:        var(--tf-text)     !important;
-  --toolbar-field-highlight:                 var(--tf-select)   !important;
-  --toolbar-field-highlight-text:            var(--tf-text)     !important;
-  --chrome-selection-background-color:       var(--tf-select)   !important;
-  --chrome-selection-color:                  var(--tf-text)     !important;
+  /* Urlbar dropdown rows — Nova's --urlbarview-* names replace the old --urlbar-popup-* /
+     --autocomplete-popup-* (no longer read). Nova hardcodes the secondary text lavender. */
+  --urlbarview-background-color-hover:    var(--tf-raised)   !important;
+  --urlbarview-background-color-selected: var(--tf-select)   !important;
+  --urlbarview-text-color-selected:       var(--tf-text)     !important;
+  --urlbarview-text-color-secondary:      var(--tf-text-dim) !important;
+  --urlbarview-text-color-action:         var(--tf-text-dim) !important;
+
+  /* Field text highlight (urlbar.css still reads the --lwt-* names). Chrome text selection is
+     covered by the ::selection rules at the top of this sheet. */
+  --lwt-toolbar-field-highlight:          var(--tf-select)   !important;
+  --lwt-toolbar-field-highlight-text:     var(--tf-text)     !important;
+
+  /* GEOMETRY — Nova's rounder language, one notch down: every radius token Nova rounds up
+     (xlarge / pill) is pointed at --tf-radius (dials.css, which tracks FF's own small radius).
+     --button-border-radius also feeds --toolbarbutton-border-radius, so toolbar-button hovers
+     become rounded squares, not circles — "no full pills". */
+  --urlbar-border-radius:         var(--tf-radius) !important;   /* field + joined dropdown, one-offs, chiclets */
+  --urlbarview-border-radius:     var(--tf-radius) !important;   /* dropdown rows (inset via Nova's gutter) */
+  --urlbar-inner-border-radius:   calc(var(--tf-radius) - 1px) !important;   /* inner chips — FF's own non-Nova formula */
+  --button-border-radius:         var(--tf-radius) !important;
+  --panel-border-radius:          var(--tf-radius) !important;   /* ☰ / arrowpanels */
+  --panel-menuitem-border-radius: var(--tf-radius) !important;   /* ☰ subview rows */
+  --panel-separator-color:        var(--tf-line)   !important;   /* menu separators (drawn as ::before) */
+  --panel-menuitem-padding-block: var(--tf-menu-row-pad-block) !important;   /* ☰ rows at context-menu density */
+
+  /* Tabs — Nova's hover tint, and the violet→orange gradient it draws on the selected tab's
+     edge; flatten that to trimfox's line color. */
+  --tab-background-color-hover:           var(--tf-raised)     !important;
+  --tab-border-color-selected-leading:    var(--tf-line-solid) !important;
+  --tab-border-color-selected-trailing:   var(--tf-line-solid) !important;
+}
+
+/* Nova rings the FIELD with a 2px inset outline while the results are open
+   (`.urlbar[popover-open][focused] > .urlbar-input-container`), inside the panel's own frame —
+   a double outline. 1.x (and trimfox's reduced take) = the single outer frame only. */
+.urlbar[popover-open][focused] > .urlbar-input-container {
+  outline: none !important;
+}
+
+/* The urlbar's globe ⌄ search-mode chip is a <moz-button type="muted">: keep Nova's filled-chip
+   idea, but in trimfox grays (radius comes from --button-border-radius above). Declared on the
+   element because moz-button reads these per-element. */
+.searchmode-switcher {
+  --button-background-color-muted:        var(--tf-raised) !important;
+  --button-background-color-muted-hover:  var(--tf-select) !important;
+  --button-background-color-muted-active: var(--tf-select) !important;
+  --button-text-color-muted:              var(--tf-text)   !important;
+}
+
+/* Square content-area corner. Pre-Nova this was the user.js pref
+   sidebar.revamp.round-content-area=false; Nova ignores that pref and rounds the top-inline-start
+   corner of the page (next to the collapsed sidebar) via --content-area-start-radius, declared on
+   .browserContainer itself — so it has to be pinned there, not on :root. */
+#tabbrowser-tabpanels .browserContainer {
+  --content-area-start-radius: 0 !important;
+  /* Nova ALSO borders the page itself (content-area.css): always on top, and on the side facing
+     a collapsed sidebar. trimfox's toolbox bottom line + sidebar divider already sit there, so
+     these read as DOUBLE lines — and pushed the page 1px below the expanded sidebar's top edge,
+     leaving a step at the corner. trimfox's lines are the single source; drop Nova's. */
+  border: none !important;
+}
+
+/* Nova re-declares the urlbar's open/focused glow ON the urlbar itself (urlbar.css), so a :root
+   pin can't reach it. Nova's value is a violet halo; this is Firefox's own non-Nova value from the
+   same rule — restoring the 1.x look, not a trimfox-tuned number. */
+.urlbar,
+#searchbar {
+  --chrome-box-shadow: rgba(0, 0, 0, 0.13) !important;
+  /* FF157 paints the OPEN urlbar in two halves: .urlbar-background (field, clipped at the seam)
+     and .urlbarView-background (the dropdown's popover). trimfox's #11 border sits on the field
+     half only, and Nova makes the open border `solid transparent` — so the frame stopped at the
+     field. This token borders the dropdown half too: ONE outline around field + results again. */
+  --urlbar-background-border-open: 1px solid var(--tf-line) !important;
+}
+
+/* Multiselected tabs (Cmd-click): trimfox strips the native .tab-background outline, which was
+   the only multiselect cue, so give non-selected members of a multiselection the selection fill. */
+.tabbrowser-tab[multiselected]:not([selected], [visuallyselected]) .tab-background {
+  background-color: var(--tf-select) !important;
 }
 
 menupopup > menuitem, menupopup > menu,
@@ -121,7 +212,7 @@ menupopup > menucaption, menupopup > menuseparator {
   /* Compact the ROW HEIGHT. The text is already 7pt (verified: 9.33px), so the
      "history popup is too big" was really the tall default menu rows on macOS.
      Shrink vertical padding + drop the min-height floor. */
-  padding-block: 1px !important;
+  padding-block: var(--tf-menu-row-pad-block) !important;
   min-height: 0 !important;
 }
 
@@ -148,12 +239,13 @@ menupopup {
   background-color: var(--tf-surface) !important;
   color: var(--tf-text) !important;
   border: 1px solid var(--tf-line-solid) !important;
-  border-radius: 6px !important;
+  border-radius: var(--tf-radius) !important;
   /* -- CONTEXT / POPUP MENU DIALS (right-click menus, urlbar dropdown, etc.) -- */
-  padding: 4px !important;                  /* inset of the item list from the popup border */
+  --tf-menu-inset: 4px;                     /* inset of the item list from the popup border */
+  padding: var(--tf-menu-inset) !important;
   --menuitem-padding: 3px 9px !important;   /* per-row padding (macOS native is 4px 11px) */
   --panel-background: var(--tf-surface) !important;
-  --panel-color: var(--tf-text) !important;
+  --panel-text-color: var(--tf-text) !important;
 }
 /* the popup wraps its items in a shadow <arrowscrollbox> (part="arrowscrollbox content",
    exportparts scrollbox→arrowscrollbox-scrollbox). That container's inline padding insets every
@@ -169,16 +261,36 @@ menupopup {
 .menupopup-arrowscrollbox {
   padding: 0 !important;
   border-width: 0 !important;
-  border-radius: 5px !important;   /* match the popup's inner radius and clip so corner rows
-                                      (esp. the active-row accent bar / full-width fill) don't
-                                      poke past the rounded corners */
+  border-radius: calc(var(--tf-radius) - 1px) !important;   /* the popup's INNER radius (outer minus
+                                      its 1px border); clip so corner rows (esp. the active-row
+                                      accent bar / full-width fill) don't poke past the corners */
   overflow: clip !important;
 }
 menupopup > menuitem,
 menupopup > menu {
   appearance: none !important;
   color: var(--tf-text) !important;
-  border-radius: 4px !important;
+  /* Floating hover row: the popup's padding insets it, so it sits INSIDE the panel with a
+     concentric corner (panel radius minus that inset — the classic nested-radius rule). */
+  border-radius: max(0px, calc(var(--tf-radius) - var(--tf-menu-inset))) !important;
+}
+/* ☰ / arrowpanel rows: Nova floors them at min-height: var(--size-item-medium), which is what
+   actually held them at ~2× context-menu height (padding alone couldn't shrink them). Same
+   min-height:0 technique as the menupopup rows above. */
+.subviewbutton,
+panelview .toolbarbutton-1,
+.widget-overflow-list .toolbarbutton-1 {
+  min-height: 0 !important;
+}
+
+/* Menu icons (extension items: 1Password, uBlock, …) sized to ONE TEXT LINE (1lh) so icon rows
+   are exactly as tall as text-only rows; follows --tf-font-size. The back/forward history menu
+   keeps its deliberate 16px favicon column (.unified-nav-* rules below are more specific). */
+menupopup > menuitem .menu-icon,
+menupopup > menu .menu-icon {
+  width: 1lh !important;
+  height: 1lh !important;
+  max-height: 1lh !important;
 }
 menupopup > menuitem[_moz-menuactive="true"]:not([disabled]),
 menupopup > menu[_moz-menuactive="true"]:not([disabled]) {
@@ -191,7 +303,10 @@ menupopup > menu[disabled="true"] {
 }
 menupopup > menuseparator {
   appearance: none !important;
-  border-top: 1px solid var(--tf-line) !important;
+  /* Firefox already draws the line as ::before (menu.css, colored by --panel-separator-color,
+     pinned in :root). A border here too stacked a SECOND line — the "thick" separators (1.x bug). */
+  border-top: none !important;
+  margin-inline: 0 !important;   /* macOS insets it; trimfox wants full-width separators */
   margin-block: 3px !important;
   padding: 0 !important;
   min-height: 0 !important;
@@ -199,7 +314,7 @@ menupopup > menuseparator {
 /* the page context menu's top icon row: back / forward / reload / bookmark */
 #context-navigation > menuitem {
   -moz-context-properties: fill !important;
-  fill: var(--toolbar-color, #e8e8e8) !important;
+  fill: var(--tf-text) !important;
 }
 #context-navigation > menuitem[_moz-menuactive="true"]:not([disabled]) {
   background-color: var(--tf-select) !important;
@@ -296,7 +411,7 @@ menuitem.unified-nav-current {
 #forward-button { display: none !important; }                /* hidden by default; shown at stack-start */
 #back-button, #forward-button {
   -moz-context-properties: fill !important;
-  fill: var(--toolbar-color, #e8e8e8) !important;   /* explicit themed color (currentColor is dark here) */
+  fill: var(--tf-text) !important;   /* explicit themed color (currentColor is dark here) */
   opacity: 1 !important;   /* never dim the combined nav button */
 }
 /* FF dims disabled toolbar buttons when the WINDOW is inactive
@@ -321,7 +436,7 @@ menuitem.unified-nav-current {
    (h=2, rx=1 in the arrowheads' 24-viewBox) — honest "nothing to navigate to" */
 #nav-bar:has(#back-button[disabled]):has(#forward-button[disabled]) #back-button {
   list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect fill="%23d4d4d4" x="5" y="11" width="14" height="2" rx="1"/></svg>') !important;
-  fill: var(--toolbar-color, #e8e8e8) !important;   /* match the chevrons (muted read as dark) */
+  fill: var(--tf-text) !important;   /* match the chevrons (muted read as dark) */
 }
 /* LIGHT palette: the dash's fill is baked into the data: URI (CSS var() can't reach inside a
    data URI), so the light-gray #d4d4d4 dash is invisible on a light toolbar. Swap in a
@@ -434,7 +549,9 @@ menuitem.unified-nav-current {
 .urlbarView-row[selected],
 .urlbarView-row:is([selected]) {
   background-color: var(--tf-select) !important;
-  background: var(--tf-select) !important;
+  /* NOT the `background:` shorthand — it resets background-clip to border-box and paints over
+     Nova's row gutter (padding + clip content-box), which IS the inset floating selection. */
+  background-clip: content-box !important;
 }
 
 /* Selected dropdown row — force white text on every child element */
@@ -479,7 +596,7 @@ menuitem.unified-nav-current {
   border: 1px solid var(--tf-line) !important;
 }
 :root:-moz-window-inactive #urlbar .urlbar-background {
-  border-color: var(--tf-line-inactive) !important;
+  border-color: var(--tf-line-unfocused) !important;
 }
 
 /* #11 no-grow on focus (measured): the "breakout-extend" state shifts the field up
@@ -500,13 +617,13 @@ menuitem.unified-nav-current {
 }
 #urlbar[breakout][breakout-extend] > .urlbar-input-container {
   height: var(--urlbar-height) !important;
-  padding: var(--urlbar-container-padding, 1px) !important;   /* compact 1px — on focus it jumps
-                                                            to 6px/5px and shoves the icons +
-                                                            text around. Pin to compact. */
+  padding: 1px !important;   /* compact 1px — on focus it jumps to 6px/5px and shoves the icons +
+                                text around. Pin to compact. (FF157 renamed the var this used to read
+                                to --urlbar-input-container-padding; trimfox wants its own value, not FF's.) */
   /* FF 152 "Nova" DOUBLES the field border-width on [breakout-extend] (padding:0 + 2×border),
      which grows the field ~2px and makes it shift up when you focus/type. Pin it to 1× so the
      box stays the same size whether empty, focused, or showing results. */
-  border-width: var(--urlbar-container-border-width, 1px) !important;
+  border-width: 1px !important;
 }
 
 /* trimfox: was `#TabsToolbar { visibility: collapse; }` — hid the tab bar for
@@ -588,8 +705,8 @@ display: none;
 /* Defines --urlbar-toolbar-height for the breakout-extend centering calc above (line ~440).
    NOT a navbar-height lever: FF 152 doesn't use this var for layout — it ONLY feeds our
    top:calc(). Removing it leaves that calc undefined and breaks the focused-urlbar / results-
-   popup rendering (learned the hard way). To actually slim the nav/url bar, lower
-   --urlbar-min-height or switch UI density (compact field = 26px) instead. */
+   popup rendering (learned the hard way). To actually slim the nav/url bar, switch UI density
+   instead (FF157 no longer reads --urlbar-min-height, so that old lever is gone). */
 #urlbar {
   --urlbar-toolbar-height: 34px !important;
 }
@@ -622,18 +739,6 @@ display: none;
   --lwt-toolbar-field-highlight-text: var(--tf-text) !important;
 }
 
-/* URL bar text selection - force gray bg with white text */
-/* Using HTML namespace for input elements */
-#urlbar html|input::-moz-selection,
-#urlbar html|input::selection,
-html|input.urlbar-input::-moz-selection,
-html|input.urlbar-input::selection,
-#urlbar-input::selection,
-#urlbar-input::-moz-selection {
-   background: var(--tf-select) !important;
-   background-color: var(--tf-select) !important;
-   color: var(--tf-text) !important;
-}
 
 /*** Hide Tab Close buttons ***/
 .tabbrowser-tab .tab-close-button {
@@ -710,18 +815,14 @@ findbar:not(:focus-within) {
   display: none !important;
 }
 
-/* COLLAPSED right divider. #vertical-tabs is full window height but normally
-   ~235px wide (transparent past the strip), so its border lands off in the page.
-   Constrain it to the strip width ONLY when collapsed (via :has() on the tab
-   state) and border its right edge → line at the visible ~14px edge, full height.
-   Expanded edge is handled by #sidebar-main below. */
+/* COLLAPSED strip width: #vertical-tabs is full window height but normally ~235px wide
+   (transparent past the strip); constrain it to the strip ONLY when collapsed (via :has() on
+   the tab state). The collapsed DIVIDER is sidebar-main's border (below) — this used to border
+   its right edge too, and the two sat side by side as a 2px line vs 1px expanded (FF157: the
+   strip and sidebar-main edges now coincide). */
 #vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
   max-width: var(--tab-collapsed-background-width) !important;
   overflow: hidden !important;
-  border-inline-end: 1px solid var(--tf-line) !important;
-}
-:root:-moz-window-inactive #vertical-tabs:has(> #tabbrowser-tabs[orient="vertical"]:not([expanded])) {
-  border-inline-end-color: var(--tf-line-inactive) !important;
 }
 
 /* Favicons: present and visible normally (and when expanded on hover), but
@@ -753,11 +854,17 @@ findbar:not(:focus-within) {
   background-repeat: no-repeat !important;
   background-position: bottom left !important;
   background-size: 100% 1px !important;
+  /* Nova paints the selected tab with a `background:` shorthand whose clip is
+     `border-area, padding-box`. With trimfox's single image layer that list truncates to
+     `border-area`, and trimfox zeroes the border — so BOTH this separator and the selected
+     fill (the color clips to the last layer) got clipped to nothing. */
+  background-clip: border-box !important;
+  background-origin: border-box !important;
 }
 :root:-moz-window-inactive .tabbrowser-tab .tab-background {
   background-image: linear-gradient(to right,
                      transparent var(--tf-sep-inset, 4px),
-                     var(--tf-line-solid-inactive) var(--tf-sep-inset, 4px)) !important;
+                     var(--tf-line-solid-unfocused) var(--tf-sep-inset, 4px)) !important;
 }
 /* The macOS window-edge highlight sits over the tab's left edge; on the ACTIVE
    tab its lighter fill shows behind that edge and makes it read brighter than on
@@ -827,7 +934,7 @@ findbar:not(:focus-within) {
 }
 :root:-moz-window-inactive .tabbrowser-tab[selected] .tab-background,
 :root:-moz-window-inactive .tabbrowser-tab[visuallyselected] .tab-background {
-  background-color: var(--tf-highlight-inactive) !important;
+  background-color: var(--tf-highlight-unfocused) !important;
 }
 
 /* Flatten the tab "pill": kill the rounded background, its inset margins and
@@ -882,7 +989,7 @@ sidebar-main {
   border-inline-end: 1px solid var(--tf-line) !important;
 }
 :root:-moz-window-inactive sidebar-main {
-  border-inline-end-color: var(--tf-line-inactive) !important;
+  border-inline-end-color: var(--tf-line-unfocused) !important;
 }
 #sidebar-container[sidebar-launcher-expanded] sidebar-main {
   border-inline-end: 0 !important;   /* the container edge owns the divider when expanded */
@@ -922,8 +1029,8 @@ sidebar-main {
                                                                        for every tab. */
 }
 :root:-moz-window-inactive #main-window[sidebar-expand-on-hover] #sidebar-container[sidebar-launcher-expanded] {
-  border-inline-end-color: var(--tf-line-inactive) !important;
-  box-shadow: 0 -1px 0 0 var(--tf-line-solid-inactive) !important;
+  border-inline-end-color: var(--tf-line-unfocused) !important;
+  box-shadow: 0 -1px 0 0 var(--tf-line-solid-unfocused) !important;
 }
 
 /* UNIFIED full-width line under the toolbar: a plain border-bottom on the toolbox,
@@ -936,7 +1043,7 @@ sidebar-main {
   border-block-end: 1px solid var(--tf-line-solid) !important;
 }
 :root:-moz-window-inactive #navigator-toolbox {
-  border-block-end-color: var(--tf-line-solid-inactive) !important;
+  border-block-end-color: var(--tf-line-solid-unfocused) !important;
 }
 
 /* Auto-hide the whole sidebar when there's only ONE tab — a single-item strip is
@@ -1324,7 +1431,7 @@ sidebar-main:not(:has(.tabbrowser-tab ~ .tabbrowser-tab)) {
   background-color: var(--tf-line-solid) !important;
 }
 :root:-moz-window-inactive #vertical-pinned-tabs-splitter {
-  background-color: var(--tf-line-solid-inactive) !important;
+  background-color: var(--tf-line-solid-unfocused) !important;
 }
 /* no extra gap between the pinned area and the first normal tab (the "taller top tab").
    Root cause (probe): #tabbrowser-tabs is a flex column with a ~5px GAP between its three
