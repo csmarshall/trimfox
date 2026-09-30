@@ -62,6 +62,7 @@ Every pref trimfox sets, with its Firefox default:
 | `browser.tabs.hoverPreview.showThumbnails` | `false` | `true` | no thumbnails in that card |
 | `browser.toolbars.bookmarks.visibility` | `never` | `newtab` | no bookmarks toolbar |
 | `browser.tabs.closeWindowWithLastTab` | `false` | `true` | closing the last tab keeps the window |
+| `permissions.default.shortcuts` | *(opt-in, commented)* `2` | `0` | Firefox's shortcuts beat websites (Cmd+F = native find everywhere); global, per-site exceptions via Page Info → Permissions |
 | `font.size.variable.x-western` | `12` | `16` | default web-page proportional font (chrome is 7pt via CSS) |
 | `font.size.monospace.x-western` | `14` | `13` | default web-page monospace font |
 

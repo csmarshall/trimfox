@@ -27,6 +27,10 @@
 // user_pref("devtools.chrome.enabled", true);
 // user_pref("devtools.debugger.remote-enabled", true);
 
+// Firefox's shortcuts always beat websites (Cmd+F = native find bar everywhere). Global — see
+// the caveats in trimfox's user.js; allow exceptions per site via Page Info → Permissions:
+// user_pref("permissions.default.shortcuts", 2);
+
 // Disable Quick Find (the "/" and "'" find-as-you-type bars). trimfox skins Quick Find to
 // match the full find bar, but if you'd rather it not trigger at all:
 // user_pref("accessibility.typeaheadfind.manual", false);

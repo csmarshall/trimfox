@@ -111,6 +111,14 @@ user_pref("browser.tabs.hoverPreview.showThumbnails", false);
 user_pref("browser.toolbars.bookmarks.visibility", "never"); // no bookmarks toolbar
 user_pref("browser.tabs.closeWindowWithLastTab", false);     // closing the last tab keeps the window
 
+// OPTIONAL (off by default): Firefox's shortcuts always win over websites — Cmd+F ALWAYS opens
+// the native find bar, even on sites that hijack it. 2 = block sites from overriding browser
+// shortcuts (default 0 = site decides). Caveats: it's GLOBAL (every browser shortcut on every
+// site, e.g. Slack's Cmd+K becomes Firefox's search), and canvas-drawn apps (Google Docs/Sheets)
+// are invisible to native find — allow those per site via Page Info (Cmd+I) → Permissions →
+// "Override Keyboard Shortcuts". Put it in user-overrides.js to opt in. (#45)
+// user_pref("permissions.default.shortcuts", 2);
+
 // Content fonts  (the *chrome* is forced to 7pt by userChrome.css; these are
 // the default web-page fonts)
 user_pref("font.size.variable.x-western", 12);
